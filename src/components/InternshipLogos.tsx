@@ -2,32 +2,13 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-export default function InternshipLogos() {
-    const [logos, setLogos] = useState<string[]>([]);
-    const [loading, setLoading] = useState(true);
+interface InternshipLogosProps {
+    logos: any[];
+}
 
-    useEffect(() => {
-        fetch('/api/internships')
-            .then(res => res.json())
-            .then(data => {
-                if (data.logos) {
-                    setLogos(data.logos);
-                }
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
-    }, []);
+export default function InternshipLogos({ logos }: InternshipLogosProps) {
 
-    if (loading) {
-        return <div className="animate-pulse flex flex-wrap gap-8 justify-center mt-8">
-            <div className="w-32 h-16 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
-            <div className="w-32 h-16 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
-            <div className="w-32 h-16 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
-        </div>;
-    }
+
 
     if (logos.length === 0) {
         return (
@@ -35,11 +16,10 @@ export default function InternshipLogos() {
                 <div className="p-8 border-2 border-dashed border-slate-300 dark:border-slate-700/50 rounded-2xl w-full max-w-2xl text-center backdrop-blur-sm bg-white/30 dark:bg-black/10">
                     <p className="text-slate-500 dark:text-slate-400 mb-2 text-lg font-medium">No internship logos found yet.</p>
                     <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                        To add logos automatically, drop your logo images into the <br />
+                        To add logos automatically, register them via your <br />
                         <code className="bg-slate-200 dark:bg-slate-800 px-2 py-1 rounded text-blue-600 dark:text-blue-400 font-bold mx-1">
-                            public/internships
+                            Admin Dashboard
                         </code>
-                        folder in your project repository!
                     </p>
                     <p className="text-xs text-slate-400 dark:text-slate-500 mt-4 italic">This section will automatically display them here upon page refresh.</p>
                 </div>
@@ -59,7 +39,7 @@ export default function InternshipLogos() {
             {logos.map((logo, index) => (
                 <div key={index} className="relative h-16 w-32 md:h-24 md:w-48 transition-transform hover:scale-110 flex items-center justify-center filter drop-shadow-sm">
                     <Image
-                        src={`/internships/${logo}`}
+                        src={logo.imageUrl}
                         alt={`Internship Logo ${index + 1}`}
                         fill
                         className="object-contain"

@@ -6,26 +6,19 @@ import Image from "next/image";
 // Define the available categories
 const CATEGORIES = ["All", "Projects", "Workshop", "Industrial Visit", "Schools", "Lab Setup"];
 
-// Dummy data structure for the gallery. 
-// The user can easily swap `src` with real paths from their `public/gallery/` folder
-const GALLERY_ITEMS = [
-    { id: 1, category: "Projects", title: "Autonomous Drone", src: "https://images.unsplash.com/photo-1508614589041-895b68904e3d?w=800&q=80" },
-    { id: 2, category: "Workshop", title: "Weekend Robotics Bootcamp", src: "https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=800&q=80" },
-    { id: 3, category: "Industrial Visit", title: "DRDO Electronics Lab", src: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80" },
-    { id: 4, category: "Schools", title: "Techfest Outreach", src: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80" },
-    { id: 5, category: "Lab Setup", title: "PNT Advanced Equipment", src: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80" },
-    { id: 6, category: "Projects", title: "Obstacle Avoidance Car", src: "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=800&q=80" },
-    { id: 7, category: "Workshop", title: "Soldering Essentials", src: "https://images.unsplash.com/photo-1581092334651-ddf70514125b?w=800&q=80" },
-    { id: 8, category: "Industrial Visit", title: "Assembly Line Tour", src: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80" }
-];
 
-export default function Gallery() {
+
+interface GalleryProps {
+    items: any[];
+}
+
+export default function Gallery({ items }: GalleryProps) {
     const [activeCategory, setActiveCategory] = useState("All");
 
     // Filter items based on the active tab
     const filteredItems = activeCategory === "All"
-        ? GALLERY_ITEMS
-        : GALLERY_ITEMS.filter(item => item.category === activeCategory);
+        ? items
+        : items.filter(item => item.category === activeCategory);
 
     return (
         <section id="gallery" className="py-24 relative border-t border-slate-900/10 dark:border-white/5 bg-slate-100/50 dark:bg-slate-900/20 backdrop-blur-sm transition-colors duration-500">
@@ -58,7 +51,7 @@ export default function Gallery() {
                     <AnimatePresence>
                         {filteredItems.map((item) => (
                             <motion.div
-                                key={item.id}
+                                key={item._id}
                                 layout
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -68,7 +61,7 @@ export default function Gallery() {
                             >
                                 {/* Background Image */}
                                 <Image
-                                    src={item.src}
+                                    src={item.imageUrl}
                                     alt={item.title}
                                     fill
                                     className="object-cover transition-transform duration-700 group-hover:scale-110"

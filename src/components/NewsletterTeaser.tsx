@@ -1,3 +1,5 @@
+"use client";
+
 export default function NewsletterTeaser() {
     return (
         <section className="py-24 relative overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-500">
