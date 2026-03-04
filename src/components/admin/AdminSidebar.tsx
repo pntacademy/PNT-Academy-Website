@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { LayoutDashboard, Image as ImageIcon, Briefcase, GraduationCap, FileText, Settings, LogOut } from "lucide-react";
@@ -29,11 +30,14 @@ export default function AdminSidebar() {
             {/* Logo Area */}
             <div className="p-6 border-b border-slate-200 dark:border-white/10 flex items-center justify-center">
                 <Link href="/admin" className="block text-center hover:opacity-80 transition-opacity">
-                    <img
-                        src="https://thepntacademy.com/assets/PNTLogo.png"
-                        alt="PNT Academy"
-                        className="h-10 w-auto mx-auto drop-shadow-md brightness-100 dark:brightness-110"
-                    />
+                    <div className="relative w-28 h-10 mx-auto">
+                        <Image
+                            src="/logo.png"
+                            alt="PNT Academy Logo"
+                            fill
+                            className="object-contain dark:invert-0 invert drop-shadow-md brightness-100 dark:brightness-110 transition-all duration-500"
+                        />
+                    </div>
                     <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mt-2 block">Admin Panel</span>
                 </Link>
             </div>
@@ -50,8 +54,8 @@ export default function AdminSidebar() {
                                 whileHover={{ scale: 1.02, x: 5 }}
                                 whileTap={{ scale: 0.98 }}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive
-                                        ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
+                                    ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
                                     }`}
                             >
                                 <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-slate-500 dark:text-slate-400"}`} />
