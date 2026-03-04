@@ -263,7 +263,10 @@ export default function Home() {
       {/* Internships Section */}
       <section id="internships" className="py-24 relative border-t border-slate-900/10 dark:border-white/5 transition-colors duration-500">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-16 text-slate-800 dark:text-white/90 transition-colors duration-500">We provide internships on</h2>
+          <h2 className="text-3xl font-bold mb-4 text-slate-800 dark:text-white/90 transition-colors duration-500">Internships based on real-world projects</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 mb-16 max-w-2xl mx-auto transition-colors duration-500">
+            We provide hands-on internship experience working on technologies utilized by our elite clients.
+          </p>
           <InternshipLogos />
         </div>
       </section>
@@ -273,6 +276,9 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-16 text-slate-800 dark:text-white/90 transition-colors duration-500">Trusted by Innovative Schools</h2>
           <ClientLogos />
+          <p className="text-xl font-medium text-slate-500 dark:text-slate-400 mt-12 transition-colors duration-500">
+            ...and many more schools across the country.
+          </p>
         </div>
       </section>
 
