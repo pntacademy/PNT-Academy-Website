@@ -3,7 +3,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { Suspense } from "react";
-import { Spot } from "./Spot";
+import { AGV } from "./AGV";
 
 export default function Hero3D() {
     return (
@@ -22,8 +22,7 @@ export default function Hero3D() {
                     {/* Environment map adds realistic reflections onto the GLB (like metal parts) */}
                     <Environment preset="city" />
 
-                    {/* Load our interactive Boston Dynamics Spot model */}
-                    <Spot scale={1.5} position={[0, -1, 0]} />
+                    <AGV scale={4} position={[0, -1, 1]} />
 
                     {/* Let the user rotate the camera slightly, but restrict dramatic zooms/pans */}
                     <OrbitControls
