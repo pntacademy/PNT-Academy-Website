@@ -161,7 +161,7 @@ export default function AdminInternships() {
                             className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm flex flex-col items-center p-4 hover:shadow-lg transition-all"
                         >
                             <div className="w-24 h-24 mb-3 relative flex items-center justify-center bg-slate-50 dark:bg-slate-800 rounded-full p-2 border border-slate-100 dark:border-slate-700">
-                                <img src={item.imageUrl} alt={item.name} className="max-w-full max-h-full object-contain" />
+                                <img src={item.imageUrl} alt={item.name} className="max-w-full max-h-full object-contain dark:invert transition-all" />
                             </div>
                             <h4 className="text-slate-700 dark:text-slate-200 font-medium text-xs text-center line-clamp-2 w-full">{item.name}</h4>
 
