@@ -24,7 +24,7 @@ export default function Hero3D() {
                     <Environment preset="night" />
 
                     {/* Adjusted scale strictly to fit within borders while maintaining prominent size */}
-                    <AGV scale={5} position={[0, 0, 0]} />
+                    <AGV scale={4.3} position={[0, 0, 0]} />
 
                     {/* Let the user rotate the camera slightly, but restrict dramatic zooms/pans */}
                     <OrbitControls
