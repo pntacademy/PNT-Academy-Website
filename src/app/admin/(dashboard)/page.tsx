@@ -8,6 +8,7 @@ interface AdminStats {
     galleryCount: number;
     schoolsCount: number;
     internshipsCount: number;
+    totalVisits: number;
     dbSizeInBytes: number;
 }
 
@@ -57,7 +58,7 @@ export default function AdminDashboard() {
         { label: "Gallery Photos", value: loading ? "-" : stats?.galleryCount || 0, icon: ImageIcon, color: "text-blue-500", bg: "bg-blue-500/10" },
         { label: "Partner Schools", value: loading ? "-" : stats?.schoolsCount || 0, icon: GraduationCap, color: "text-purple-500", bg: "bg-purple-500/10" },
         { label: "Internships", value: loading ? "-" : stats?.internshipsCount || 0, icon: Briefcase, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-        { label: "Total Visits", value: "8,401", icon: TrendingUp, color: "text-amber-500", bg: "bg-amber-500/10" }, // Mock data for now
+        { label: "Total Visits", value: loading ? "-" : stats?.totalVisits?.toLocaleString() || 0, icon: TrendingUp, color: "text-amber-500", bg: "bg-amber-500/10" },
     ];
 
     return (

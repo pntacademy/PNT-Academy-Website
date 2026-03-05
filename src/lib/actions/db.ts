@@ -5,6 +5,23 @@ import School from "@/lib/models/School";
 import Internship from "@/lib/models/Internship";
 
 // Using Lean() for plain JSON objects to pass safely to Client Components
+import SiteMetric from "@/lib/models/SiteMetric";
+
+export async function incrementLiveVisits() {
+    try {
+        await connectMongo();
+        // Increment the total_visits counter by 1, or create it if it doesn't exist
+        const metric = await SiteMetric.findOneAndUpdate(
+            { key: "total_visits" },
+            { $inc: { value: 1 } },
+            { new: true, upsert: true }
+        ).lean();
+        return metric?.value || 0;
+    } catch (error) {
+        console.error("Failed to increment visits:", error);
+        return 0;
+    }
+}
 export async function getLiveGallery() {
     try {
         await connectMongo();

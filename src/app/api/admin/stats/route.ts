@@ -3,6 +3,7 @@ import connectMongo from "@/lib/mongodb";
 import Gallery from "@/lib/models/Gallery";
 import School from "@/lib/models/School";
 import Internship from "@/lib/models/Internship";
+import SiteMetric from "@/lib/models/SiteMetric";
 import mongoose from "mongoose";
 
 export async function GET() {
@@ -10,11 +11,14 @@ export async function GET() {
         await connectMongo();
 
         // 1. Get counts for each collection
-        const [galleryCount, schoolsCount, internshipsCount] = await Promise.all([
+        const [galleryCount, schoolsCount, internshipsCount, visitsMetric] = await Promise.all([
             Gallery.countDocuments({}),
             School.countDocuments({}),
             Internship.countDocuments({}),
+            SiteMetric.findOne({ key: "total_visits" }).lean()
         ]);
+
+        const totalVisits = visitsMetric?.value || 0;
 
         // 2. Get database storage stats
         // We use mongoose.connection.db.stats() to get the size
@@ -30,6 +34,7 @@ export async function GET() {
                 galleryCount,
                 schoolsCount,
                 internshipsCount,
+                totalVisits,
                 dbSizeInBytes,
             }
         });

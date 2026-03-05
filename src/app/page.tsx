@@ -7,7 +7,7 @@ import InternshipLogos from "@/components/InternshipLogos";
 import Gallery from "@/components/Gallery";
 import NewsletterTeaser from "@/components/NewsletterTeaser";
 import ProgramsTabs from "@/components/ProgramsTabs";
-import { getLiveGallery, getLiveSchools, getLiveInternships } from "@/lib/actions/db";
+import { getLiveGallery, getLiveSchools, getLiveInternships, incrementLiveVisits } from "@/lib/actions/db";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +15,9 @@ export default async function Home() {
   const galleryItems = await getLiveGallery();
   const schools = await getLiveSchools();
   const internships = await getLiveInternships();
+
+  // Track page view
+  await incrementLiveVisits();
 
   return (
     <main className="min-h-screen relative text-slate-900 dark:text-slate-50 overflow-x-hidden transition-colors duration-500">
