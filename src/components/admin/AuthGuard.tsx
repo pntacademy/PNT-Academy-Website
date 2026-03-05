@@ -11,6 +11,13 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
     useEffect(() => {
+        // If Firebase is not configured, show a helpful message instead of crashing
+        if (!auth) {
+            console.error("Firebase is not initialized. Please ensure NEXT_PUBLIC_FIREBASE_* environment variables are set.");
+            setLoading(false);
+            return;
+        }
+
         // Exclude the login page from the protection loop
         if (pathname === "/admin/login") {
             setLoading(false);
