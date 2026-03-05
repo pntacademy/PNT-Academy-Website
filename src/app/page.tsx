@@ -1,6 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import TypedText from "@/components/TypedText";
 import HeroSection from "@/components/HeroSection";
+
 import NetworkBackground from "@/components/NetworkBackground";
 import ClientLogos from "@/components/ClientLogos";
 import InternshipLogos from "@/components/InternshipLogos";
@@ -76,29 +78,58 @@ export default async function Home() {
       </section>
 
       {/* About Us Section */}
-      <section id="about" className="py-32 relative border-t border-slate-900/10 dark:border-white/5 bg-slate-100/50 dark:bg-slate-900/20 backdrop-blur-sm transition-colors duration-500">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-slate-900 dark:text-white transition-colors duration-500">About PNT Academy</h2>
+      <section id="about" className="py-24 md:py-32 relative border-t border-slate-900/10 dark:border-white/5 bg-slate-100/50 dark:bg-slate-900/20 backdrop-blur-sm transition-colors duration-500">
+        <div className="container mx-auto px-4 max-w-7xl">
+
+          {/* Section heading */}
+          <div className="text-center mb-14">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-3">Who We Are</p>
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight transition-colors duration-500">
+              Building <TypedText />
+            </h2>
+            <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto mt-6" />
           </div>
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="text-lg leading-relaxed text-left text-slate-700 dark:text-slate-300">
-              <p className="mb-6">
-                Founded in 2016, PNT Academy is a nationally recognized educational organization committed to delivering hands-on training and curriculum in Robotics, Automation, Coding, AI, and IoT to school and college students across India. With a strong emphasis on practical, project-based learning, PNT Academy bridges the gap between academic learning and industry requirements.
+
+          {/* Content grid — text narrow, slider wide */}
+          <div className="grid md:grid-cols-[2fr_3fr] gap-10 xl:gap-16 items-center">
+
+            {/* Text */}
+            <div className="space-y-5 text-base md:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              <p>
+                Founded in 2016, PNT Academy has earned national recognition for its impactful work in robotics education and hands-on training. While our primary focus is on student-centric, project-based learning, our sister company, <strong className="text-slate-900 dark:text-white">PNT Robotics</strong>, has been appreciated by Hon&apos;ble Prime Minister Shri Narendra Modi and featured on Shark Tank India, where it secured investment from Peyush Bansal.
               </p>
-              <p className="font-bold text-xl text-slate-900 dark:text-white mt-6 mb-4">Our programs are:</p>
-              <ul className="list-disc pl-6 space-y-3">
-                <li>Aligned with NEP 2020 standards</li>
-                <li>Backed by PNT Robotics — India&apos;s first internet-controlled autonomous robot pioneer</li>
-                <li>Featured on <strong>Shark Tank India</strong> (funded by Peyush Bansal)</li>
-                <li>Appreciated by <strong>PM Shri Narendra Modi</strong></li>
-                <li>Partnered with Indian Army, DRDO, BARC &amp; TATA Power</li>
-              </ul>
+              <p>
+                We specialize in delivering engaging, practical learning experiences, and have partnered with prestigious institutions such as the <strong className="text-slate-900 dark:text-white">Indian Navy, DRDO, and TATA Power</strong>. These collaborations enable us to offer students real-world exposure through internships, workshops, and industrial training programs.
+              </p>
+              <p>
+                At PNT Academy, our mission is to bridge the gap between classroom learning and real-world industry demands—empowering students with the future-ready skills needed to <strong className="text-slate-900 dark:text-white">innovate, build, and lead</strong> in tomorrow&apos;s world.
+              </p>
+
+              {/* Stat pills */}
+              <div className="flex flex-wrap gap-3 pt-4">
+                {[
+                  { label: "Founded", value: "2016" },
+                  { label: "Shark Tank", value: "Funded" },
+                  { label: "PM Appreciation", value: "Received" },
+                  { label: "Students", value: "10,000+" },
+                ].map((s) => (
+                  <div key={s.label} className="px-4 py-2 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 text-center">
+                    <div className="text-xs text-slate-400 dark:text-slate-500 font-medium uppercase tracking-wider">{s.label}</div>
+                    <div className="text-sm font-bold text-slate-800 dark:text-white">{s.value}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <AboutSlider photos={aboutPhotos} />
+
+            {/* Big slider */}
+            <div className="w-full">
+              <AboutSlider photos={aboutPhotos} />
+            </div>
+
           </div>
         </div>
       </section>
+
 
       {/* Programs Section with Animated Tabs */}
       <section id="programs" className="py-32 relative border-t border-slate-900/10 dark:border-white/5 transition-colors duration-500">

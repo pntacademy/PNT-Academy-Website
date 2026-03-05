@@ -23,7 +23,7 @@ export default function AboutSlider({ photos }: { photos: Photo[] }) {
 
     if (photos.length === 0) {
         return (
-            <div className="w-full aspect-[16/9] rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 text-center p-8">
+            <div className="w-full aspect-[4/3] rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 text-center p-8">
                 <p className="text-slate-500 dark:text-slate-400 font-medium">Team photos coming soon!</p>
                 <p className="text-sm text-slate-400 dark:text-slate-600 mt-2">Upload via Admin → About Section Photos</p>
             </div>
@@ -31,7 +31,7 @@ export default function AboutSlider({ photos }: { photos: Photo[] }) {
     }
 
     return (
-        <div className="relative w-full aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 group">
+        <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 group">
             {/* Images */}
             {photos.map((photo, i) => (
                 <div
