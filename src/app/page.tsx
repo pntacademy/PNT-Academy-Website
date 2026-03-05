@@ -7,6 +7,7 @@ import InternshipLogos from "@/components/InternshipLogos";
 import Gallery from "@/components/Gallery";
 import NewsletterTeaser from "@/components/NewsletterTeaser";
 import ProgramsTabs from "@/components/ProgramsTabs";
+import Footer from "@/components/Footer";
 import { getLiveGallery, getLiveSchools, getLiveInternships, incrementLiveVisits } from "@/lib/actions/db";
 
 export const dynamic = "force-dynamic";
@@ -128,12 +129,7 @@ export default async function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-slate-900/10 dark:border-white/10 bg-slate-100 dark:bg-slate-950 text-center text-slate-800 dark:text-slate-500 transition-colors duration-500">
-        <p>© 2026 PNT Academy. All rights reserved.</p>
-        <Link href="/admin" className="text-xs mt-2 inline-block hover:text-blue-600 transition-colors opacity-50 hover:opacity-100">
-          Admin Portal
-        </Link>
-      </footer>
+      <Footer />
     </main>
   );
 }
