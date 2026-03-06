@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
         // Initialize the model with system instruction
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash", // Updated to 2.0 based on 2026 availability
+            model: "gemini-2.5-flash", // Updated to 2.5-flash which has verified quota
             systemInstruction: SYSTEM_INSTRUCTION
         });
 
