@@ -92,6 +92,10 @@ export default function Navbar() {
                         </button>
                     )}
 
+                    <Link href="/contact" className="ml-2 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                        Contact
+                    </Link>
+
                     <Link href="/lms" className="ml-2 px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] flex items-center gap-2 font-bold">
                         <span>LMS Portal</span>
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
