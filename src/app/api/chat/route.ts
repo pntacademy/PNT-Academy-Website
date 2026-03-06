@@ -1,8 +1,5 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
-
-// Initialize the new SDK
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // The Master Prompt for PNT Academy
 const SYSTEM_INSTRUCTION = `
@@ -28,6 +25,8 @@ export async function POST(req: Request) {
     try {
         const { messages } = await req.json();
 
+        console.log("Chat Request Messages:", JSON.stringify(messages));
+
         if (!messages || !Array.isArray(messages)) {
             return NextResponse.json({ error: "Invalid message format" }, { status: 400 });
         }
@@ -37,28 +36,70 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "API configuration error. Please contact administrator." }, { status: 500 });
         }
 
-        // Format history for the new @google/genai SDK
-        const contents = messages.map((msg: { role: string; content: string }) => ({
-            role: msg.role === 'user' ? 'user' : 'model',
-            parts: [{ text: msg.content }]
-        }));
+        // Initialize the SDK with the API key directly
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-        // Send to Gemini 2.5 Flash
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+        // Initialize the model with system instruction
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.0-flash", // Updated to 2.0 based on 2026 availability
+            systemInstruction: SYSTEM_INSTRUCTION
+        });
+
+        // Format history for the SDK (roles must be 'user' or 'model')
+        // Filter out any messages that don't have text or invalid roles
+        const contents = messages
+            .filter(msg => msg.content && msg.content.trim() !== "")
+            .map((msg: { role: string; content: string }) => ({
+                role: msg.role === 'user' ? 'user' : 'model',
+                parts: [{ text: msg.content }]
+            }));
+
+        console.log("Formatted Contents for Gemini:", JSON.stringify(contents));
+
+        if (contents.length === 0) {
+            return NextResponse.json({ reply: "I didn't receive any message. How can I help you?" });
+        }
+
+        // Generate content
+        const result = await model.generateContent({
             contents: contents,
-            config: {
-                systemInstruction: SYSTEM_INSTRUCTION,
-                temperature: 0.3, // Low temperature for factual consistency
+            generationConfig: {
+                temperature: 0.3,
+                maxOutputTokens: 600,
             }
         });
 
-        const replyText = response.text;
+        const response = await result.response;
+
+        // Robust text extraction
+        let replyText = "";
+        try {
+            replyText = response.text();
+        } catch (e) {
+            console.error("Error calling response.text():", e);
+            // Fallback to manual extraction if text() fails (e.g. if blocked)
+            replyText = response.candidates?.[0]?.content?.parts?.[0]?.text ||
+                "I apologize, but I am unable to answer that specific question right now. Is there anything else about PNT Academy I can help with?";
+        }
+
+        console.log("Gemini Response extracted:", replyText);
 
         return NextResponse.json({ reply: replyText });
 
     } catch (error: any) {
-        console.error("Gemini API Error:", error);
-        return NextResponse.json({ error: "Could not generate response. Please try again." }, { status: 500 });
+        console.error("Gemini API Error Detail:", error);
+
+        // Handle specific API key errors
+        if (error.message?.includes("API_KEY_INVALID")) {
+            return NextResponse.json({
+                error: "API key is invalid. Please check your configuration.",
+                details: error.message
+            }, { status: 401 });
+        }
+
+        return NextResponse.json({
+            error: "Could not generate response. Please try again.",
+            details: error.message
+        }, { status: 500 });
     }
 }
