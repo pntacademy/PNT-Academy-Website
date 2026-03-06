@@ -13,16 +13,20 @@ import Footer from "@/components/Footer";
 import AboutSlider from "@/components/AboutSlider";
 import { getLiveGallery, getLiveSchools, getLiveInternships, incrementLiveVisits, getLiveAboutPhotos } from "@/lib/actions/db";
 
-export const dynamic = "force-dynamic";
+// ISR: serve from cache instantly, silently refresh in background every 60s
+export const revalidate = 60;
 
 export default async function Home() {
-  const galleryItems = await getLiveGallery();
-  const schools = await getLiveSchools();
-  const internships = await getLiveInternships();
-  const aboutPhotos = await getLiveAboutPhotos();
+  // Run all DB reads in parallel — much faster than sequential awaits
+  const [galleryItems, schools, internships, aboutPhotos] = await Promise.all([
+    getLiveGallery(),
+    getLiveSchools(),
+    getLiveInternships(),
+    getLiveAboutPhotos(),
+  ]);
 
-  // Track page view
-  await incrementLiveVisits();
+  // Fire-and-forget — never block page render for a counter update
+  incrementLiveVisits().catch(() => { });
 
   return (
     <main className="min-h-screen relative text-slate-900 dark:text-slate-50 overflow-x-hidden transition-colors duration-500">
