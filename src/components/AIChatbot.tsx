@@ -108,33 +108,37 @@ export default function AIChatbot() {
                 throw new Error("Network response was not ok");
             }
 
-            // 1. Prepare for Streaming Response
-            const reader = response.body?.getReader();
-            const decoder = new TextDecoder();
-            if (!reader) throw new Error("Failed to initialize stream reader.");
+            const contentType = response.headers.get("Content-Type") || "";
 
-            // 2. Add placeholder message for the incoming stream
-            setMessages(prev => [...prev, { role: "model", content: "" }]);
+            // Handle JSON response (Gemini fallback)
+            if (contentType.includes("application/json")) {
+                const data = await response.json();
+                setMessages(prev => [...prev, { role: "model", content: data.reply }]);
+            } else {
+                // Handle Streaming response (Groq primary)
+                const reader = response.body?.getReader();
+                const decoder = new TextDecoder();
+                if (!reader) throw new Error("Failed to initialize stream reader.");
 
-            let accumulatedStreamingText = "";
+                setMessages(prev => [...prev, { role: "model", content: "" }]);
+                let accumulatedStreamingText = "";
 
-            // 3. Consume the stream
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
 
-                const chunk = decoder.decode(value, { stream: true });
-                accumulatedStreamingText += chunk;
+                    const chunk = decoder.decode(value, { stream: true });
+                    accumulatedStreamingText += chunk;
 
-                // 4. Update the latest message in real-time
-                setMessages(prev => {
-                    const newMessages = [...prev];
-                    newMessages[newMessages.length - 1] = {
-                        role: "model",
-                        content: accumulatedStreamingText
-                    };
-                    return newMessages;
-                });
+                    setMessages(prev => {
+                        const newMessages = [...prev];
+                        newMessages[newMessages.length - 1] = {
+                            role: "model",
+                            content: accumulatedStreamingText
+                        };
+                        return newMessages;
+                    });
+                }
             }
 
         } catch (error) {
