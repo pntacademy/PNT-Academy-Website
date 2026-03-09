@@ -13,7 +13,7 @@ interface Message {
 export default function AIChatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: "model", content: "System Online! ⚙️ I am **Robo-PNT**, your elite Digital Assistant. Ready to build the future? \n\nI can help with robotics courses, school lab setups, or our legendary **Army & Navy internships**! What's on your mind?" }
+        { role: "model", content: "Hello! I'm **Robo-PNT**, your PNT Academy assistant. I can help with courses, school lab setups, Army & Navy internships, or any general questions. How can I assist you?" }
     ]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -102,6 +102,15 @@ export default function AIChatbot() {
 
             if (!response.ok) {
                 const data = await response.json();
+                if (response.status === 429) {
+                    // Rate limited — show polite throttle message, don't fallback
+                    setMessages(prev => [...prev, {
+                        role: "model",
+                        content: data.error || "Please wait a moment before sending another message."
+                    }]);
+                    setIsLoading(false);
+                    return;
+                }
                 if (data.fallbackTrigger) {
                     throw new Error(data.error || "Server fallback requested");
                 }
