@@ -13,7 +13,7 @@ interface Message {
 export default function AIChatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: "model", content: "Hello! I'm the PNT Academy Assistant. How can I help you today with our robotics courses, labs, or internships?" }
+        { role: "model", content: "System Online! ⚙️ I am **Robo-PNT**, your elite Digital Assistant. Ready to build the future? \n\nI can help with robotics courses, school lab setups, or our legendary **Army & Navy internships**! What's on your mind?" }
     ]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +28,7 @@ export default function AIChatbot() {
             try {
                 const res = await fetch("/api/admin/faq");
                 if (res.ok) {
-                    const data = await res.ok ? await res.json() : [];
+                    const data = await res.json();
                     setLocalKnowledge(data);
                 }
             } catch (err) {
@@ -106,7 +106,7 @@ export default function AIChatbot() {
 
             setMessages(prev => [...prev, { role: "model", content: data.reply }]);
         } catch (error) {
-            console.warn("Cloud AI unreachable, switching to Local Agent:", error);
+            console.warn("Cloud AI unreachable, switching to Robo-Local Shield:", error);
 
             // Trigger Local Agent Fallback
             const localReply = processLocalQuery(userMessage);
@@ -115,13 +115,13 @@ export default function AIChatbot() {
             if (localReply) {
                 setMessages(prev => [...prev, {
                     role: "model",
-                    content: `(Local Knowledge Active) ${localReply}`
+                    content: `(Local Knowledge Active) ⚡ Bypassing to Secure Local Buffer! 🛡️\n\n${localReply}`
                 }]);
             } else {
                 setIsError(true);
                 setMessages(prev => [...prev, {
                     role: "model",
-                    content: "I'm currently in 'Local Shield Mode' to stay secure. I couldn't find a local answer for that specific question.\n\nPlease contact our team directly for advanced technical or pricing queries."
+                    content: "🚨 CRITICAL ERROR: My cloud processors are offline and my local archives don't have a match for this specific query. \n\nPlease patch through to Pratik's team directly via the links below! 🤖🛠️"
                 }]);
             }
         } finally {
