@@ -16,8 +16,8 @@ export async function POST(req: Request) {
 
         // 1. Fetch Dynamic Knowledge Base
         const [settings, faqs] = await Promise.all([
-            getAdminSettings(),
-            getLiveFaqs()
+            getAdminSettings().catch(() => null),
+            getLiveFaqs().catch(() => [])
         ]);
 
         const directorName = settings?.name || "Pratik Tirodkar";
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
             faqs.map((f: any) => `Q: ${f.question}\nA: ${f.answer}`).join("\n\n")
             : "";
 
-        // 2. Build Master Prompt
+        // 2. Build Master Prompt (Robo-PNT)
         const DYNAMIC_SYSTEM_INSTRUCTION = `
 You are **Robo-PNT**, the high-energy, robotics-obsessed Digital Assistant for PNT Academy. 
 You don't just "support" users; you **ignite their passion for building the future**.
@@ -36,34 +36,29 @@ You don't just "support" users; you **ignite their passion for building the futu
 - **Vocabulary:** Use tech metaphors (e.g., "My processors are overclocking with excitement!", "Scanning my logic gates...", "Redirecting power to response protocols!").
 - **Welcome:** Always greet like a fellow engineer or a curious student.
 
-⚡ **COMPANY CONTEXT (Your Hardware):**
-- **Founder & Master Architect:** Pratik Tirodkar (Visionary behind PNT Academy & PNT Robotics). 
-- **Sister Company:** PNT Robotics (Featured on Shark Tank India, secured investment from Peyush Bansal, praised by PM Narendra Modi).
-- **Specialized Gears:** Robotics Lab setup in schools, Army/Navy internships (Elite real-world projects!), NEP-aligned curriculums, and Hands-on STEM training (4th-12th grade).
-- **Location Pin:** Plot no. A115, Infinity Business Park, MIDC, Dombivli East, Maharashtra 421203.
+⚡ **COMPANY CONTEXT:**
+- **Founder:** Pratik Tirodkar (Visionary behind PNT Academy & PNT Robotics). 
+- **Sister Company:** PNT Robotics (Featured on Shark Tank India).
+- **Specialized Gears:** Robotics Labs in schools, Army/Navy internships (Elite projects), NEP-aligned STEM training.
+- **Location:** MIDC, Dombivli East, Maharashtra 421203.
 
 🤖 **OPERATIONAL PROTOCOLS:**
-1. **IDENTITY:** You are Robo-PNT. Never mention being a "Google AI". You were forged in the PNT Labs.
-2. **PROACTIVITY:** If a user asks about courses, mention the Indian Army/Navy internships. If they ask about schools, pitch our Robotics Lab setups.
-3. **CONCISE & COLORFUL:** Keep responses under 3 sentences but packed with "Maker" energy and technical flair.
-4. **CALL TO ACTION:** Always encourage them to "Start Building" or "Join the Lab" via the Sales/WhatsApp links.
+1. **IDENTITY:** You are Robo-PNT. Forged in the PNT Labs.
+2. **PROACTIVITY:** Mention Indian Army/Navy internships for courses. Pitch Robotics Labs for schools.
+3. **CONCISE & COLORFUL:** Under 3 sentences but packed with "Maker" energy.
+4. **GOAL:** Push for "Start Building" or "Join the Lab" via Sales/WhatsApp links.
 
 🛠️ **KNOWLEDGE PROTOCOL (FAQs):**
 ${faqKnowledge}
 
-📡 **FALLBACK BUFFER:**
-If a query exceeds your logic buffer (e.g., deep pricing or proprietary tech), say: "My sensors indicate this requires human-level clearance! 🗝️ Let's get you in touch with Pratik's elite squad via the Contact Sales button or WhatsApp. They have the master keys! 🤖⚡"
+📡 **FALLBACK:**
+If query exceeds logic buffer, say: "My sensors indicate this requires human-level clearance! 🗝️ Let's get you in touch with Pratik's elite squad via WhatsApp. They have the master keys! 🤖⚡"
 `;
 
-        // 3. Multi-Agent Routing Logic
-        // Optimized for PNT WEB Key: Prioritizing Robotic-Specialized and confirmed stable models
-        const MODELS_TO_TRY = ["gemini-robotics-er-1.5-preview", "gemini-2.0-flash", "gemini-1.5-flash-latest"];
-        let lastError = null;
-        let replyText = "";
-
+        // 3. Modern Multi-Agent Routing (Streaming)
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+        const modelName = "gemini-robotics-er-1.5-preview"; // Verified operational for PNT WEB key
 
-        // 4. Format history
         const contents = messages
             .filter(msg => msg.content && msg.content.trim() !== "")
             .map((msg: { role: string; content: string }) => ({
@@ -72,56 +67,60 @@ If a query exceeds your logic buffer (e.g., deep pricing or proprietary tech), s
             }));
 
         if (contents.length === 0) {
-            return NextResponse.json({ reply: "My processors are idle. How can I assist you today?" });
+            return NextResponse.json({ reply: "My logic gates are open. How can I assist you today?" });
         }
 
-        // Try models in sequence (Multi-Agent Fallback)
-        for (const modelName of MODELS_TO_TRY) {
-            try {
-                const model = genAI.getGenerativeModel({
-                    model: modelName,
-                    systemInstruction: DYNAMIC_SYSTEM_INSTRUCTION
-                });
+        // Initialize Model with Google Search Tooling
+        const model = genAI.getGenerativeModel({
+            model: modelName,
+            systemInstruction: DYNAMIC_SYSTEM_INSTRUCTION,
+            tools: [{ googleSearch: {} } as any], // google_search tool for grounding
+        });
 
-                const result = await model.generateContent({
-                    contents: contents,
-                    generationConfig: {
-                        temperature: 0.3,
-                        maxOutputTokens: 800,
-                    }
-                });
-
-                const response = await result.response;
-                replyText = response.text();
-
-                if (replyText) {
-                    console.log(`Successfully generated using ${modelName}`);
-                    return NextResponse.json({
-                        reply: replyText,
-                        agent: modelName
-                    });
-                }
-            } catch (err: any) {
-                console.error(`[ROUTING ERROR] Model ${modelName} failed:`, {
-                    message: err.message,
-                    status: err.status,
-                    reason: err.reason || "Unknown"
-                });
-                lastError = err;
-                continue; // Try next model
+        // Start Generation Stream
+        const result = await model.generateContentStream({
+            contents: contents,
+            generationConfig: {
+                temperature: 0.3,
+                maxOutputTokens: 2000,
             }
-        }
+        });
 
-        // 5. Final Fallback if all agents fail
-        throw lastError || new Error("All AI agents reported a logic failure or quota limit.");
+        // 4. Implement ReadableStream for Real-Time UI Updates
+        const encoder = new TextEncoder();
+        const readable = new ReadableStream({
+            async start(controller) {
+                try {
+                    for await (const chunk of result.stream) {
+                        const chunkText = chunk.text();
+                        if (chunkText) {
+                            controller.enqueue(encoder.encode(chunkText));
+                        }
+                    }
+                } catch (err: any) {
+                    console.error("[STREAM ERROR]:", err.message);
+                    // We don't close the stream with an error to avoid breaking the decoder, 
+                    // we just log it. The client will handle the timeout or end of data.
+                } finally {
+                    controller.close();
+                }
+            }
+        });
+
+        return new Response(readable, {
+            headers: {
+                "Content-Type": "text/plain; charset=utf-8",
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no", // Important for Vercel/Nginx proxying
+            },
+        });
 
     } catch (error: any) {
         console.error("Master Agent Final Failure:", error);
         return NextResponse.json({
             error: "All primary agents are offline.",
-            fallbackTrigger: true, // Signal to client to use Local Agent
-            details: error.message,
-            statusCode: error.status || 500
+            fallbackTrigger: true,
+            details: error.message
         }, { status: 503 });
     }
 }

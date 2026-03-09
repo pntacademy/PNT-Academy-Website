@@ -86,7 +86,9 @@ export default function AIChatbot() {
         setInput("");
         setIsError(false);
         setIsLocalMode(false);
-        setMessages(prev => [...prev, { role: "user", content: userMessage }]);
+
+        const currentMessages: Message[] = [...messages, { role: "user", content: userMessage }];
+        setMessages(currentMessages);
         setIsLoading(true);
 
         try {
@@ -94,17 +96,47 @@ export default function AIChatbot() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    messages: [...messages, { role: "user", content: userMessage }]
+                    messages: currentMessages
                 }),
             });
 
-            const data = await response.json();
-
-            if (!response.ok || data.fallbackTrigger) {
-                throw new Error(data.error || "Server fallback requested");
+            if (!response.ok) {
+                const data = await response.json();
+                if (data.fallbackTrigger) {
+                    throw new Error(data.error || "Server fallback requested");
+                }
+                throw new Error("Network response was not ok");
             }
 
-            setMessages(prev => [...prev, { role: "model", content: data.reply }]);
+            // 1. Prepare for Streaming Response
+            const reader = response.body?.getReader();
+            const decoder = new TextDecoder();
+            if (!reader) throw new Error("Failed to initialize stream reader.");
+
+            // 2. Add placeholder message for the incoming stream
+            setMessages(prev => [...prev, { role: "model", content: "" }]);
+
+            let accumulatedStreamingText = "";
+
+            // 3. Consume the stream
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                accumulatedStreamingText += chunk;
+
+                // 4. Update the latest message in real-time
+                setMessages(prev => {
+                    const newMessages = [...prev];
+                    newMessages[newMessages.length - 1] = {
+                        role: "model",
+                        content: accumulatedStreamingText
+                    };
+                    return newMessages;
+                });
+            }
+
         } catch (error) {
             console.warn("Cloud AI unreachable, switching to Robo-Local Shield:", error);
 
