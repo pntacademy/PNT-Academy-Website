@@ -29,13 +29,21 @@ function RoboPNTModel() {
             if ((child as THREE.Mesh).isMesh) {
                 const mat = (child as THREE.Mesh).material as THREE.MeshStandardMaterial;
                 if (mat) {
-                    if (mat.name.includes("Body")) {
-                        mat.metalness = 0.92;
-                        mat.roughness = 0.1;
+                    // Make it shiny metallic Blue-Black
+                    if (mat.name.includes("Body") || mat.name.includes("Joint") || mat.name.includes("Dark")) {
+                        mat.color = new THREE.Color("#0a0f1d"); // Deep blue-black
+                        mat.metalness = 0.95;
+                        mat.roughness = 0.05; // Very shiny
+                        mat.envMapIntensity = 2.5;
+                    } else if (mat.name.includes("Accent")) {
+                        mat.color = new THREE.Color("#4facfe"); // Electric blue accents
+                        mat.metalness = 0.8;
+                        mat.roughness = 0.2;
                         mat.envMapIntensity = 2.0;
                     } else if (mat.name.includes("Eye")) {
+                        mat.color = new THREE.Color("#ffffff");
                         mat.emissive = new THREE.Color("#4facfe");
-                        mat.emissiveIntensity = 2.0;
+                        mat.emissiveIntensity = 3.0;
                     }
                 }
             }
@@ -68,7 +76,7 @@ function RoboPNTModel() {
 
         // 2. Breathing - Body pulses
         const breathe = Math.sin(t * 2) * 0.02;
-        g.position.y = -0.3 + breathe;
+        g.position.y = 0 + breathe;
 
         // 3. Idle Arms
         if (parts["Arm_Left"] && !waving) {
@@ -78,22 +86,38 @@ function RoboPNTModel() {
             parts["Arm_Right"].rotation.x = Math.sin(t * 1.5 + Math.PI) * 0.1;
         }
 
-        // 4. Wave Animation - Only Arm_Right moves
-        if (waving && parts["Arm_Right"]) {
+        // 4. Wave & Spin Animation
+        if (waving) {
             waveTime.current += delta;
             const wt = waveTime.current;
-            const arm = parts["Arm_Right"];
 
+            // 360 Spin logic
             if (wt < 2.0) {
-                const decay = Math.max(0, 1 - wt / 2.0);
-                // Swing arm up and wave
-                arm.rotation.x = THREE.MathUtils.lerp(arm.rotation.x, -2.5, 0.2); // Lift arm
-                arm.rotation.z = Math.sin(wt * Math.PI * 4) * 0.5 * decay; // Wave hand
+                // Smooth ease-in-out rotation for a full 360 (Math.PI * 2)
+                const spinProgress = Math.min(wt / 1.5, 1.0); // finishes spin in 1.5s
+                const ease = 1 - Math.pow(1 - spinProgress, 3); // cubic ease out
+                g.rotation.y = ease * Math.PI * 2;
             } else {
-                setWaving(false);
-                arm.rotation.x = THREE.MathUtils.lerp(arm.rotation.x, 0, 0.1);
-                arm.rotation.z = THREE.MathUtils.lerp(arm.rotation.z, 0, 0.1);
+                g.rotation.y = 0; // reset
             }
+
+            // Arm waving logic
+            if (parts["Arm_Right"]) {
+                const arm = parts["Arm_Right"];
+                if (wt < 2.0) {
+                    const decay = Math.max(0, 1 - wt / 2.0);
+                    // Swing arm up and wave
+                    arm.rotation.x = THREE.MathUtils.lerp(arm.rotation.x, -2.5, 0.2); // Lift arm
+                    arm.rotation.z = Math.sin(wt * Math.PI * 4) * 0.8 * decay; // Wave hand
+                } else {
+                    setWaving(false);
+                    arm.rotation.x = THREE.MathUtils.lerp(arm.rotation.x, 0, 0.1);
+                    arm.rotation.z = THREE.MathUtils.lerp(arm.rotation.z, 0, 0.1);
+                }
+            }
+        } else {
+            // Keep rotation stable when not waving
+            g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, 0, 0.1);
         }
 
         const baseScale = hovered ? 1.05 : 1.0;
@@ -103,7 +127,7 @@ function RoboPNTModel() {
     return (
         <group
             ref={groupRef}
-            position={[0, -0.3, 0]}
+            position={[0, 0, 0]}
             onClick={handleClick}
             onPointerOver={() => { setHovered(true); document.body.style.cursor = "pointer"; }}
             onPointerOut={() => { setHovered(false); document.body.style.cursor = "auto"; }}
@@ -165,7 +189,7 @@ export default function ContactBaymax3DScene() {
     return (
         <div className="h-full w-full relative">
             <Canvas
-                camera={{ position: [0, 0.2, 6], fov: 42 }}
+                camera={{ position: [0, 0.4, 7], fov: 45 }}
                 gl={{ alpha: true, antialias: true, toneMappingExposure: 1.2 }}
                 onClick={() => setClickCount(c => c + 1)}
             >
