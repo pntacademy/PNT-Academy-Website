@@ -214,10 +214,13 @@ function OrbitingSystem() {
                 // Add a slight vertical wave
                 const y = Math.sin(angle * 2) * 1.5;
 
-                // Active Node is either manually hovered, or automatically the one in front
-                const isActive = hoveredNode === prog.id || (!hoveredNode && frontNode === prog.id);
-                // Faded if something is active but it's not THIS one
-                const isFaded = (hoveredNode || frontNode) ? !isActive : false;
+                // Active Node is primarily what the user is hovering.
+                // If the user isn't hovering anything, default to the one in the very front.
+                const isActive = hoveredNode ? hoveredNode === prog.id : frontNode === prog.id;
+
+                // Dim nodes only if something is explicitly hovered AND this isn't it.
+                // (We don't want to dim everything else just because something auto-rotated to the front)
+                const isFaded = hoveredNode ? !isActive : false;
 
                 return (
                     <group key={prog.id} position={[x, y, z]}>
@@ -281,9 +284,9 @@ function OrbitingSystem() {
 
 export default function ProgramsCircularUI() {
     return (
-        <div className="w-full h-[600px] md:h-[800px] relative mt-10 overflow-hidden transition-colors duration-500">
+        <div className="w-full h-[800px] md:h-[1000px] relative mt-16 overflow-visible transition-colors duration-500">
             {/* The transparent canvas allowing natural background to shine through */}
-            <Canvas camera={{ position: [0, 2, 14], fov: 45 }}>
+            <Canvas camera={{ position: [0, 2, 16], fov: 45 }}>
                 {/* Tech/Robotics Ambient Lighting */}
                 <ambientLight intensity={0.8} />
                 <directionalLight position={[10, 20, 10]} intensity={2.5} color="#ffffff" />
