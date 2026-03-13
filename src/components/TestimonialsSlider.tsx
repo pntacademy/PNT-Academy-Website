@@ -3,41 +3,33 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Quote, ChevronLeft, ChevronRight } from "lucide-react";
-
-// Placeholder data - later to be fetched from Admin Panel
-const PLACEHOLDER_TESTIMONIALS = [
-    {
-        id: 1,
-        name: "Aman Sharma",
-        role: "Student, Grade 10",
-        quote: "The robotics bootcamp completely changed how I look at coding. Building a real AGV that moved on its own was the coolest thing I've ever done. Thanks PNT Academy!"
-    },
-    {
-        id: 2,
-        name: "Principal R. K. Desai",
-        role: "St. Xavier's High School",
-        quote: "Setting up the Composite Skill Lab with PNT Academy was seamless. Their curriculum is perfectly aligned with NEP 2020, and the students are noticeably more engaged in STEM subjects."
-    },
-    {
-        id: 3,
-        name: "Priyanka Patel",
-        role: "Engineering Student",
-        quote: "The Tata Power internship project gave me the exact hands-on experience I needed. Getting to work on actual industrial problem-statements gave me a huge edge in my job interviews."
-    }
-];
+import Image from "next/image";
 
 export default function TestimonialsSlider() {
+    const [testimonials, setTestimonials] = useState<any[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-    const next = () => setCurrentIndex((prev) => (prev + 1) % PLACEHOLDER_TESTIMONIALS.length);
-    const prev = () => setCurrentIndex((prev) => (prev - 1 + PLACEHOLDER_TESTIMONIALS.length) % PLACEHOLDER_TESTIMONIALS.length);
+    useEffect(() => {
+        fetch("/api/admin/testimonials?page=home")
+            .then(r => r.json())
+            .then(data => { if (Array.isArray(data) && data.length > 0) setTestimonials(data); })
+            .catch(console.error);
+    }, []);
+
+
+    const next = () => setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+    const prev = () => setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
     useEffect(() => {
-        if (!isAutoPlaying) return;
+        if (!isAutoPlaying || testimonials.length <= 1) return;
         const interval = setInterval(next, 6000);
         return () => clearInterval(interval);
-    }, [isAutoPlaying]);
+    }, [isAutoPlaying, testimonials.length]);
+
+    if (testimonials.length === 0) {
+        return null; // Hide section entirely if no user testimonials exist to keep the website looking pristine.
+    }
 
     return (
         <section className="py-24 relative border-t border-slate-900/10 dark:border-white/5 bg-slate-50 dark:bg-slate-900/40 transition-colors duration-500 overflow-hidden">
@@ -67,43 +59,61 @@ export default function TestimonialsSlider() {
                             >
                                 <Quote className="w-16 h-16 text-blue-500/20 absolute top-8 text-left -z-10 transform -rotate-12" />
                                 <div className="text-xl md:text-2xl text-slate-700 dark:text-slate-200 leading-relaxed font-medium italic mb-10 text-center relative z-10">
-                                    "{PLACEHOLDER_TESTIMONIALS[currentIndex].quote}"
+                                    "{testimonials[currentIndex].quote}"
                                 </div>
                                 <div className="flex flex-col items-center justify-center text-center">
-                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 mb-4 shadow-md flex items-center justify-center text-white font-bold text-xl uppercase">
-                                        {PLACEHOLDER_TESTIMONIALS[currentIndex].name.charAt(0)}
-                                    </div>
-                                    <h4 className="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-wider">{PLACEHOLDER_TESTIMONIALS[currentIndex].name}</h4>
-                                    <p className="text-sm font-semibold text-blue-500 mt-1">{PLACEHOLDER_TESTIMONIALS[currentIndex].role}</p>
+                                    {testimonials[currentIndex].imageUrl ? (
+                                        <div className="relative w-20 h-20 rounded-full overflow-hidden mb-4 shadow-lg border-4 border-white dark:border-slate-800 shrink-0">
+                                            <Image 
+                                                src={testimonials[currentIndex].imageUrl} 
+                                                alt={testimonials[currentIndex].name}
+                                                fill
+                                                className="object-cover"
+                                                sizes="80px"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 mb-4 shadow-lg flex items-center justify-center text-white font-bold text-2xl uppercase border-4 border-white dark:border-slate-800 shrink-0">
+                                            {testimonials[currentIndex].name.charAt(0)}
+                                        </div>
+                                    )}
+                                    <h4 className="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-wider mt-2">{testimonials[currentIndex].name}</h4>
+                                    <p className="text-sm font-semibold text-blue-500 mt-1">{testimonials[currentIndex].role}</p>
                                 </div>
                             </motion.div>
                         </AnimatePresence>
                     </div>
 
                     {/* Navigation Buttons */}
-                    <button
-                        onClick={prev}
-                        className="absolute left-0 lg:-left-12 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white dark:bg-slate-800 p-3 rounded-full shadow-lg border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-blue-500 hover:scale-110 transition-all z-20"
-                    >
-                        <ChevronLeft className="w-6 h-6" />
-                    </button>
-                    <button
-                        onClick={next}
-                        className="absolute right-0 lg:-right-12 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white dark:bg-slate-800 p-3 rounded-full shadow-lg border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-blue-500 hover:scale-110 transition-all z-20"
-                    >
-                        <ChevronRight className="w-6 h-6" />
-                    </button>
+                    {testimonials.length > 1 && (
+                        <>
+                            <button
+                                onClick={prev}
+                                className="absolute left-0 lg:-left-12 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white dark:bg-slate-800 p-3 rounded-full shadow-lg border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-blue-500 hover:scale-110 transition-all z-20"
+                            >
+                                <ChevronLeft className="w-6 h-6" />
+                            </button>
+                            <button
+                                onClick={next}
+                                className="absolute right-0 lg:-right-12 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white dark:bg-slate-800 p-3 rounded-full shadow-lg border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-blue-500 hover:scale-110 transition-all z-20"
+                            >
+                                <ChevronRight className="w-6 h-6" />
+                            </button>
+                        </>
+                    )}
 
                     {/* Dots */}
-                    <div className="flex justify-center gap-2 mt-8">
-                        {PLACEHOLDER_TESTIMONIALS.map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => setCurrentIndex(i)}
-                                className={`w-3 h-3 rounded-full transition-all duration-300 ${i === currentIndex ? "bg-blue-600 w-8" : "bg-slate-300 dark:bg-slate-600"}`}
-                            />
-                        ))}
-                    </div>
+                    {testimonials.length > 1 && (
+                        <div className="flex justify-center gap-2 mt-8">
+                            {testimonials.map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setCurrentIndex(i)}
+                                    className={`w-3 h-3 rounded-full transition-all duration-300 ${i === currentIndex ? "bg-blue-600 w-8" : "bg-slate-300 dark:bg-slate-600"}`}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

@@ -10,7 +10,12 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'thepntacademy.com',
-      }
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/dycht8a6s/**',
+      },
     ],
   },
 };

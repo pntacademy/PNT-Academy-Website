@@ -76,9 +76,9 @@ export default function EnquiriesPage() {
 
     return (
         <div className="space-y-6">
-            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-sm">
+            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-900 dark:from-slate-200 dark:to-white tracking-tight">
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
                         Enquiries inbox
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm">

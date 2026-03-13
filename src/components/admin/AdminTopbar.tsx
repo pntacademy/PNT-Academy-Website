@@ -4,11 +4,20 @@ import { useEffect, useState } from "react";
 import { Sun, Moon, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function AdminTopbar() {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [adminData, setAdminData] = useState<{ name?: string, profileImage?: string | null } | null>(null);
+    const pathname = usePathname();
+
+    // Generate Breadcrumb
+    const pathSegments = pathname.split('/').filter(Boolean);
+    let breadcrumbText = "Overview";
+    if (pathSegments.length > 1) {
+        breadcrumbText = pathSegments[1].charAt(0).toUpperCase() + pathSegments[1].slice(1).replace("-", " ");
+    }
 
     useEffect(() => {
         setMounted(true);
@@ -28,7 +37,15 @@ export default function AdminTopbar() {
     }, []);
 
     return (
-        <header className="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/10 flex items-center justify-end px-8 z-10 sticky top-0 transition-colors duration-500">
+        <header className="h-16 bg-white dark:bg-[#0A0A0A] border-b border-slate-200 dark:border-white/10 flex items-center justify-between px-8 z-10 sticky top-0 transition-colors duration-500">
+            {/* Breadcrumb Left */}
+            <div className="flex items-center text-sm font-medium">
+                <span className="text-slate-400">Admin</span>
+                <span className="mx-2 text-slate-300 dark:text-slate-600">/</span>
+                <span className="text-slate-900 dark:text-slate-100">{breadcrumbText}</span>
+            </div>
+
+            {/* Actions Right */}
             <div className="flex items-center gap-4">
 
                 {/* Theme Toggle */}
@@ -51,10 +68,10 @@ export default function AdminTopbar() {
 
                 {/* Admin Avatar & Name */}
                 <Link href="/admin/settings" className="flex items-center gap-3 ml-4 group">
-                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 hidden md:block group-hover:text-blue-600 transition-colors">
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300 hidden md:block group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         {adminData?.name || "Admin"}
                     </span>
-                    <div className="h-9 w-9 rounded-full relative overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md border border-white/20 group-hover:ring-2 ring-blue-500 transition-all">
+                    <div className="h-8 w-8 rounded-full relative overflow-hidden bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-xs ring-1 ring-slate-200 dark:ring-white/10 group-hover:ring-slate-300 dark:group-hover:ring-white/20 transition-all">
                         {adminData?.profileImage ? (
                             <Image
                                 src={adminData.profileImage}

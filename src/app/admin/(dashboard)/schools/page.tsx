@@ -43,14 +43,28 @@ export default function AdminSchools() {
         setIsUploading(true);
 
         try {
-            const base64Image = await getBase64(file);
+            // 1. Upload to Cloudinary using unsigned preset
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", "pnt_academy_unsigned");
 
+            const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/dycht8a6s/image/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!cloudinaryRes.ok) throw new Error("Cloudinary upload failed");
+            
+            const cloudinaryData = await cloudinaryRes.json();
+            const secureUrl = cloudinaryData.secure_url;
+
+            // 2. Save directly to MongoDB API
             const res = await fetch("/api/admin/schools", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Accept": "application/json" },
                 body: JSON.stringify({
                     name,
-                    imageUrl: base64Image,
+                    imageUrl: secureUrl,
                 }),
             });
 
@@ -82,10 +96,10 @@ export default function AdminSchools() {
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             <header className="mb-6 flex justify-between items-end">
                 <div>
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-500 tracking-tight">Partner Schools Network</h1>
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Partner Schools Network</h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm max-w-lg">
                         Manage the school logos appearing in the "Trusted by Innovative Schools" section globally.
                     </p>
@@ -95,7 +109,7 @@ export default function AdminSchools() {
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row gap-8"
+                className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row gap-8"
             >
                 <form onSubmit={handleUpload} className="flex-1 space-y-5">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
@@ -154,7 +168,7 @@ export default function AdminSchools() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: i * 0.05 }}
-                            className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm flex flex-col items-center p-4 hover:shadow-lg transition-all"
+                            className="group relative bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm flex flex-col items-center p-4 hover:shadow-md transition-all"
                         >
                             <div className="w-24 h-24 mb-3 relative flex items-center justify-center bg-slate-50 dark:bg-slate-800 rounded-full p-2 border border-slate-100 dark:border-slate-700">
                                 <img src={item.imageUrl} alt={item.name} className="max-w-full max-h-full object-contain dark:invert transition-all" />

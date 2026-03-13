@@ -19,19 +19,43 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PNT Academy | Robotics Training",
-  description: "Shape the Future of Robotics. Training programs for students 4th to 12th grade.",
+  title: {
+    default: "PNT Academy | Robotics Training for Kids & Innovators",
+    template: "%s | PNT Academy"
+  },
+  description: "Empowering the next generation of innovators with hands-on robotics, AI, and IoT training. Specialized programs for schools, colleges, and kids.",
+  keywords: ["Robotics Training", "STEM Education", "AI for Kids", "IoT Workshops", "PNT Academy", "School Robotics Lab", "Electronics for Kids"],
+  authors: [{ name: "PNT Academy" }],
+  creator: "PNT Academy",
+  publisher: "PNT Academy",
+  metadataBase: new URL("https://pnt-academy.vercel.app"), // Replace with actual domain when secured
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "PNT Academy",
-    description: "Shape the Future of Robotics. Training programs for students 4th to 12th grade.",
+    title: "PNT Academy | Robotics & STEM Education",
+    description: "Shape the Future of Robotics. Hands-on training programs for students and institutions.",
     url: "https://pnt-academy.vercel.app",
     siteName: "PNT Academy",
+    locale: "en_IN",
     type: "website",
+    // images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "PNT Academy Robotics" }], // Add this when image is ready
   },
   twitter: {
     card: "summary_large_image",
-    title: "PNT Academy",
-    description: "Shape the Future of Robotics.",
+    title: "PNT Academy | Robotics & STEM",
+    description: "Shape the Future of Robotics with PNT Academy's hands-on programs.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

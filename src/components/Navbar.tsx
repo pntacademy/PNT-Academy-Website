@@ -31,39 +31,39 @@ export default function Navbar() {
 
                 <nav className="hidden lg:flex items-center gap-5 text-sm font-medium tracking-wide">
                     {/* 1. Robotics LAB for Institute */}
-                    <Link href="/schools/robotics-lab" className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors py-2 whitespace-nowrap">
+                    <Link href="/schools/robotics-lab" className="text-slate-600 hover:text-cyan-500 hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)] dark:text-slate-300 dark:hover:text-cyan-400 transition-all py-2 whitespace-nowrap">
                         Robotics LAB <span className="hidden xl:inline">for Institute</span>
                     </Link>
 
-                    {/* 2. Junior Innovators Program */}
-                    <Link href="/programs/junior-innovators" className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors py-2 whitespace-nowrap">
-                        Junior Innovators <span className="hidden xl:inline">Program</span>
+                    {/* 2. Courses for Kids */}
+                    <Link href="/programs/courses-for-kids" className="text-sm font-semibold text-slate-700 hover:text-cyan-500 hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)] dark:text-slate-300 dark:hover:text-cyan-400 transition-all">
+                        Courses for <span className="hidden xl:inline">Kids</span>
                     </Link>
 
                     {/* 3. Training Programs for Schools */}
-                    <Link href="/programs/schools" className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors py-2 whitespace-nowrap">
+                    <Link href="/programs/schools" className="text-slate-600 hover:text-cyan-500 hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)] dark:text-slate-300 dark:hover:text-cyan-400 transition-all py-2 whitespace-nowrap">
                         Training <span className="hidden xl:inline">for Schools</span>
                     </Link>
 
                     {/* 4. Trainings for Colleges */}
-                    <Link href="/programs/colleges" className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors py-2 whitespace-nowrap">
+                    <Link href="/programs/colleges" className="text-slate-600 hover:text-cyan-500 hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)] dark:text-slate-300 dark:hover:text-cyan-400 transition-all py-2 whitespace-nowrap">
                         Trainings <span className="hidden xl:inline">for Colleges</span>
                     </Link>
 
                     {mounted && (
                         <button
                             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                            className="ml-2 p-2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
+                            className="ml-2 p-2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.5)] transition-all"
                             aria-label="Toggle Dark Mode"
                         >
                             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
                         </button>
                     )}
 
-                    <Link href="/payments" className="ml-2 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <Link href="/payments" className="ml-2 px-4 py-2 text-sm font-semibold text-slate-700 hover:text-cyan-500 hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)] dark:text-slate-300 dark:hover:text-cyan-400 transition-all">
                         Payments
                     </Link>
-                    <Link href="/contact" className="ml-2 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <Link href="/contact" className="ml-2 px-4 py-2 text-sm font-semibold text-slate-700 hover:text-cyan-500 hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.8)] dark:text-slate-300 dark:hover:text-cyan-400 transition-all">
                         Contact
                     </Link>
 

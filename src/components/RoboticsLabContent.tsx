@@ -1,66 +1,91 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect, Suspense, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Cpu, Wrench, Zap, Monitor, Star } from "lucide-react";
+import { CheckCircle2, Microchip, Radar, MonitorPlay, Cog, School, University, Star, Quote } from "lucide-react";
+import Image from "next/image";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, Float, ContactShadows, Environment, useGLTF, Center } from "@react-three/drei";
+import * as THREE from "three";
 
 export default function RoboticsLabContent() {
     const [activeTab, setActiveTab] = useState<"schools" | "colleges">("schools");
 
+    // Define tabs data for the new structure
+    const tabs = [
+        { id: "schools", label: "For Schools", icon: School },
+        { id: "colleges", label: "For Colleges", icon: University },
+    ];
+
     return (
         <>
-            {/* Master Toggle and Hero Banner */}
-            <div className="pt-32 pb-16 bg-gradient-to-br from-blue-900 to-indigo-900 border-b border-white/10 relative overflow-hidden">
-                {/* Background decorative elements */}
-                <div className="absolute inset-0 bg-[url('/images/network-grid.svg')] opacity-20 pointer-events-none" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/20 rounded-full blur-[100px] pointer-events-none" />
+            {/* --- Hero Section --- */}
+            <div className="relative flex flex-col items-center justify-center text-center min-h-[420px] pt-32 pb-16 overflow-hidden bg-black">
+                {/* Full lab photo */}
+                <img
+                    src="/images/robotics-lab/1.jpeg"
+                    alt="Robotics Lab"
+                    className="absolute inset-0 w-full h-full object-cover opacity-80"
+                />
+                {/* Just a subtle dark vignette at the bottom so text stays readable */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
 
-                <div className="container mx-auto px-4 relative z-10">
-                    <div className="text-center mb-12">
-                        <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-5xl md:text-7xl font-black mb-6 text-white drop-shadow-xl tracking-tight"
-                        >
-                            Industrial Robotics <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Lab Setup</span>
-                        </motion.h1>
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className="text-xl text-blue-100 max-w-3xl mx-auto font-medium"
-                        >
-                            Choose your institution type below to view our specialized curriculum and hardware configurations.
-                        </motion.p>
-                    </div>
+                <div className="relative z-10 w-full max-w-4xl mx-auto px-6 flex flex-col items-center">
+                    <motion.h1
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.7, ease: "easeOut" }}
+                        className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 tracking-tight text-white text-center leading-tight"
+                    >
+                        Industrial Robotics{" "}
+                        <span className="text-cyan-300">Lab Setup</span>
+                    </motion.h1>
 
-                    {/* Master Toggle Area */}
-                    <div className="flex justify-center mb-8 relative z-20">
-                        <div className="relative flex p-1.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-2xl">
-                            <button
-                                onClick={() => setActiveTab("schools")}
-                                className={`relative z-10 px-8 py-4 text-lg md:text-xl font-bold rounded-full transition-colors duration-300 ${activeTab === "schools" ? "text-blue-900" : "text-white hover:text-blue-200"}`}
-                            >
-                                For Schools
-                            </button>
-                            <button
-                                onClick={() => setActiveTab("colleges")}
-                                className={`relative z-10 px-8 py-4 text-lg md:text-xl font-bold rounded-full transition-colors duration-300 ${activeTab === "colleges" ? "text-indigo-900" : "text-white hover:text-indigo-200"}`}
-                            >
-                                For Colleges
-                            </button>
-                            {/* Animated active pill */}
+                    <motion.p
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
+                        className="text-lg md:text-xl text-blue-100/80 max-w-2xl mx-auto mb-10 font-normal text-center"
+                    >
+                        Choose your institution type below to view our specialized curriculum and hardware configurations.
+                    </motion.p>
+
+                    {/* Tab switcher */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                        className="flex justify-center"
+                    >
+                        <div className="inline-flex bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-1.5 relative shadow-lg">
+                            {tabs.map((tab) => {
+                                const isActive = activeTab === tab.id;
+                                return (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id as "schools" | "colleges")}
+                                        className={`relative z-10 px-8 py-3 text-base font-bold rounded-full transition-all duration-300 ${
+                                            isActive
+                                                ? "text-blue-800"
+                                                : "text-white/80 hover:text-white"
+                                        }`}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                );
+                            })}
+
+                            {/* Animated white active pill */}
                             <motion.div
-                                className="absolute top-1.5 bottom-1.5 w-[calc(50%-0.375rem)] rounded-full bg-white shadow-lg z-0"
+                                className="absolute top-1.5 bottom-1.5 w-[calc(50%-0.375rem)] rounded-full bg-white shadow-md z-0"
                                 initial={false}
-                                animate={{
-                                    left: activeTab === "schools" ? "0.375rem" : "50%"
-                                }}
-                                transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+                                animate={{ left: activeTab === "schools" ? "0.375rem" : "50%" }}
+                                transition={{ type: "spring", stiffness: 400, damping: 35 }}
                             />
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
+
 
             {/* Dynamic Content Rendering */}
             <div className="relative min-h-[800px] w-full pb-20">
@@ -93,12 +118,127 @@ export default function RoboticsLabContent() {
 }
 
 // -------------------------------------------------------------
+// Interactive 3D Hardware Model Component — uses real GLB files
+// -------------------------------------------------------------
+const MODEL_MAP: Record<number, string> = {
+    0: "/models/arduino_uno.glb",
+    1: "/models/esp8266.glb",
+    2: "/models/raspberry_pi.glb",
+};
+
+// Auto-normalizing GLB model: synchronously centers and scales to fill the viewport
+function GlbModel({ path, targetSize = 5 }: { path: string; targetSize?: number }) {
+    const { scene } = useGLTF(path);
+    const groupRef = useRef<THREE.Group>(null);
+
+    // Compute bounding box and scale it safely ONCE before it ever renders
+    const scaledScene = useMemo(() => {
+        const cloned = scene.clone(true);
+        const box = new THREE.Box3().setFromObject(cloned);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const maxDim = Math.max(size.x, size.y, size.z);
+        if (maxDim > 0) {
+            cloned.scale.setScalar(targetSize / maxDim);
+        }
+        return cloned;
+    }, [scene, targetSize]);
+
+    useFrame((_, delta) => {
+        if (groupRef.current) groupRef.current.rotation.y += delta * 0.35;
+    });
+
+    return (
+        <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.6}>
+            <group ref={groupRef}>
+                <Center>
+                    <primitive object={scaledScene} />
+                </Center>
+            </group>
+        </Float>
+    );
+}
+
+// Simple wrapper: receives the glb path directly
+function HardwareModel({ path }: { path: string }) {
+    return <GlbModel path={path} targetSize={4} />;
+}
+
+// -------------------------------------------------------------
 // State 1: For Schools
 // -------------------------------------------------------------
+// Preload known GLB models so they start downloading immediately and don't stall the UI
+useGLTF.preload("/models/arduino_uno.glb");
+useGLTF.preload("/models/esp8266.glb");
+useGLTF.preload("/models/raspberry_pi.glb");
+
+// All hardware categories — each has a model file path (or null until GLB is added)
+const HARDWARE_ITEMS = [
+    {
+        title: "Core Controllers",
+        subtitle: "Arduino Uno / ESP8266 / Raspberry Pi",
+        icon: Microchip,
+        desc: "From basic logic to AI-grade computing — the heart of every project.",
+        iconBg: "bg-blue-100 dark:bg-blue-900/30",
+        iconColor: "text-blue-600 dark:text-blue-400",
+        border: "border-blue-500",
+        models: ["/models/arduino_uno.glb", "/models/esp8266.glb", "/models/raspberry_pi.glb"],
+    },
+    {
+        title: "Smart Sensors",
+        subtitle: "HC-SR04 Ultrasonic / PIR / IR / DHT11",
+        icon: Radar,
+        desc: "Real-world input — ultrasonic ranging, heat detection, gas sensing & more.",
+        iconBg: "bg-purple-100 dark:bg-purple-900/30",
+        iconColor: "text-purple-600 dark:text-purple-400",
+        border: "border-purple-500",
+        models: [], // Add: hc-sr04_ultrasonic.glb, pir_sensor.glb, dht11.glb
+    },
+    {
+        title: "Displays & Modules",
+        subtitle: "16x2 LCD / OLED / Bluetooth HC-05 / GPS",
+        icon: MonitorPlay,
+        desc: "Human-machine interfaces and wireless communication modules.",
+        iconBg: "bg-emerald-100 dark:bg-emerald-900/30",
+        iconColor: "text-emerald-600 dark:text-emerald-400",
+        border: "border-emerald-500",
+        models: [], // Add: lcd_16x2.glb, oled_display.glb, hc05_bluetooth.glb
+    },
+    {
+        title: "Motors & Actuators",
+        subtitle: "SG90 Servo / 28BYJ Stepper / DC Gear Motor",
+        icon: Cog,
+        desc: "Physical movement — servo arms, wheel drives, pump mechanisms.",
+        iconBg: "bg-orange-100 dark:bg-orange-900/30",
+        iconColor: "text-orange-600 dark:text-orange-400",
+        border: "border-orange-500",
+        models: [], // Add: sg90_servo.glb, stepper_motor.glb, dc_gear_motor.glb
+    },
+];
+
 function SchoolsContent() {
+    const [activeCat, setActiveCat] = useState(0);
+    const [modelIdx, setModelIdx] = useState(0);
+
+    const currentCategory = HARDWARE_ITEMS[activeCat];
+    const availableModels = currentCategory.models;
+    const currentModel = availableModels[modelIdx] ?? null;
+
+    // Auto-slideshow: cycle through models in the active category every 3s
+    useEffect(() => {
+        if (availableModels.length <= 1) return;
+        const t = setInterval(() => {
+            setModelIdx(i => (i + 1) % availableModels.length);
+        }, 3000);
+        return () => clearInterval(t);
+    }, [activeCat, availableModels.length]);
+
+    // Reset modelIdx when category changes
+    useEffect(() => { setModelIdx(0); }, [activeCat]);
+
     return (
         <div className="container mx-auto px-4 py-20 max-w-7xl">
-            {/* Section 1: The Principle & Description */}
+            {/* Section 1: The Principle */}
             <section className="mb-24 text-center max-w-4xl mx-auto">
                 <span className="text-blue-600 dark:text-blue-400 font-bold tracking-widest uppercase mb-4 block">The Principle</span>
                 <h2 className="text-3xl md:text-5xl font-black mb-8 text-slate-900 dark:text-white">Empowering the Next Generation of Innovators</h2>
@@ -119,30 +259,84 @@ function SchoolsContent() {
                 </div>
             </section>
 
-            {/* Section 2: The Electronics Lab */}
+            {/* Section 2: Electronics Lab with real GLB models */}
             <section className="mb-24">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-black mb-6">The Electronics Lab</h2>
-                    <p className="text-slate-600 dark:text-slate-400 text-lg">The core components that spark structural thinking and circuit logic.</p>
+                    <p className="text-slate-600 dark:text-slate-400 text-lg">Select a category to explore the hardware in 3D.</p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {/* Glowing Cards UI */}
-                    {[
-                        { title: "Core Controllers", icon: Cpu, desc: "Arduino Nano & Raspberry Pi 4 configurations for basic logic to high-level AI computing.", iconBg: "bg-blue-100 dark:bg-blue-900/30", iconColor: "text-blue-600 dark:text-blue-400" },
-                        { title: "Smart Sensors", icon: Zap, desc: "Ultrasonic, IR, PIR, Soil Moisture, Pulse Rate, Touch, and Gas sensors for real-time data.", iconBg: "bg-purple-100 dark:bg-purple-900/30", iconColor: "text-purple-600 dark:text-purple-400" },
-                        { title: "Displays & Modules", icon: Monitor, desc: "16x2 LCDs, 8x8 LED Matrices, Bluetooth, and GPS for interactive physical outputs.", iconBg: "bg-emerald-100 dark:bg-emerald-900/30", iconColor: "text-emerald-600 dark:text-emerald-400" },
-                        { title: "Motors & Actuators", icon: Wrench, desc: "Water pumps, Servos, and Stepper motors for physical movement and robotics.", iconBg: "bg-orange-100 dark:bg-orange-900/30", iconColor: "text-orange-600 dark:text-orange-400" },
-                    ].map((item, i) => (
-                        <div key={i} className="group relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col items-center text-center">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-                            <div className={`w-20 h-20 rounded-2xl ${item.iconBg} flex items-center justify-center mb-6 ${item.iconColor} group-hover:scale-110 transition-transform duration-300`}>
-                                <item.icon className="w-10 h-10" />
+                <div className="grid lg:grid-cols-2 gap-10 items-stretch">
+                    {/* Left: Category cards */}
+                    <div className="flex flex-col gap-4">
+                        {HARDWARE_ITEMS.map((item, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setActiveCat(i)}
+                                onMouseEnter={() => setActiveCat(i)}
+                                className={`text-left p-6 rounded-3xl border-2 transition-all duration-300 flex items-center gap-6 ${
+                                    activeCat === i
+                                        ? `bg-white dark:bg-slate-900 ${item.border} shadow-xl scale-105 z-10 relative`
+                                        : "bg-slate-50 dark:bg-slate-800/40 border-transparent hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:scale-[1.02]"
+                                }`}
+                            >
+                                <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center ${item.iconBg} ${item.iconColor}`}>
+                                    <item.icon className="w-8 h-8" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-xl font-bold mb-1">{item.title}</h3>
+                                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed truncate">{item.subtitle}</p>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Right: 3D Canvas — no container bg, floats seamlessly */}
+                    <div className="h-[400px] lg:h-[600px] w-full relative flex items-center justify-center">
+                        {/* Decorative background circle */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-blue-500/10 dark:bg-blue-400/5 rounded-full blur-[60px] pointer-events-none" />
+                        
+                        {currentModel ? (
+                            <>
+                                <div className="absolute inset-0">
+                                    <Canvas camera={{ position: [5, 4, 5], fov: 40 }}>
+                                        <ambientLight intensity={1.2} />
+                                        <directionalLight position={[5, 5, 5]} intensity={1.5} />
+                                        <directionalLight position={[-5, -5, -5]} intensity={0.5} />
+                                        <Environment preset="studio" />
+                                        <Suspense fallback={null}>
+                                            <HardwareModel path={currentModel} />
+                                        </Suspense>
+                                        <ContactShadows position={[0, -2.5, 0]} opacity={0.3} scale={8} blur={2.5} far={5} />
+                                        <OrbitControls enablePan={false} enableZoom={false} autoRotate autoRotateSpeed={0.5} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 1.5} />
+                                    </Canvas>
+                                </div>
+                                {/* Model label overlay */}
+                                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none z-10">
+                                    <div className="bg-slate-900/60 dark:bg-black/60 backdrop-blur-md border border-white/10 text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-xl">
+                                        {currentCategory.title} · {currentCategory.subtitle.split("/")[modelIdx]?.trim()}
+                                    </div>
+                                </div>
+                                {/* Slideshow dots */}
+                                {availableModels.length > 1 && (
+                                    <div className="absolute top-4 right-4 flex gap-2 pointer-events-none z-10">
+                                        {availableModels.map((_, i) => (
+                                            <div key={i} className={`h-2 rounded-full transition-all ${i === modelIdx ? "w-6 bg-blue-500" : "w-2 bg-slate-300 dark:bg-white/30"}`} />
+                                        ))}
+                                    </div>
+                                )}
+                            </>
+                        ) : (
+                            // Placeholder when no model available yet
+                            <div className="flex flex-col items-center justify-center text-center p-10">
+                                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-5">
+                                    <currentCategory.icon className="w-10 h-10 text-white/30" />
+                                </div>
+                                <p className="text-white/50 font-semibold text-sm mb-1">3D Model Coming Soon</p>
+                                <p className="text-white/25 text-xs">Drop the GLB file in <span className="font-mono">public/models/</span></p>
                             </div>
-                            <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
-                            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
-                        </div>
-                    ))}
+                        )}
+                    </div>
                 </div>
             </section>
 
@@ -182,6 +376,24 @@ function SchoolsContent() {
 // State 2: For Colleges
 // -------------------------------------------------------------
 function CollegesContent() {
+    const [liveTestimonials, setLiveTestimonials] = useState<any[] | null>(null);
+
+    useEffect(() => {
+        // Fetch only lab-page testimonials
+        fetch("/api/admin/testimonials?page=lab")
+            .then(r => r.json())
+            .then(data => setLiveTestimonials(Array.isArray(data) ? data : []))
+            .catch(() => setLiveTestimonials([]));
+    }, []);
+
+    const fallbackTestimonials = [
+        { name: "Rahul S.", role: "Pillai College of Engg.", quote: "Working on the 6DOF robotic hand algorithms completely changed my perspective on ROS. The hands-on exposure is unmatched." },
+        { name: "Ananya M.", role: "Manipal Academy", quote: "The AGV trolley project we built here helped me crack my core technical interview instantly. This lab is transformative." },
+        { name: "Vikram K.", role: "Bharati Vidyapeeth", quote: "Bridging mechanical design with computer vision inside a real lab setting is a privilege very few engineering students get." },
+    ];
+
+    const testimonialsToShow = (liveTestimonials && liveTestimonials.length > 0) ? liveTestimonials : fallbackTestimonials;
+
     return (
         <div className="container mx-auto px-4 py-20 max-w-7xl">
             {/* Hero/Intro */}
@@ -259,38 +471,65 @@ function CollegesContent() {
                 </div>
             </section>
 
-            {/* Testimonials */}
+            {/* Testimonials — LIVE from Admin Panel (Lab page) */}
             <section>
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-black mb-6">Trusted by Future Engineers</h2>
-                    <p className="text-slate-600 dark:text-slate-400 text-lg">Engineering students executing real-world industry mandates.</p>
+                    <span className="text-indigo-600 dark:text-indigo-400 font-bold tracking-widest uppercase mb-3 block text-sm">Student Voices</span>
+                    <h2 className="text-3xl md:text-4xl font-black mb-4">Trusted by Future Engineers</h2>
+                    <p className="text-slate-500 dark:text-slate-400">Engineering students executing real-world industry mandates.</p>
                 </div>
+
                 <div className="grid md:grid-cols-3 gap-8">
-                    {[
-                        { name: "Rahul S.", uni: "Pillai College", text: "Working on the 6DOF robotic hand algorithms completely changed my perspective on ROS." },
-                        { name: "Ananya M.", uni: "Manipal Academy", text: "The AGV trolley project we built here helped me crack my core technical interview instantly." },
-                        { name: "Vikram K.", uni: "Bharati Vidyapeeth", text: "Bridging mechanical design with computer vision inside a real lab setting is unparalleled." }
-                    ].map((test, i) => (
-                        <div key={i} className="bg-slate-50 dark:bg-slate-800/50 p-10 rounded-3xl border border-slate-200 dark:border-slate-700/50 flex flex-col justify-between hover:shadow-xl transition-shadow">
-                            <div>
-                                <div className="flex text-yellow-500 mb-6 gap-1">
-                                    {[...Array(5)].map((_, j) => <Star key={j} className="w-5 h-5 fill-current" />)}
+                    {testimonialsToShow.map((test: any, i: number) => {
+                        const initial = test.name?.charAt(0) || "?";
+                        return (
+                            <div
+                                key={test._id || i}
+                                className="group bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col"
+                            >
+                                {/* Large photo / GIF area */}
+                                <div className="relative h-64 w-full overflow-hidden bg-gradient-to-br from-indigo-100 to-blue-100 dark:from-indigo-900/30 dark:to-blue-900/30">
+                                    {test.imageUrl ? (
+                                        <img
+                                            src={test.imageUrl}
+                                            alt={test.name}
+                                            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-indigo-400 to-blue-600 flex items-center justify-center text-white font-black text-5xl shadow-xl">
+                                                {initial}
+                                            </div>
+                                        </div>
+                                    )}
+                                    {/* Name + role tag at bottom of photo */}
+                                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-5">
+                                        <h4 className="font-bold text-white text-lg leading-tight">{test.name}</h4>
+                                        <p className="text-indigo-300 text-xs font-semibold mt-0.5">{test.role}</p>
+                                    </div>
                                 </div>
-                                <p className="text-slate-700 dark:text-slate-300 italic mb-8 text-lg leading-relaxed text-balance">"{test.text}"</p>
+
+                                {/* Quote area */}
+                                <div className="p-6 flex flex-col flex-1">
+                                    <div className="flex text-amber-400 mb-4 gap-0.5">
+                                        {[...Array(5)].map((_, j) => <Star key={j} className="w-4 h-4 fill-current" />)}
+                                    </div>
+                                    <blockquote className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic flex-1">
+                                        &ldquo;{test.quote}&rdquo;
+                                    </blockquote>
+                                    <div className="mt-5 pt-5 border-t border-slate-100 dark:border-slate-800">
+                                        <div className="flex items-center gap-2">
+                                            <Quote className="w-4 h-4 text-indigo-300" />
+                                            <span className="text-xs text-slate-400 font-medium">PNT Academy Lab Alumni</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xl">
-                                    {test.name.charAt(0)}
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-slate-900 dark:text-white">{test.name}</h4>
-                                    <p className="text-sm text-slate-500">{test.uni}</p>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </section>
         </div>
     );
 }
+

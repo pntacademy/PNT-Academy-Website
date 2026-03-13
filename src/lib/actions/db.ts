@@ -5,6 +5,18 @@ import School from "@/lib/models/School";
 import Internship from "@/lib/models/Internship";
 import AboutPhoto from "@/lib/models/AboutPhoto";
 import Faq from "@/lib/models/Faq";
+import Testimonial from "@/lib/models/Testimonial";
+
+export async function getLiveTestimonials() {
+    try {
+        await connectMongo();
+        const items = await Testimonial.find({}).sort({ createdAt: -1 }).lean();
+        return JSON.parse(JSON.stringify(items));
+    } catch (error) {
+        console.error("Failed to fetch testimonials:", error);
+        return [];
+    }
+}
 
 // Using Lean() for plain JSON objects to pass safely to Client Components
 import SiteMetric from "@/lib/models/SiteMetric";

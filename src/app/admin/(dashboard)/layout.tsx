@@ -14,15 +14,12 @@ export default function AdminLayout({
 }) {
     return (
         <AuthGuard>
-            <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
-                {/* Fixed Sidebar */}
+            <div className="flex min-h-screen bg-slate-50 dark:bg-[#0A0A0A] transition-colors duration-500 text-slate-900 dark:text-slate-100">
+                {/* Vertical Sidebar */}
                 <AdminSidebar />
 
                 {/* Main Content Area */}
-                <div className="flex-1 flex flex-col min-h-screen relative overflow-hidden">
-                    {/* Background glow for theme matching */}
-                    <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-500/10 dark:bg-blue-600/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
-                    <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-500/10 dark:bg-purple-600/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+                <div className="flex-1 flex flex-col min-h-screen relative overflow-x-hidden">
 
                     {/* Dashboard Header/Topbar */}
                     <AdminTopbar />

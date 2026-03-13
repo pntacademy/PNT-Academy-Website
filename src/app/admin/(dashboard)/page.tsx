@@ -10,6 +10,7 @@ interface AdminStats {
     internshipsCount: number;
     totalVisits: number;
     dbSizeInBytes: number;
+    cloudinaryUsageMB: number;
 }
 
 export default function AdminDashboard() {
@@ -48,11 +49,16 @@ export default function AdminDashboard() {
         setShowWelcome(false);
     };
 
-    // Calculate Storage (Free tier is 512MB = 536,870,912 bytes)
+    // Calculate MongoDB Storage (Free tier is 512MB = 536,870,912 bytes)
     const maxStorageBytes = 536870912;
     const currentStorageBytes = stats?.dbSizeInBytes || 0;
     const storagePercentage = Math.min((currentStorageBytes / maxStorageBytes) * 100, 100);
     const storageMegabytes = (currentStorageBytes / (1024 * 1024)).toFixed(2);
+
+    // Calculate Cloudinary Storage (Free tier is 25 Credits = ~25GB = 25600 MB)
+    const maxCloudinaryMB = 25600;
+    const currentCloudinaryMB = stats?.cloudinaryUsageMB || 0;
+    const cloudinaryPercentage = Math.min((currentCloudinaryMB / maxCloudinaryMB) * 100, 100);
 
     const STATS = [
         { label: "Gallery Photos", value: loading ? "-" : stats?.galleryCount || 0, icon: ImageIcon, color: "text-blue-500", bg: "bg-blue-500/10" },
@@ -90,9 +96,6 @@ export default function AdminDashboard() {
                                 Get Started
                             </button>
                         </div>
-                        {/* Decorative background elements */}
-                        <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-                        <div className="absolute left-1/2 top-0 w-32 h-32 bg-purple-500/30 rounded-full blur-2xl"></div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -101,7 +104,7 @@ export default function AdminDashboard() {
                 <motion.h1
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-500 tracking-tight"
+                    className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight"
                 >
                     Overview
                 </motion.h1>
@@ -234,6 +237,58 @@ export default function AdminDashboard() {
                         <div className="flex justify-between text-xs text-slate-500 font-medium tracking-wide border-t border-slate-800 pt-3">
                             <span>0 MB</span>
                             <span>512 MB (Free Tier Limit)</span>
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Cloudinary Media Storage Gauge */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                    className="bg-slate-950 rounded-3xl p-8 relative overflow-hidden shadow-xl border border-slate-800 text-white flex flex-col justify-between"
+                >
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-cyan-500"></div>
+                    <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+
+                    <div>
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-3 bg-blue-500/20 rounded-xl">
+                                <ImageIcon className="w-6 h-6 text-blue-400" />
+                            </div>
+                            <h2 className="text-xl font-bold">Cloudinary Media</h2>
+                        </div>
+                        <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+                            Dedicated cloud storage for massive 4K gallery images, student photos, and video assets. Enjoy up to ~25GB totally free on this tier.
+                        </p>
+                    </div>
+
+                    <div>
+                        <div className="flex justify-between items-end mb-3">
+                            <div>
+                                <span className="text-3xl font-black text-white">
+                                    {loading ? "-" : currentCloudinaryMB.toFixed(2)}
+                                </span>
+                                <span className="text-slate-400 text-sm ml-1 font-medium">MB Used</span>
+                            </div>
+                            <span className="text-blue-400 text-sm font-bold bg-blue-500/10 px-3 py-1 rounded-full">
+                                {loading ? "-" : cloudinaryPercentage.toFixed(4)}%
+                            </span>
+                        </div>
+
+                        <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden mb-3">
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${cloudinaryPercentage}%` }}
+                                transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
+                                className="h-full bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full relative"
+                            >
+                                <div className="absolute top-0 right-0 bottom-0 left-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.15)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.15)_50%,rgba(255,255,255,0.15)_75%,transparent_75%,transparent)] bg-[length:1rem_1rem]"></div>
+                            </motion.div>
+                        </div>
+                        <div className="flex justify-between text-xs text-slate-500 font-medium tracking-wide border-t border-slate-800 pt-3">
+                            <span>0 GB</span>
+                            <span>25 GB (Free Tier Limit)</span>
                         </div>
                     </div>
                 </motion.div>

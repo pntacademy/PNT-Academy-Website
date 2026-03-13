@@ -33,11 +33,24 @@ export default function AdminAboutPhotos() {
         if (!file) return;
         setIsUploading(true);
         try {
-            const imageUrl = await getBase64(file);
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", "pnt_academy_unsigned");
+
+            const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/dycht8a6s/image/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!cloudinaryRes.ok) throw new Error("Cloudinary upload failed");
+            
+            const cloudinaryData = await cloudinaryRes.json();
+            const secureUrl = cloudinaryData.secure_url;
+
             const res = await fetch("/api/admin/about", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ caption, imageUrl }),
+                body: JSON.stringify({ caption, imageUrl: secureUrl }),
             });
             if (res.ok) { setFile(null); setCaption(""); await fetchPhotos(); }
         } catch (e) { console.error(e); }

@@ -46,8 +46,20 @@ export default function AdminGallery() {
         setIsUploading(true);
 
         try {
-            // 1. Convert Image to Base64 String locally
-            const base64Image = await getBase64(file);
+            // 1. Upload to Cloudinary using unsigned preset
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", "pnt_academy_unsigned");
+
+            const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/dycht8a6s/image/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!cloudinaryRes.ok) throw new Error("Cloudinary upload failed");
+            
+            const cloudinaryData = await cloudinaryRes.json();
+            const secureUrl = cloudinaryData.secure_url;
 
             // 2. Save directly to MongoDB API
             const res = await fetch("/api/admin/gallery", {
@@ -56,7 +68,7 @@ export default function AdminGallery() {
                 body: JSON.stringify({
                     title,
                     category,
-                    imageUrl: base64Image,
+                    imageUrl: secureUrl,
                 }),
             });
 
@@ -89,10 +101,10 @@ export default function AdminGallery() {
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             <header className="mb-6 flex justify-between items-end">
                 <div>
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-500 tracking-tight">Gallery Media Library</h1>
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Gallery Media Library</h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm max-w-lg">
                         Upload and manage photos actively displayed on the main website's project categories.
                     </p>
@@ -103,7 +115,7 @@ export default function AdminGallery() {
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row gap-8"
+                className="bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row gap-8"
             >
                 <form onSubmit={handleUpload} className="flex-1 space-y-5">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
@@ -174,9 +186,9 @@ export default function AdminGallery() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: i * 0.05 }}
-                            className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm"
+                            className="group relative bg-white dark:bg-[#0A0A0A] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden shadow-sm"
                         >
-                            <div className="aspect-video w-full bg-slate-100 dark:bg-slate-800 relative">
+                            <div className="aspect-video w-full bg-slate-100 dark:bg-slate-800/50 relative">
                                 <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
                                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pb-3">
                                     <span className="text-[10px] uppercase font-bold tracking-wider text-blue-300 whitespace-nowrap mb-1 block">

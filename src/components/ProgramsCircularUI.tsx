@@ -32,13 +32,13 @@ const PROGRAMS = [
     },
     {
         id: "junior",
-        title: "Junior Innovators Program",
+        title: "Courses for Kids",
         icon: Users,
         color: "from-orange-500 to-red-600",
         shadow: "shadow-orange-500/50",
         description: "Ignite young minds (Grades 4-12) with hands-on robotics, AI, and coding projects.",
-        link: "/programs/junior-innovators",
-        linkText: "Join the Innovators"
+        link: "/programs/courses-for-kids",
+        linkText: "Join the Courses"
     },
     {
         id: "lab",
