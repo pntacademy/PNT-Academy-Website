@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Float, ContactShadows, Environment, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import { getLiveGallery } from "@/lib/actions/db";
 
 export default function RoboticsLabContent() {
     const [activeTab, setActiveTab] = useState<"schools" | "colleges">("schools");
@@ -113,6 +114,8 @@ export default function RoboticsLabContent() {
                     )}
                 </AnimatePresence>
             </div>
+            
+            <LabGallerySection />
         </>
     );
 }
@@ -1042,3 +1045,56 @@ function CollegesContent() {
     );
 }
 
+// -------------------------------------------------------------
+// Shared Lab Gallery Component
+// -------------------------------------------------------------
+function LabGallerySection() {
+    const [images, setImages] = useState<any[]>([]);
+
+    useEffect(() => {
+        getLiveGallery().then(data => {
+            // Filter to show primarily "Lab Setup" photos
+            const labPhotos = data.filter((item: any) => item.category === "Lab Setup" || item.category === "Projects");
+            if (labPhotos.length > 0) {
+                setImages(labPhotos);
+            } else {
+                // Fallback to recent 8 images if no specific lab setup category exists yet
+                setImages(data.slice(0, 8));
+            }
+        }).catch(console.error);
+    }, []);
+
+    if (!images || images.length === 0) return null;
+
+    return (
+        <section className="py-24 px-4 bg-slate-900 bg-gradient-to-br from-slate-900 via-blue-900/20 to-slate-900 dark:bg-black text-white relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_70%)]" />
+            <div className="container mx-auto max-w-6xl relative z-10">
+                <div className="text-center mb-16">
+                    <span className="text-cyan-400 font-bold tracking-widest uppercase text-sm mb-4 block">Deployment Gallery</span>
+                    <h2 className="text-4xl md:text-5xl font-black mb-4">Labs in Action</h2>
+                    <p className="text-slate-400 text-lg max-w-2xl mx-auto">A glimpse into our state-of-the-art robotics & automation labs deployed across premier institutions.</p>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {images.slice(0, 12).map((img, i) => (
+                        <motion.div 
+                            key={i} 
+                            initial={{ opacity: 0, scale: 0.9 }} 
+                            whileInView={{ opacity: 1, scale: 1 }} 
+                            viewport={{ once: true }} 
+                            transition={{ delay: i * 0.05 }}
+                            className="aspect-square rounded-2xl overflow-hidden relative group shadow-2xl shadow-black/50"
+                        >
+                            <Image src={img.imageUrl} alt={img.title || "Lab Photo"} fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="(max-width: 768px) 50vw, 25vw" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
+                                <span className="text-cyan-400 font-bold text-xs uppercase tracking-wider mb-1">{img.category}</span>
+                                <h3 className="text-white font-semibold text-sm line-clamp-2">{img.title}</h3>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}
