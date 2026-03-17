@@ -77,57 +77,10 @@ const SIMPLE_LINKS = [
     { label: "Contact", href: "/contact" },
 ];
 
-// ─── Hover Preview Card ───────────────────────────────────────────────────────
-function PreviewCard({ item }: { item: typeof NAV_ITEMS[0] }) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.97 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-72 z-50 pointer-events-none"
-        >
-            {/* Arrow tip */}
-            <div className="mx-auto mb-[-1px] w-3 h-3 rotate-45 bg-white dark:bg-slate-900 border-t border-l border-slate-200 dark:border-white/10 relative z-10" style={{ marginLeft: "calc(50% - 6px)" }} />
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-                {/* Headline */}
-                <div className="px-4 pt-4 pb-3 border-b border-slate-100 dark:border-white/5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-cyan-500">{item.icon} {item.label}</p>
-                    <p className="text-sm font-bold text-slate-800 dark:text-white mt-0.5">{item.preview.headline}</p>
-                </div>
-                {/* Blocks */}
-                <div className="grid grid-cols-2 gap-1.5 p-3">
-                    {item.preview.blocks.map((b, i) => (
-                        <div key={i} className="bg-slate-50 dark:bg-white/5 rounded-xl p-3">
-                            <span className="text-lg">{b.icon}</span>
-                            <p className="text-xs font-bold text-slate-800 dark:text-white mt-1">{b.title}</p>
-                            <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5">{b.desc}</p>
-                        </div>
-                    ))}
-                </div>
-                <div className="px-4 pb-3">
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center">Click to explore →</p>
-                </div>
-            </div>
-        </motion.div>
-    );
-}
-
-// ─── Main NavLink with hover preview ─────────────────────────────────────────
+// ─── Main NavLink ─────────────────────────────────────────
 function NavLink({ item, isActive }: { item: typeof NAV_ITEMS[0]; isActive: boolean }) {
-    const [hovered, setHovered] = useState(false);
-    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    const show = () => {
-        if (timerRef.current) clearTimeout(timerRef.current);
-        setHovered(true);
-    };
-    const hide = () => {
-        timerRef.current = setTimeout(() => setHovered(false), 120);
-    };
-
     return (
-        <div className="relative" onMouseEnter={show} onMouseLeave={hide}>
+        <div className="relative">
             <Link
                 href={item.href}
                 className={`relative z-10 flex items-center gap-1 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors duration-200 whitespace-nowrap
@@ -166,9 +119,6 @@ function NavLink({ item, isActive }: { item: typeof NAV_ITEMS[0]; isActive: bool
                 {item.label}
                 {item.sublabel && <span className="hidden xl:inline text-slate-400 dark:text-slate-500 font-normal">&nbsp;{item.sublabel}</span>}
             </Link>
-            <AnimatePresence>
-                {hovered && <PreviewCard item={item} />}
-            </AnimatePresence>
         </div>
     );
 }

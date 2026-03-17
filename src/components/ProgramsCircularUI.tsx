@@ -88,8 +88,8 @@ function RealisticEarth() {
     return (
         <group>
             {/* The Earth */}
-            <mesh ref={earthRef}>
-                <sphereGeometry args={[5.6, 64, 64]} />
+            <mesh ref={earthRef} castShadow receiveShadow>
+                <sphereGeometry args={[5, 32, 32]} />
                 <meshStandardMaterial
                     map={colorMap}
                     bumpMap={bumpMap}
@@ -113,7 +113,7 @@ function RealisticEarth() {
 
             {/* Atmospheric Glow */}
             <mesh>
-                <sphereGeometry args={[5.8, 64, 64]} />
+                <sphereGeometry args={[5.8, 32, 32]} />
                 <meshBasicMaterial
                     color="#4b91ff"
                     transparent={true}

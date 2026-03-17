@@ -228,7 +228,9 @@ function PrinterLabSection() {
                             <Canvas 
                                 shadows 
                                 gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
-                                camera={{ position: [10, 4, 10], fov: 40 }}
+                                camera={{ position: isMobile ? [15, 6, 15] : [10, 4, 10], fov: isMobile ? 50 : 40 }}
+                                frameloop={isMobile ? "demand" : "always"}
+                                dpr={isMobile ? [1, 1.5] : [1, 2]}
                             >
                                 <ambientLight intensity={0.4} />
                                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.5} castShadow />
@@ -412,7 +414,11 @@ function SchoolsContent() {
                         {currentModel ? (
                             <>
                                 <div className="absolute inset-0">
-                                    <Canvas camera={{ position: [5, 4, 5], fov: 40 }}>
+                                    <Canvas 
+                                        camera={{ position: isMobile ? [7, 5, 7] : [5, 4, 5], fov: isMobile ? 50 : 40 }}
+                                        frameloop={isMobile ? "demand" : "always"}
+                                        dpr={isMobile ? [1, 1.5] : [1, 2]}
+                                    >
                                         <ambientLight intensity={0.4} />
                                         <directionalLight position={[5, 8, 5]} intensity={1.0} />
                                         <directionalLight position={[-3, -2, -4]} intensity={0.3} />
@@ -494,7 +500,9 @@ function SchoolsContent() {
                             <Canvas 
                                 shadows
                                 gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
-                                camera={{ position: [8, 6, 15], fov: 35 }}
+                                camera={{ position: isMobile ? [10, 8, 20] : [8, 6, 15], fov: isMobile ? 45 : 35 }}
+                                frameloop={isMobile ? "demand" : "always"}
+                                dpr={isMobile ? [1, 1.5] : [1, 2]}
                             >
                                 <ambientLight intensity={0.4} />
                                 <spotLight position={[10, 10, 10]} intensity={1.5} angle={0.2} castShadow />
@@ -537,7 +545,9 @@ function SchoolsContent() {
                             <Canvas 
                                 shadows
                                 gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
-                                camera={{ position: [0, 4, 22], fov: 35 }}
+                                camera={{ position: isMobile ? [0, 6, 30] : [0, 4, 22], fov: isMobile ? 45 : 35 }}
+                                frameloop={isMobile ? "demand" : "always"}
+                                dpr={isMobile ? [1, 1.5] : [1, 2]}
                             >
                                 <ambientLight intensity={0.5} />
                                 <spotLight position={[5, 15, 10]} intensity={2} angle={0.3} castShadow />
@@ -580,11 +590,6 @@ function SchoolsContent() {
                                 ))}
                             </ul>
                         </div>
-                        <div className="p-5 bg-amber-50 dark:bg-amber-900/20 rounded-2xl border border-amber-200 dark:border-amber-800/30">
-                            <p className="text-amber-700 dark:text-amber-400 text-sm font-semibold">
-                                🚀 <strong>Coming in 2025–26:</strong> PNT's in-house ED-U 01 humanoid platform, developed in partnership with Indian defense research labs. Institutions can pre-register for early access.
-                            </p>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -606,31 +611,31 @@ const PRODUCTS = [
         image: "/images/robotics-lab/8.jpeg",
     },
     {
-        icon: "🏭", name: "Industrial Robotic Arm", specs: "4–6 Axis Articulated | Payload: 1–2 kg | Repeatability: ±0.1 mm",
+        name: "Industrial Robotic Arm", specs: "4–6 Axis Articulated | Payload: 1–2 kg | Repeatability: ±0.1 mm",
         tagline: "Industrial-grade precision for real-world manufacturing simulation.",
         features: ["Forward & inverse kinematics programming", "Pick-and-place task execution", "Tool path planning for repetitive tasks", "Payload testing and accuracy calibration"],
         image: "/images/robotics-lab/9.jpeg",
     },
     {
-        icon: "🚗", name: "Industrial AGV", specs: "Industrial-grade | Custom-design capabilities | Smart factory integration",
+        name: "Industrial AGV", specs: "Industrial-grade | Custom-design capabilities | Smart factory integration",
         tagline: "Automated guided vehicles for smart warehouse and factory floor applications.",
         features: ["Line following AGV demonstration", "Obstacle avoidance demonstration", "RFID-based navigation system", "Automated goods transportation", "Speed and acceleration control", "Wireless & IoT-based Control", "Path planning via custom algorithms", "Battery and Power Optimization", "Integration of external sensors"],
         image: "/images/robotics-lab/10.jpeg",
     },
     {
-        icon: "✋", name: "Robotic Hand", specs: "Multi-finger | Customizable Parts | Gesture-Controlled Interface",
+        name: "Robotic Hand", specs: "Multi-finger | Customizable Parts | Gesture-Controlled Interface",
         tagline: "Advanced dexterous manipulation and prosthetic hand research platform.",
         features: ["Finger movement coordination", "Feedback mechanism demonstration", "EMG-based hand control", "Gesture-based hand control", "Prosthetic Hand Demonstration", "Haptic Feedback System", "AI-Based control of hand", "AI-based gesture control", "Integration with Wearable Tech", "Remote-controlled hand movement"],
         image: "/images/robotics-lab/11.jpeg",
     },
     {
-        icon: "🚁", name: "Industrial Drone", specs: "Programmable | Custom Control Options | AI-Integrated",
+        name: "Industrial Drone", specs: "Programmable | Custom Control Options | AI-Integrated",
         tagline: "Programmable aerial platforms for surveillance, delivery, and inspection.",
         features: ["API usage and calibration", "Sensor data collection and usage", "Takeoff and landing automation", "Obstacle avoidance using object detection", "Warehouse automation using barcodes/QR codes", "Aerial Photography and Surveillance", "Face tracking with drone flight", "AI-based object detection from aerial view", "AI Surveillance drone with intruder detection", "PC application development to control drone"],
         image: "/images/robotics-lab/12.jpeg",
     },
     {
-        icon: "🤖", name: "Industrial AMR", specs: "Differential / Mecanum wheel drive | ROS-based | LiDAR optional",
+        name: "Industrial AMR", specs: "Differential / Mecanum wheel drive | ROS-based | LiDAR optional",
         tagline: "Addressing real-world challenges in logistics and defense deployment scenarios.",
         features: ["Hardware interfacing and integration of sensors and actuators with ROS", "Odometry sensor data and teleoperation control for AMRs", "Mapping indoor environments using LiDAR sensors", "Autonomous navigation with parameter tuning"],
         image: "/images/robotics-lab/13.jpeg",
@@ -638,13 +643,7 @@ const PRODUCTS = [
     },
 ];
 
-const HIRING_COMPANIES = [
-    "ABB Mobile Robotics", "Fanuc India", "Tata Elxsi", "Bosch India", "Larsen & Toubro (L&T)",
-    "Siemens India", "GreyOrange Robotics", "KUKA Robotics India", "Honeywell Automation", "Schneider Electric India",
-    "PNT Robotics", "Mitsubishi Electric India", "Wipro Engineering", "Cognizant Technology Solutions",
-    "Indian Oil Corporation (IOCL)", "Bluebotics India", "Industrial Robotics", "Heavy-Duty AGVs",
-    "Collaborative Robotics", "General-Purpose Robotics",
-];
+// HIRING_COMPANIES array removed as it is now fetched dynamically
 
 function CollegesContent() {
     const [liveTestimonials, setLiveTestimonials] = useState<any[] | null>(null);
@@ -776,13 +775,69 @@ function CollegesContent() {
                     <div className="flex overflow-x-auto pb-4 -mx-4 px-4 md:px-0 snap-x snap-mandatory md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0 scrollbar-hide">
                         {PRODUCTS.map((p, i) => (
                             <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}
-                                className="min-w-[80vw] md:min-w-0 snap-center shrink-0 mr-4 md:mr-0 last:mr-0 bg-white dark:bg-slate-900/60 backdrop-blur-xl shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-200/60 dark:border-slate-800 rounded-2xl p-8 text-center group hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 cursor-pointer">
-                                <span className="text-5xl block mb-4">{p.icon}</span>
+                                className="min-w-[80vw] md:min-w-0 snap-center shrink-0 mr-4 md:mr-0 last:mr-0 bg-white dark:bg-slate-900/60 backdrop-blur-xl shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-200/60 dark:border-slate-800 rounded-2xl p-6 text-center group hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 cursor-pointer flex flex-col items-center">
+                                <div className="relative w-20 h-20 mb-4 rounded-xl overflow-hidden shadow-md">
+                                    <Image src={p.image} alt={p.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                                </div>
                                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{p.name}</h3>
                                 <p className="text-sm text-slate-500 dark:text-slate-400">{p.specs}</p>
                             </motion.div>
                         ))}
                     </div>
+
+                    {/* TRADITIONAL VS CUSTOMIZED COMPARISON */}
+                    <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="mt-20">
+                        <div className="text-center mb-10">
+                            <h3 className="text-3xl font-black text-slate-900 dark:text-white">Why Choose Our Approach?</h3>
+                            <p className="text-slate-600 dark:text-slate-400 mt-2">A stark contrast between conventional textbook learning and our hands-on industrial ecosystem.</p>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                            {/* Traditional */}
+                            <div className="bg-red-50/50 dark:bg-red-950/20 rounded-3xl p-8 border border-red-100 dark:border-red-900/30 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 dark:bg-red-500/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                                <div className="flex items-center gap-4 mb-6 relative z-10">
+                                    <span className="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-500 text-xl font-bold">✕</span>
+                                    <h4 className="text-2xl font-bold text-slate-900 dark:text-white">Traditional Tech Labs</h4>
+                                </div>
+                                <ul className="space-y-4 relative z-10">
+                                    {[
+                                        "Closed source, black-box systems with limited customizability.",
+                                        "Focus on obsolete technologies no longer used in modern factories.",
+                                        "Rigid theoretical learning with restricted hands-on experimentation.",
+                                        "No clear pathway or connection to immediate industry employment.",
+                                        "Equipment quickly becomes outdated with no modular upgrade path."
+                                    ].map((text, idx) => (
+                                        <li key={idx} className="flex items-start gap-3 text-slate-600 dark:text-slate-400">
+                                            <span className="mt-1 text-red-400 shrink-0">−</span>
+                                            <span className="text-sm">{text}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            {/* Customized */}
+                            <div className="bg-emerald-50/50 dark:bg-emerald-950/20 rounded-3xl p-8 border border-emerald-200 dark:border-emerald-800/40 relative overflow-hidden shadow-lg shadow-emerald-500/5">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 dark:bg-emerald-500/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                                <div className="flex items-center gap-4 mb-6 relative z-10">
+                                    <span className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-xl font-bold shadow-md">✓</span>
+                                    <h4 className="text-2xl font-bold text-slate-900 dark:text-white">PNT Customized Solutions</h4>
+                                </div>
+                                <ul className="space-y-4 relative z-10">
+                                    {[
+                                        "Fully open-source, flexible platforms (ROS, Python, C++).",
+                                        "Deployment of modern industrial-grade AGVs, AMRs, and 6-axis Arms.",
+                                        "Project-based learning encouraging reverse-engineering and innovation.",
+                                        "Direct placement assistance and pipeline to top robotics companies.",
+                                        "Modular ecosystem—upgrade sensors and compute boards anytime."
+                                    ].map((text, idx) => (
+                                        <li key={idx} className="flex items-start gap-3 text-slate-700 dark:text-slate-300 font-medium">
+                                            <span className="mt-1 text-emerald-500 shrink-0">✓</span>
+                                            <span className="text-sm">{text}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 
@@ -861,8 +916,10 @@ function CollegesContent() {
                                 </div>
                             </div>
                             {/* Content */}
-                            <div className="w-full md:w-1/2">
-                                <span className="text-4xl block mb-3">{p.icon}</span>
+                             <div className="w-full md:w-1/2">
+                                <div className="relative w-24 h-24 mb-6 rounded-2xl overflow-hidden shadow-lg border-2 border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 mx-auto md:mx-0">
+                                    <Image src={p.image} alt={p.name} fill className="object-cover" />
+                                </div>
                                 <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-3">{p.name}</h3>
                                 <span className="inline-block bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-300 text-xs font-bold px-4 py-1.5 rounded-full mb-4">{p.specs}</span>
                                 <p className="text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">{p.tagline}</p>
@@ -886,7 +943,8 @@ function CollegesContent() {
             <section className="py-24 px-4 bg-gradient-to-b from-slate-50 to-slate-100 dark:from-[#0A0A0F] dark:to-[#111827]">
                 <div className="container mx-auto max-w-6xl">
                     <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
-                        <h2 className="text-4xl md:text-5xl font-black">College Benefits</h2>
+                        <span className="text-blue-600 dark:text-cyan-400 font-bold tracking-widest uppercase text-sm mb-4 block">Key Advantages</span>
+                        <h2 className="text-5xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-white">College Benefits</h2>
                     </motion.div>
 
                     <div className="flex overflow-x-auto pb-4 -mx-4 px-4 md:px-0 snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6 md:overflow-visible md:pb-0 scrollbar-hide">
@@ -898,10 +956,10 @@ function CollegesContent() {
                         ].map((b, i) => (
                             <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }}
                                 className="min-w-[80vw] md:min-w-0 snap-center shrink-0 mr-4 md:mr-0 last:mr-0 bg-white dark:bg-slate-900/60 backdrop-blur-xl shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-200/60 dark:border-slate-800 rounded-2xl p-6 hover:border-blue-500/30 transition-all">
-                                <span className="text-3xl block mb-3">{b.icon}</span>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">{b.title}</h3>
-                                <ul className="space-y-2">
-                                    {b.points.map((pt, j) => <li key={j} className="text-xs text-slate-500 dark:text-slate-400 flex items-start gap-2"><span className="text-blue-400">✓</span>{pt}</li>)}
+                                <span className="text-5xl block mb-6">{b.icon}</span>
+                                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 leading-tight">{b.title}</h3>
+                                <ul className="space-y-3">
+                                    {b.points.map((pt, j) => <li key={j} className="text-sm font-medium text-slate-600 dark:text-slate-400 flex items-start gap-2"><span className="text-blue-500 font-bold">✓</span>{pt}</li>)}
                                 </ul>
                             </motion.div>
                         ))}
@@ -910,21 +968,38 @@ function CollegesContent() {
             </section>
 
             {/* ===== SECTION 15: BRANCH ALIGNMENT ===== */}
-            <section className="py-24 px-4">
-                <div className="container mx-auto max-w-4xl text-center">
-                    <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-                        <h2 className="text-4xl md:text-5xl font-black mb-8">Branch Alignment & Curriculum</h2>
-                        <div className="flex flex-wrap justify-center gap-3 mb-10">
-                            {["Mechanical", "Mechatronics", "Electrical", "E&TC", "AI-ML", "Robotics"].map((b, i) => (
-                                <span key={i} className="px-5 py-2.5 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-full text-sm font-bold text-blue-300">{b}</span>
-                            ))}
-                        </div>
-                        <div className="flex flex-wrap justify-center gap-3">
-                            {["Robotics & Automation", "Control Systems", "Mechatronics", "Embedded Systems", "ROS & Autonomous Systems"].map((t, i) => (
-                                <span key={i} className="px-5 py-2.5 bg-white dark:bg-white/5 shadow-md shadow-slate-200/50 dark:shadow-none border border-slate-200/80 dark:border-white/10 rounded-full text-xs font-bold tracking-wide text-slate-700 dark:text-slate-300">{t}</span>
-                            ))}
-                        </div>
+            <section id="branch-alignment" className="py-24 px-4 relative overflow-hidden bg-slate-50 dark:bg-[#0A0A0F]">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-blue-500/10 to-transparent blur-3xl rounded-full pointer-events-none"></div>
+                <div className="container mx-auto max-w-6xl relative z-10">
+                    <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
+                        <span className="text-blue-600 dark:text-cyan-400 font-bold tracking-widest uppercase text-sm mb-4 block">Interdisciplinary Integration</span>
+                        <h2 className="text-4xl md:text-5xl font-black mb-6 text-slate-900 dark:text-white">Branch Alignment & Curriculum</h2>
+                        <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg">Our robotics lab bridges the gap between multiple engineering disciplines, fostering a truly collaborative and mechatronic learning environment.</p>
                     </motion.div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                        {[
+                            { name: "Mechanical", icon: "⚙️", desc: "Kinematics, dynamics, and structural analysis of robotic arms and AGVs.", color: "from-orange-500 to-amber-500" },
+                            { name: "Mechatronics", icon: "🤖", desc: "Synergy of mechanical structures with electronic control systems.", color: "from-blue-500 to-cyan-500" },
+                            { name: "Electrical & E&TC", icon: "⚡", desc: "Power distribution, motor drives, and embedded communication.", color: "from-purple-500 to-indigo-500" },
+                            { name: "Computer Science & IT", icon: "💻", desc: "Software architecture, ROS programming, and algorithmic path planning.", color: "from-emerald-500 to-teal-500" },
+                            { name: "AI & Machine Learning", icon: "🧠", desc: "Computer vision, object detection, and autonomous decision making.", color: "from-pink-500 to-rose-500" },
+                            { name: "Robotics Engineeering", icon: "🦾", desc: "Complete system integration, sensor fusion, and advanced autonomy.", color: "from-slate-600 to-slate-800" }
+                        ].map((branch, i) => (
+                            <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                                className="group relative bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-8 rounded-3xl hover:-translate-y-2 transition-transform duration-300 overflow-hidden shadow-lg shadow-slate-200/50 dark:shadow-none">
+                                {/* Hover Gradient Background */}
+                                <div className={`absolute inset-0 bg-gradient-to-br ${branch.color} opacity-0 group-hover:opacity-5 dark:group-hover:opacity-10 transition-opacity duration-300`}></div>
+
+                                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br border border-white/20 shadow-inner flex items-center justify-center text-3xl mb-6 ${branch.color} text-white`}>
+                                    {branch.icon}
+                                </div>
+                                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">{branch.name}</h3>
+                                <p className="text-base text-slate-600 dark:text-slate-400 transition-colors">{branch.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
@@ -963,9 +1038,21 @@ function CollegesContent() {
                     {/* Infinite marquee */}
                     <div className="relative overflow-hidden py-4">
                         <div className="flex gap-6 animate-[marquee_30s_linear_infinite]" style={{ width: 'max-content' }}>
-                            {[...HIRING_COMPANIES, ...HIRING_COMPANIES].map((c, i) => (
-                                <span key={i} className="px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm dark:shadow-none rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap hover:border-blue-500/40 hover:text-blue-600 dark:hover:text-blue-300 transition-all">{c}</span>
-                            ))}
+                            {(() => {
+                                const hiringPartners = labPartners.filter(p => p.category === 'hiring');
+                                const displayPartners = hiringPartners.length > 0 
+                                    ? [...hiringPartners, ...hiringPartners, ...hiringPartners] // Triplicate for smooth infinite scroll
+                                    : Array(10).fill({ name: "Partner Company", imageUrl: "" }); // Fallback
+
+                                return displayPartners.map((c, i) => (
+                                    <div key={i} className="px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm dark:shadow-none rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap hover:border-blue-500/40 transition-all flex items-center gap-3">
+                                        {c.imageUrl && (
+                                            <img src={c.imageUrl} alt={c.name} className="h-6 w-auto object-contain" />
+                                        )}
+                                        <span>{c.name}</span>
+                                    </div>
+                                ));
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -1046,9 +1133,10 @@ function CollegesContent() {
                         <h2 className="text-4xl md:text-6xl font-black mb-6">Join the Automation Revolution</h2>
                         <p className="text-slate-500 dark:text-slate-400 text-lg leading-relaxed mb-4">PNT Academy invites your institution to be a part of this transformative journey in automation education. Together, let us shape the future of education and innovation.</p>
                         <p className="text-slate-400 dark:text-slate-500 text-sm mb-10">Join hands with PNT Academy to revolutionize your institution&apos;s approach to learning and empower the next generation of automation leaders.</p>
-                        <div className="flex flex-col sm:flex-row justify-center gap-4">
-                            <a href="/contact" className="px-10 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-all">Contact Us</a>
-                            <a href="#" className="px-10 py-4 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/20 shadow-lg shadow-slate-200/50 dark:shadow-none text-slate-900 dark:text-white font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-white/10 transition-all">Download Brochure</a>
+                        <div className="flex justify-center mt-6">
+                            <a href="/contact" className="px-10 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-xl shadow-[0_4px_20px_rgba(59,130,246,0.35)] hover:shadow-[0_6px_25px_rgba(59,130,246,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                                Contact Us Today
+                            </a>
                         </div>
                     </motion.div>
                 </div>
@@ -1090,23 +1178,30 @@ function LabGallerySection() {
                     <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">A glimpse into our state-of-the-art robotics & automation labs deployed across premier institutions.</p>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {images.slice(0, 12).map((img, i) => (
-                        <motion.div 
-                            key={i} 
-                            initial={{ opacity: 0, scale: 0.9 }} 
-                            whileInView={{ opacity: 1, scale: 1 }} 
-                            viewport={{ once: true }} 
-                            transition={{ delay: i * 0.05 }}
-                            className="aspect-square rounded-2xl overflow-hidden relative group shadow-xl shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/50 border border-slate-200 dark:border-white/10"
-                        >
-                            <Image src={img.imageUrl} alt={img.title || "Lab Photo"} fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="(max-width: 768px) 50vw, 25vw" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end">
-                                <span className="text-cyan-400 font-bold text-xs uppercase tracking-wider mb-1">{img.category}</span>
-                                <h3 className="text-white font-semibold text-sm line-clamp-2">{img.title}</h3>
+                <div className="relative w-full overflow-hidden flex group mt-10">
+                    <div
+                        className="flex gap-6 px-3 w-max"
+                        style={{ animation: 'marquee 50s linear infinite' }}
+                    >
+                        {[...images, ...images, ...images].map((img, i) => (
+                            <div
+                                key={`${img._id || i}-${i}`}
+                                className="relative w-[280px] h-[280px] md:w-[320px] md:h-[320px] flex-shrink-0 rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl group/card"
+                            >
+                                <Image 
+                                    src={img.imageUrl} 
+                                    alt={img.title || "Lab Photo"} 
+                                    fill 
+                                    className="object-cover transition-transform duration-700 group-hover/card:scale-110" 
+                                    sizes="(max-width: 768px) 280px, 320px" 
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 p-6 flex flex-col justify-end text-center rounded-full">
+                                    <span className="text-cyan-400 font-bold text-[10px] uppercase tracking-wider mb-1">{img.category}</span>
+                                    <h3 className="text-white font-semibold text-sm line-clamp-2">{img.title}</h3>
+                                </div>
                             </div>
-                        </motion.div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>

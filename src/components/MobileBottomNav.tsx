@@ -9,7 +9,7 @@ export default function MobileBottomNav() {
 
     const NAV_ITEMS = [
         { label: "Home", href: "/", icon: <Home className="w-5 h-5 mb-1" /> },
-        { label: "Schools", href: "/schools/robotics-lab", icon: <Lightbulb className="w-5 h-5 mb-1" /> },
+        { label: "Robotics LAB", href: "/schools/robotics-lab", icon: <Lightbulb className="w-5 h-5 mb-1" /> },
         { label: "Colleges", href: "/programs/colleges", icon: <GraduationCap className="w-5 h-5 mb-1" /> },
         { label: "Contact", href: "/contact", icon: <Phone className="w-5 h-5 mb-1" /> },
     ];

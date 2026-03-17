@@ -246,7 +246,7 @@ export default function AIChatbot() {
     };
 
     return (
-        <div className="fixed bottom-0 right-0 z-[100] pointer-events-none">
+        <div className="fixed bottom-0 right-0 z-[100] pointer-events-none mb-16 md:mb-0">
             {/* Pulsing AI Bubble */}
             <AnimatePresence>
                 {!isOpen && (

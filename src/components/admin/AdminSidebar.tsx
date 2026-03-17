@@ -13,6 +13,7 @@ const MENU_ITEMS = [
     { name: "Gallery", href: "/admin/gallery", icon: ImageIcon },
     { name: "About Photos", href: "/admin/about", icon: Users },
     { name: "Partner Schools", href: "/admin/schools", icon: GraduationCap },
+    { name: "Partners & Logos", href: "/admin/partners", icon: Briefcase },
     { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
     { name: "Internships", href: "/admin/internships", icon: Briefcase },
     { name: "FAQs", href: "/admin/faq", icon: MessageSquare },
