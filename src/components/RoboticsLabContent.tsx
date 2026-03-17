@@ -1047,7 +1047,9 @@ function CollegesContent() {
                                 return displayPartners.map((c, i) => (
                                     <div key={i} className="px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm dark:shadow-none rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap hover:border-blue-500/40 transition-all flex items-center gap-3">
                                         {c.imageUrl && (
-                                            <img src={c.imageUrl} alt={c.name} className="h-6 w-auto object-contain" />
+                                            <div className="bg-white p-1 rounded-md">
+                                                <img src={c.imageUrl} alt={c.name} className="h-6 w-auto object-contain" />
+                                            </div>
                                         )}
                                         <span>{c.name}</span>
                                     </div>
@@ -1072,7 +1074,9 @@ function CollegesContent() {
                             <motion.div key={a._id || i} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.4 }}
                                 className="min-w-[65vw] md:min-w-0 snap-center shrink-0 mr-4 md:mr-0 last:mr-0 bg-white dark:bg-slate-900/60 backdrop-blur-xl shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-200/60 dark:border-slate-800 rounded-2xl p-8 text-center hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
                                 {a.imageUrl ? (
-                                    <img src={a.imageUrl} alt={a.name} className="h-16 w-auto mx-auto object-contain mb-4" />
+                                    <div className="bg-white rounded-2xl p-4 mb-4 shadow-inner ring-1 ring-slate-100 flex items-center justify-center">
+                                        <img src={a.imageUrl} alt={a.name} className="h-16 w-auto object-contain" />
+                                    </div>
                                 ) : (
                                     <div className="h-16 w-16 mx-auto rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center text-3xl mb-4">🏭</div>
                                 )}
