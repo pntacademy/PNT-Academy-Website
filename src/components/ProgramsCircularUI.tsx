@@ -9,24 +9,16 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { AGV } from "./AGV";
 
-// Helper component to disable OrbitControls on mobile
-function ResponsiveOrbitControls(props: any) {
+// Hook to detect mobile
+function useIsMobile() {
     const [isMobile, setIsMobile] = useState(false);
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
-        return () => window.removeEventListener("resize", checkMobile);
+        const check = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+        check();
+        window.addEventListener("resize", check);
+        return () => window.removeEventListener("resize", check);
     }, []);
-
-    return (
-        <OrbitControls 
-            {...props} 
-            enableZoom={false} 
-            enablePan={false}
-            enableRotate={!isMobile} // Disable rotation on mobile so scrolling works
-        />
-    );
+    return isMobile;
 }
 
 const PROGRAMS = [
@@ -303,32 +295,36 @@ function OrbitingSystem() {
 }
 
 export default function ProgramsCircularUI() {
+    const isMobile = useIsMobile();
+
     return (
-        <div className="w-full h-[800px] md:h-[1000px] relative mt-16 overflow-visible transition-colors duration-500">
-            {/* The transparent canvas allowing natural background to shine through */}
-            <Canvas camera={{ position: [0, 2, 22], fov: 45 }}>
-                {/* Tech/Robotics Ambient Lighting */}
+        <div className="w-full h-[600px] md:h-[1000px] relative mt-16 overflow-visible transition-colors duration-500 mobile-safe-canvas">
+            <Canvas
+                camera={{ position: [0, 2, 22], fov: 45 }}
+                frameloop={isMobile ? "demand" : "always"}
+                dpr={isMobile ? [1, 1.5] : [1, 2]}
+            >
                 <ambientLight intensity={0.8} />
                 <directionalLight position={[10, 20, 10]} intensity={2.5} color="#ffffff" />
                 <directionalLight position={[-10, -10, -10]} intensity={1.5} color="#3b82f6" />
                 <pointLight position={[0, -5, 5]} intensity={1.0} color="#0ea5e9" />
-                {/* Translate entire visual cluster up by 1.5 units so user still looks straight on but group is elevated */}
                 <group position={[0, 1.5, 0]}>
                     <RealisticEarth />
                     <RealisticMoon />
                     <OrbitingSystem />
                 </group>
 
-                {/* 
-                    OrbitControls allows user to drag and spin the entire scene 
-                    enableZoom=false prevents them from scrolling wildly out of the layout
-                */}
-                <ResponsiveOrbitControls
-                    autoRotate={true}
-                    autoRotateSpeed={0.5}
-                    minPolarAngle={Math.PI / 3} // Restrict viewing angle so they don't look from extreme top/bottom
-                    maxPolarAngle={Math.PI / 1.5}
-                />
+                {/* Only render OrbitControls on desktop */}
+                {!isMobile && (
+                    <OrbitControls
+                        enableZoom={false}
+                        enablePan={false}
+                        autoRotate={true}
+                        autoRotateSpeed={0.5}
+                        minPolarAngle={Math.PI / 3}
+                        maxPolarAngle={Math.PI / 1.5}
+                    />
+                )}
             </Canvas>
 
             <div className="absolute bottom-6 left-0 right-0 text-center pointer-events-none hidden md:block">

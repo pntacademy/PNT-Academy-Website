@@ -5,52 +5,49 @@ import { Environment, OrbitControls } from "@react-three/drei";
 import { Suspense, useState, useEffect } from "react";
 import { AGV } from "./AGV";
 
-// Helper component to disable OrbitControls on mobile
-function ResponsiveOrbitControls(props: any) {
+export default function Hero3D() {
     const [isMobile, setIsMobile] = useState(false);
+
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
-        return () => window.removeEventListener("resize", checkMobile);
+        const check = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+        check();
+        window.addEventListener("resize", check);
+        return () => window.removeEventListener("resize", check);
     }, []);
 
     return (
-        <OrbitControls 
-            {...props} 
-            enableZoom={false} 
-            enablePan={false}
-            enableRotate={!isMobile} // Disable rotation on mobile so scrolling works
-        />
-    );
-}
-
-export default function Hero3D() {
-    return (
-        <div className="absolute inset-0 z-0 h-full w-full">
+        <div className="absolute inset-0 z-0 h-full w-full mobile-safe-canvas">
             <Canvas
                 shadows
-                camera={{ position: [0, 2, 10], fov: 45 }}
-                gl={{ alpha: true, antialias: true, toneMappingExposure: 0.9 }}
+                camera={{
+                    position: isMobile ? [0, 3, 12] : [0, 2, 10],
+                    fov: isMobile ? 40 : 45,
+                }}
+                gl={{ alpha: true, antialias: !isMobile, toneMappingExposure: 0.9 }}
+                frameloop={isMobile ? "demand" : "always"}
+                dpr={isMobile ? [1, 1.5] : [1, 2]}
             >
                 <Suspense fallback={null}>
-                    {/* Lighting setup for a dark, high-contrast aesthetic */}
                     <ambientLight intensity={0.4} />
                     <directionalLight position={[10, 10, 10]} castShadow intensity={1.2} />
                     <spotLight position={[-10, 10, 10]} angle={0.2} penumbra={1} intensity={0.8} />
                     <pointLight position={[-10, -10, -10]} intensity={0.3} />
-
-                    {/* Environment map adds realistic reflections onto the GLB (like metal parts) */}
                     <Environment preset="night" />
 
-                    {/* Adjusted scale strictly to fit within borders while maintaining prominent size */}
-                    <AGV scale={6} position={[0, 0, 0]} />
-
-                    {/* Let the user rotate the camera slightly, but restrict dramatic zooms/pans */}
-                    <ResponsiveOrbitControls
-                        minPolarAngle={Math.PI / 3}
-                        maxPolarAngle={Math.PI / 1.5}
+                    {/* Smaller AGV on mobile so it fits without overflow */}
+                    <AGV
+                        scale={isMobile ? 4.5 : 6}
+                        position={isMobile ? [0, -0.5, 0] : [0, 0, 0]}
                     />
+
+                    {!isMobile && (
+                        <OrbitControls
+                            enableZoom={false}
+                            enablePan={false}
+                            minPolarAngle={Math.PI / 3}
+                            maxPolarAngle={Math.PI / 1.5}
+                        />
+                    )}
                 </Suspense>
             </Canvas>
         </div>

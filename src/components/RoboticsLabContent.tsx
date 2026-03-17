@@ -8,24 +8,16 @@ import { OrbitControls, Float, ContactShadows, Environment, useGLTF } from "@rea
 import * as THREE from "three";
 import { getLiveGallery } from "@/lib/actions/db";
 
-// Helper component to disable OrbitControls on mobile
-function ResponsiveOrbitControls(props: any) {
+// Hook to detect mobile
+function useIsMobile() {
     const [isMobile, setIsMobile] = useState(false);
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
-        return () => window.removeEventListener("resize", checkMobile);
+        const check = () => setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+        check();
+        window.addEventListener("resize", check);
+        return () => window.removeEventListener("resize", check);
     }, []);
-
-    return (
-        <OrbitControls 
-            {...props} 
-            enableZoom={false} 
-            enablePan={false}
-            enableRotate={!isMobile} // Disable rotation on mobile so scrolling works
-        />
-    );
+    return isMobile;
 }
 
 export default function RoboticsLabContent() {
@@ -217,6 +209,7 @@ function HumanoidModel() {
 }
 
 function PrinterLabSection() {
+    const isMobile = useIsMobile();
     return (
         <section className="mb-24">
             <div className="text-center mb-12">
@@ -231,7 +224,7 @@ function PrinterLabSection() {
                     <div className="relative flex items-center justify-center h-[500px] cursor-grab active:cursor-grabbing">
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-orange-400/20 dark:bg-orange-500/10 rounded-full blur-[80px] -z-10" />
 
-                        <div className="absolute inset-0">
+                        <div className="absolute inset-0 mobile-safe-canvas">
                             <Canvas 
                                 shadows 
                                 gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
@@ -245,7 +238,7 @@ function PrinterLabSection() {
                                 <Suspense fallback={null}>
                                     <PrinterModel />
                                 </Suspense>
-                                <ResponsiveOrbitControls makeDefault autoRotate autoRotateSpeed={1} enableZoom={false} />
+                                {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1} enableZoom={false} />}
                             </Canvas>
                         </div>
 
@@ -336,6 +329,7 @@ const HARDWARE_ITEMS = [
 ];
 
 function SchoolsContent() {
+    const isMobile = useIsMobile();
     const [activeCat, setActiveCat] = useState(0);
     const [modelIdx, setModelIdx] = useState(0);
 
@@ -411,7 +405,7 @@ function SchoolsContent() {
                     </div>
 
                     {/* Right: 3D Canvas — no container bg, floats seamlessly */}
-                    <div className="h-[400px] lg:h-[600px] w-full relative flex items-center justify-center">
+                    <div className="h-[400px] lg:h-[600px] w-full relative flex items-center justify-center mobile-safe-canvas">
                         {/* Decorative background circle */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-blue-500/10 dark:bg-blue-400/5 rounded-full blur-[60px] pointer-events-none" />
                         
@@ -427,7 +421,7 @@ function SchoolsContent() {
                                             <HardwareModel path={currentModel} />
                                         </Suspense>
                                         <ContactShadows position={[0, -2.5, 0]} opacity={0.3} scale={8} blur={2.5} far={5} />
-                                        <ResponsiveOrbitControls makeDefault target={[0, 0, 0]} enablePan={false} enableZoom={false} autoRotate autoRotateSpeed={0.5} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 1.5} />
+                                        {!isMobile && <OrbitControls makeDefault target={[0, 0, 0]} enablePan={false} enableZoom={false} autoRotate autoRotateSpeed={0.5} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 1.5} />}
                                     </Canvas>
                                 </div>
                                 {/* Model label overlay */}
@@ -496,7 +490,7 @@ function SchoolsContent() {
                         {/* Soft Glow Behind */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-400/20 dark:bg-blue-500/10 rounded-full blur-[80px] -z-10" />
 
-                        <div className="absolute inset-0">
+                        <div className="absolute inset-0 mobile-safe-canvas">
                             <Canvas 
                                 shadows
                                 gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
@@ -511,7 +505,7 @@ function SchoolsContent() {
                                     <WrenchModel />
                                 </Suspense>
                                 <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={10} blur={2} far={4} />
-                                <ResponsiveOrbitControls makeDefault autoRotate autoRotateSpeed={1.5} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 2} />
+                                {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1.5} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 2} />}
                             </Canvas>
                         </div>
 
@@ -539,7 +533,7 @@ function SchoolsContent() {
                         {/* Soft Glow Behind */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-cyan-400/20 dark:bg-cyan-500/10 rounded-full blur-[80px] -z-10" />
 
-                        <div className="absolute inset-0">
+                        <div className="absolute inset-0 mobile-safe-canvas">
                             <Canvas 
                                 shadows
                                 gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
@@ -554,7 +548,7 @@ function SchoolsContent() {
                                     <HumanoidModel />
                                 </Suspense>
                                 <ContactShadows position={[0, -3.5, 0]} opacity={0.5} scale={15} blur={2.5} far={6} />
-                                <ResponsiveOrbitControls makeDefault autoRotate autoRotateSpeed={1} minPolarAngle={0} maxPolarAngle={Math.PI / 2 + 0.1} />
+                                {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1} minPolarAngle={0} maxPolarAngle={Math.PI / 2 + 0.1} />}
                             </Canvas>
                         </div>
 

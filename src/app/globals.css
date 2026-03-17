@@ -29,3 +29,20 @@ body {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+
+/* ─── Mobile 3D Canvas Optimizations ─── */
+
+/* On mobile, force R3F canvases inside .mobile-safe-canvas to allow touch scrolling.
+   R3F sets touch-action:none on <canvas>, which prevents swipe-to-scroll. */
+@media (max-width: 768px) {
+  .mobile-safe-canvas canvas {
+    touch-action: auto !important;
+    pointer-events: none !important;
+  }
+}
+
+/* GPU-accelerated painting for canvas containers — prevents scroll jank */
+.mobile-safe-canvas {
+  will-change: transform;
+  contain: content;
+}
