@@ -1,6 +1,15 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Composite Skill Lab | Innovation Centers by PNT Academy",
+  description: "Comprehensive multi-disciplinary innovation centers combining 3D Printing, IoT, AR/VR, and core mechanical automation for schools and colleges.",
+  alternates: {
+    canonical: "/schools/composite-skill-lab",
+  },
+};
 
 export default function CompositeSkillLabPage() {
     return (

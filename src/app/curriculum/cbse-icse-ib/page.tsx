@@ -1,6 +1,15 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "CBSE / ICSE / IB Robotics Syllabus Integration | PNT Academy",
+  description: "Supplementary robotics curriculum maps tailored to support computer science and physics syllabi for CBSE, ICSE, and IB boards.",
+  alternates: {
+    canonical: "/curriculum/cbse-icse-ib",
+  },
+};
 
 export default function CbseIcsePage() {
     return (

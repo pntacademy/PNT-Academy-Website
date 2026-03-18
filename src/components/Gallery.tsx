@@ -26,6 +26,7 @@ export default function Gallery() {
 
     return (
         <section id="gallery" className="py-24 relative border-t border-slate-900/10 dark:border-white/5 bg-slate-50 dark:bg-slate-900/20 backdrop-blur-sm transition-colors duration-500 overflow-hidden">
+            {/* Heading — stays centered */}
             <div className="container mx-auto px-4 relative z-10">
                 <div className="text-center mb-16">
                     <p className="text-sm font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-3">Activity Hub</p>
@@ -36,11 +37,15 @@ export default function Gallery() {
                 </div>
             </div>
 
-            {/* Marquee Wrapper */}
-            <div className="relative w-full overflow-hidden flex group">
-                {/* CSS animation for scrolling left */}
+            {/* Full-width marquee strip */}
+            <div className="relative w-full overflow-hidden mt-4">
+                {/* Left fade edge */}
+                <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-r from-slate-50 dark:from-slate-900 to-transparent" />
+                {/* Right fade edge */}
+                <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-20 z-10 bg-gradient-to-l from-slate-50 dark:from-slate-900 to-transparent" />
+
                 <div
-                    className="flex gap-6 px-3 w-max"
+                    className="flex gap-6 px-6 w-max"
                     style={{ animation: 'marquee 50s linear infinite' }}
                 >
                     {marqueeItems.map((item, index) => (
@@ -72,7 +77,7 @@ export default function Gallery() {
                 }
                 
                 /* Pause marquee on hover */
-                #gallery .flex.w-max:hover {
+                #gallery .w-max:hover {
                     animation-play-state: paused;
                 }
             `}</style>

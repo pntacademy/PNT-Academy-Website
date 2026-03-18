@@ -2,8 +2,16 @@ import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import TypedText from "@/components/TypedText";
 import HeroSection from "@/components/HeroSection";
+import type { Metadata } from "next";
 
-import NetworkBackground from "@/components/NetworkBackground";
+export const metadata: Metadata = {
+  title: "PNT Academy | Premier Robotics & AI Training",
+  description: "Join PNT Academy to master Robotics, AI, IoT, and STEM. We provide hands-on training for schools, colleges, and kids to build a future in automation.",
+  alternates: {
+    canonical: "/",
+  },
+};
+
 import ClientLogos from "@/components/ClientLogos";
 import InternshipLogos from "@/components/InternshipLogos";
 import Gallery from "@/components/Gallery";
@@ -14,7 +22,7 @@ import Footer from "@/components/Footer";
 import AboutSlider from "@/components/AboutSlider";
 import { incrementLiveVisits } from "@/lib/actions/db";
 
-import ClientOnly from "@/components/ClientOnly";
+
 
 // ISR: serve from cache instantly, silently refresh in background every 60s
 export const revalidate = 60;
@@ -29,12 +37,7 @@ export default async function Home() {
 
   return (
     <main className="relative min-h-screen text-slate-900 dark:text-slate-50 overflow-x-hidden transition-colors duration-500">
-      <ClientOnly>
-        <div className="absolute inset-0 z-0">
-          <NetworkBackground />
-        </div>
-      </ClientOnly>
-      <div className="relative z-10">
+      <div className="relative">
         <Navbar />
 
         {/* Hero Section */}

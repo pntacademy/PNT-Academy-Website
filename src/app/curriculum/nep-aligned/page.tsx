@@ -1,6 +1,15 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "NEP 2020 Aligned Robotics Curriculum | PNT Academy",
+  description: "Year-long Robotics, Coding, and AI curriculum focused on practical learning and 21st-century skills aligned with NEP 2020 guidelines.",
+  alternates: {
+    canonical: "/curriculum/nep-aligned",
+  },
+};
 
 export default function NepAlignedPage() {
     return (

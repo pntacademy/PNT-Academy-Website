@@ -1,6 +1,15 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Offline Robotics Bootcamps | PNT Academy",
+  description: "Intensive multi-day coding and robotics bootcamps. Build physical prototypes, wire sensors, and learn Python with PNT Engineers.",
+  alternates: {
+    canonical: "/courses/offline-bootcamps",
+  },
+};
 
 export default function OfflineBootcampsPage() {
     return (

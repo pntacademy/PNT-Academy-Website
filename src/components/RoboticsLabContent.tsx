@@ -222,7 +222,6 @@ function PrinterLabSection() {
                 {/* Interactive 3D Printer Visual */}
                 <div className="flex flex-col gap-6">
                     <div className="relative flex items-center justify-center h-[500px] cursor-grab active:cursor-grabbing">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-orange-400/20 dark:bg-orange-500/10 rounded-full blur-[80px] -z-10" />
 
                         <div className="absolute inset-0 mobile-safe-canvas">
                             <Canvas 
@@ -493,8 +492,6 @@ function SchoolsContent() {
 
                     {/* Interactive 3D Wrench Visual on the Right */}
                     <div className="relative flex items-center justify-center h-[450px] cursor-grab active:cursor-grabbing order-1 lg:order-2">
-                        {/* Soft Glow Behind */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-400/20 dark:bg-blue-500/10 rounded-full blur-[80px] -z-10" />
 
                         <div className="absolute inset-0 mobile-safe-canvas">
                             <Canvas 
@@ -513,7 +510,7 @@ function SchoolsContent() {
                                     <WrenchModel />
                                 </Suspense>
                                 <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={10} blur={2} far={4} />
-                                {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1.5} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 2} />}
+                                {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1.5} enableZoom={false} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 2} />}
                             </Canvas>
                         </div>
 
@@ -538,8 +535,6 @@ function SchoolsContent() {
                 <div className="grid lg:grid-cols-2 gap-10 items-center">
                     {/* Interactive 3D Humanoid Robot Visual */}
                     <div className="relative flex items-center justify-center h-[500px] cursor-grab active:cursor-grabbing lg:order-2">
-                        {/* Soft Glow Behind */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-cyan-400/20 dark:bg-cyan-500/10 rounded-full blur-[80px] -z-10" />
 
                         <div className="absolute inset-0 mobile-safe-canvas">
                             <Canvas 
@@ -558,7 +553,7 @@ function SchoolsContent() {
                                     <HumanoidModel />
                                 </Suspense>
                                 <ContactShadows position={[0, -3.5, 0]} opacity={0.5} scale={15} blur={2.5} far={6} />
-                                {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1} minPolarAngle={0} maxPolarAngle={Math.PI / 2 + 0.1} />}
+                                {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1} enableZoom={false} minPolarAngle={0} maxPolarAngle={Math.PI / 2 + 0.1} />}
                             </Canvas>
                         </div>
 
@@ -669,7 +664,7 @@ function CollegesContent() {
     const testimonialsToShow = (liveTestimonials && liveTestimonials.length > 0) ? liveTestimonials : fallbackTestimonials;
 
     return (
-        <div className="bg-gradient-to-b from-white to-slate-50 dark:from-[#0A0A0F] dark:to-[#0A0A0F] text-slate-900 dark:text-white">
+        <div className="text-slate-900 dark:text-white">
 
             {/* ===== SECTION 2: PROBLEM STATEMENT ===== */}
             <section className="py-24 px-4">
@@ -708,7 +703,7 @@ function CollegesContent() {
             </section>
 
             {/* ===== SECTION 3: THE OPPORTUNITY — Animated Timeline ===== */}
-            <section className="py-28 px-4 bg-gradient-to-b from-slate-50 via-blue-50/40 to-slate-50 dark:from-[#0A0A0F] dark:via-[#0F172A] dark:to-[#0A0A0F] overflow-hidden relative">
+            <section className="py-28 px-4 overflow-hidden relative">
                 {/* Background decorative orbs */}
                 <div className="absolute top-10 left-1/4 w-80 h-80 bg-blue-400/10 dark:bg-blue-600/5 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-indigo-400/10 dark:bg-indigo-600/5 rounded-full blur-3xl pointer-events-none" />
@@ -1130,7 +1125,7 @@ function CollegesContent() {
             </section>
 
             {/* ===== SECTION 20: CONCLUSION CTA ===== */}
-            <section className="py-32 px-4 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-50 dark:from-[#0A0A0F] dark:via-[#0F172A] dark:to-[#0A0A0F] text-center relative overflow-hidden">
+            <section className="py-32 px-4 text-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08)_0%,transparent_70%)]" />
                 <div className="container mx-auto max-w-3xl relative z-10">
                     <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
@@ -1173,41 +1168,59 @@ function LabGallerySection() {
     if (!images || images.length === 0) return null;
 
     return (
-        <section className="py-24 px-4 bg-slate-50 dark:bg-black text-slate-900 dark:text-white relative overflow-hidden">
+        <section className="py-24 text-slate-900 dark:text-white relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.05)_0%,transparent_70%)] dark:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_70%)]" />
-            <div className="container mx-auto max-w-6xl relative z-10">
+
+            {/* Heading — stays centered */}
+            <div className="container mx-auto max-w-6xl px-4 relative z-10">
                 <div className="text-center mb-16">
                     <span className="text-blue-600 dark:text-cyan-400 font-bold tracking-widest uppercase text-sm mb-4 block">Deployment Gallery</span>
                     <h2 className="text-4xl md:text-5xl font-black mb-4">Labs in Action</h2>
                     <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">A glimpse into our state-of-the-art robotics & automation labs deployed across premier institutions.</p>
                 </div>
+            </div>
 
-                <div className="relative w-full overflow-hidden flex group mt-10">
-                    <div
-                        className="flex gap-6 px-3 w-max"
-                        style={{ animation: 'marquee 50s linear infinite' }}
-                    >
-                        {[...images, ...images, ...images].map((img, i) => (
-                            <div
-                                key={`${img._id || i}-${i}`}
-                                className="relative w-[280px] h-[280px] md:w-[320px] md:h-[320px] flex-shrink-0 rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl group/card"
-                            >
-                                <Image 
-                                    src={img.imageUrl} 
-                                    alt={img.title || "Lab Photo"} 
-                                    fill 
-                                    className="object-cover transition-transform duration-700 group-hover/card:scale-110" 
-                                    sizes="(max-width: 768px) 280px, 320px" 
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 p-6 flex flex-col justify-end text-center rounded-full">
-                                    <span className="text-cyan-400 font-bold text-[10px] uppercase tracking-wider mb-1">{img.category}</span>
-                                    <h3 className="text-white font-semibold text-sm line-clamp-2">{img.title}</h3>
-                                </div>
+            {/* Full-width marquee strip — breaks out of container */}
+            <div className="relative w-full overflow-hidden mt-4">
+                {/* Left fade edge */}
+                <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-r from-slate-50/60 dark:from-slate-950/60 to-transparent" />
+                {/* Right fade edge */}
+                <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-l from-slate-50/60 dark:from-slate-950/60 to-transparent" />
+
+                <div
+                    className="flex gap-6 px-6 w-max"
+                    style={{ animation: 'labMarquee 40s linear infinite' }}
+                >
+                    {[...images, ...images, ...images].map((img, i) => (
+                        <div
+                            key={`${img._id || i}-${i}`}
+                            className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px] flex-shrink-0 rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl group/card cursor-pointer"
+                        >
+                            <Image 
+                                src={img.imageUrl} 
+                                alt={img.title || "Lab Photo"} 
+                                fill 
+                                className="object-cover transition-transform duration-700 group-hover/card:scale-110" 
+                                sizes="(max-width: 768px) 260px, 320px" 
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 p-6 flex flex-col justify-end text-center rounded-full">
+                                <span className="text-cyan-400 font-bold text-[10px] uppercase tracking-wider mb-1">{img.category}</span>
+                                <h3 className="text-white font-semibold text-sm line-clamp-2">{img.title}</h3>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    ))}
                 </div>
             </div>
+
+            <style>{`
+                @keyframes labMarquee {
+                    0%   { transform: translateX(0); }
+                    100% { transform: translateX(-33.333333%); }
+                }
+                .group:hover .w-max[style*="labMarquee"] {
+                    animation-play-state: paused;
+                }
+            `}</style>
         </section>
     );
 }

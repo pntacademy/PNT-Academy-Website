@@ -1,6 +1,15 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageHeader from "@/components/PageHeader";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Online Coding & Robotics Classes for Kids | PNT Academy",
+  description: "Free online AI & Robotics Bootcamps for students. Learn Python, block-coding, and circuitry simulations from home with PNT Academy.",
+  alternates: {
+    canonical: "/courses/online",
+  },
+};
 
 export default function OnlineClassesPage() {
     return (
