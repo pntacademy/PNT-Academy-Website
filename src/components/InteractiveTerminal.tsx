@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, PresentationControls, Environment, useGLTF, useAnimations } from "@react-three/drei";
+import { useState, useEffect, useRef, Suspense } from "react";
+import { Canvas } from "@react-three/fiber";
+import { Float, PresentationControls, Environment, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { Terminal, Lightbulb, Minimize2, Cpu, Maximize2, X, Power, BatteryCharging, Wifi } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -210,6 +210,7 @@ function ComputerModel({ onClick }: { onClick: () => void }) {
 // --- Main Export ---
 export default function InteractiveTerminal() {
     const [mounted, setMounted] = useState(false);
+    const [webglFailed, setWebglFailed] = useState(false);
     
     // Logic Flow for the Cinematic Transition:
     // 1. isTransitioning triggers the initial fade-to-black blackout.
@@ -236,6 +237,21 @@ export default function InteractiveTerminal() {
         </div>
     );
 
+    // Graceful Fallback: If WebGL crashes, show a clean clickable gradient instead of a broken icon
+    const GracefulFallback = () => (
+        <div 
+            onClick={handleMacbookClick}
+            className="w-full h-full flex flex-col items-center justify-center cursor-pointer rounded-3xl bg-gradient-to-br from-slate-800 via-slate-900 to-indigo-950 border border-slate-700/50 shadow-2xl hover:shadow-indigo-500/20 hover:border-indigo-500/30 transition-all duration-500 group"
+        >
+            <div className="relative">
+                <Cpu className="w-16 h-16 text-indigo-400 group-hover:text-indigo-300 transition-colors mb-4" />
+                <div className="absolute inset-0 blur-xl bg-indigo-500/20 group-hover:bg-indigo-400/30 transition-all" />
+            </div>
+            <span className="text-slate-300 font-bold text-lg group-hover:text-white transition-colors">PNT OS</span>
+            <span className="text-slate-500 text-sm mt-1 group-hover:text-slate-400 transition-colors">Click to Launch</span>
+        </div>
+    );
+
     return (
         <>
             {/* Phase 2: Render Absolute Fullscreen OS over top */}
@@ -254,7 +270,6 @@ export default function InteractiveTerminal() {
                         className="fixed inset-0 z-[900] bg-black pointer-events-none"
                         onAnimationComplete={(def) => {
                             if (def === "opacity") {
-                                // Once the screen goes completely black, trigger the OS and drop the blackout!
                                 setOsActive(true);
                                 setIsTransitioning(false); 
                             }
@@ -263,24 +278,36 @@ export default function InteractiveTerminal() {
                 )}
             </AnimatePresence>
 
-            {/* Phase 0: The Base Interactive Model */}
-            <Canvas 
-                camera={{ position: [0, 0, 5], fov: 45 }} 
-                // Fade out Canvas if OS is active
-                className={osActive || isTransitioning ? "opacity-0 pointer-events-none transition-opacity duration-300" : "opacity-100 transition-opacity duration-1000"}
-            >
-                <ambientLight intensity={1.5} />
-                <spotLight position={[10, 20, 10]} angle={0.5} penumbra={1} intensity={2.5} castShadow />
+            {/* Phase 0: The Base Interactive Model OR Graceful Fallback */}
+            {webglFailed ? (
+                <GracefulFallback />
+            ) : (
+                <Canvas 
+                    camera={{ position: [0, 0, 5], fov: 45 }} 
+                    className={osActive || isTransitioning ? "opacity-0 pointer-events-none transition-opacity duration-300" : "opacity-100 transition-opacity duration-1000"}
+                    onCreated={(state) => {
+                        // Catch WebGL context loss and gracefully degrade
+                        const canvas = state.gl.domElement;
+                        canvas.addEventListener('webglcontextlost', (e) => {
+                            e.preventDefault();
+                            setWebglFailed(true);
+                        });
+                    }}
+                >
+                    <Suspense fallback={null}>
+                        <ambientLight intensity={1.5} />
+                        <spotLight position={[10, 20, 10]} angle={0.5} penumbra={1} intensity={2.5} castShadow />
 
-                <PresentationControls global snap={true} rotation={[0, 0, 0]} polar={[-0.1, 0.2]} azimuth={[-0.5, 0.5]}>
-                    <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.4}>
-                        <ComputerModel onClick={handleMacbookClick} />
-                    </Float>
-                </PresentationControls>
-                
-                {/* No background - letting the object float freely over the website */}
-                <Environment preset="city" />
-            </Canvas>
+                        <PresentationControls global snap={true} rotation={[0, 0, 0]} polar={[-0.1, 0.2]} azimuth={[-0.5, 0.5]}>
+                            <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.4}>
+                                <ComputerModel onClick={handleMacbookClick} />
+                            </Float>
+                        </PresentationControls>
+                        
+                        <Environment preset="city" />
+                    </Suspense>
+                </Canvas>
+            )}
         </>
     );
 }
