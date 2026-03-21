@@ -6,6 +6,7 @@ import { Float, PresentationControls, Environment, useGLTF, useAnimations } from
 import * as THREE from "three";
 import { Terminal, Lightbulb, Minimize2, Cpu, Maximize2, X, Power, BatteryCharging, Wifi } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
 
 // --- The OS Content (Used inside the 3D Macbook AND Fullscreen) ---
 function InnerOS({ activeApp, setActiveApp, isMaximized, setIsMaximized, onShutDown, time }: any) {
@@ -275,23 +276,29 @@ export default function InteractiveTerminal() {
 
     return (
         <>
-            {/* Phase 2: Render Absolute Fullscreen OS over top */}
-            <AnimatePresence>
-                {osActive && <DesktopOS onShutDown={handleShutDown} />}
-            </AnimatePresence>
+            {/* Portal: Render OS + Blackout directly on document.body to escape stacking contexts */}
+            {createPortal(
+                <>
+                    {/* Phase 2: Fullscreen OS */}
+                    <AnimatePresence>
+                        {osActive && <DesktopOS onShutDown={handleShutDown} />}
+                    </AnimatePresence>
 
-            {/* Phase 1: Cinematic Blackout Transition Overlay */}
-            <AnimatePresence>
-                {isTransitioning && (
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.6, ease: "easeInOut" }}
-                        className="fixed inset-0 z-[900] bg-black pointer-events-none"
-                    />
-                )}
-            </AnimatePresence>
+                    {/* Phase 1: Cinematic Blackout */}
+                    <AnimatePresence>
+                        {isTransitioning && (
+                            <motion.div 
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.6, ease: "easeInOut" }}
+                                className="fixed inset-0 z-[900] bg-black pointer-events-none"
+                            />
+                        )}
+                    </AnimatePresence>
+                </>,
+                document.body
+            )}
 
             {/* Phase 0: The Base Interactive Model OR Graceful Fallback */}
             {webglFailed ? (
