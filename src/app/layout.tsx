@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import dynamic from "next/dynamic";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import PageLoader from "@/components/PageLoader";
 import "./globals.css";
@@ -10,6 +9,7 @@ import ClientAIChatbot from "@/components/ClientAIChatbot";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import ClientOnly from "@/components/ClientOnly";
 import NetworkBackground from "@/components/NetworkBackground";
+import GoogleAnalytics from "@/components/GoogleAnalytics"; // ← NEW
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,18 +31,16 @@ export const metadata: Metadata = {
   authors: [{ name: "PNT Academy" }],
   creator: "PNT Academy",
   publisher: "PNT Academy",
-  metadataBase: new URL("https://pnt-academy.vercel.app"), // Replace with actual domain when secured
-  alternates: {
-    canonical: "/",
-  },
+  metadataBase: new URL("https://pntacademy.com"),
+  alternates: { canonical: "/" },
   openGraph: {
     title: "PNT Academy | Robotics & STEM Education",
     description: "Shape the Future of Robotics. Hands-on training programs for students and institutions.",
-    url: "https://pnt-academy.vercel.app",
+    url: "https://pntacademy.com",
     siteName: "PNT Academy",
     locale: "en_IN",
     type: "website",
-    images: [{ url: "https://pnt-academy.vercel.app/opengraph-image", width: 1200, height: 630, alt: "PNT Academy Robotics" }],
+    images: [{ url: "https://pntacademy.com/opengraph-image", width: 1200, height: 630, alt: "PNT Academy Robotics" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -66,8 +64,8 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
   "name": "PNT Academy",
-  "url": "https://pnt-academy.vercel.app",
-  "logo": "https://pnt-academy.vercel.app/apple-icon.png",
+  "url": "https://pntacademy.com",
+  "logo": "https://pntacademy.com/apple-icon.png",
   "description": "Empowering the next generation of innovators with hands-on robotics, AI, and IoT training.",
   "sameAs": [
     "https://instagram.com/pntacademy",
@@ -76,19 +74,17 @@ const jsonLd = {
   ],
   "address": {
     "@type": "PostalAddress",
+    "streetAddress": "Plot no. A115, Infinity Business Park, MIDC",
+    "addressLocality": "Dombivli East",
+    "addressRegion": "Maharashtra",
+    "postalCode": "421203",
     "addressCountry": "IN"
   },
-  "offers": {
-    "@type": "Offer",
-    "category": "Educational Programs (Robotics, AI, IoT)"
-  }
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -100,29 +96,28 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 min-h-screen selection:bg-blue-600 selection:text-white transition-colors duration-500`}
       >
+        {/* Google Analytics — loaded after page is interactive, zero render-blocking */}
+        <GoogleAnalytics />
+
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          {/* Global animated background — shared across all pages */}
+          {/* Global animated background */}
           <ClientOnly>
             <div className="fixed inset-0 z-0 pointer-events-none">
               <NetworkBackground />
             </div>
           </ClientOnly>
 
-          {/* Client-only persistent layers */}
           <ClientAIChatbot />
           <ClientIntroWrapper />
           <PageLoader />
 
-          {/* Server-rendered page content */}
           <div className="relative z-10">
             {children}
           </div>
 
-          {/* Mobile App Navigation */}
           <MobileBottomNav />
         </ThemeProvider>
       </body>
     </html>
   );
 }
-
