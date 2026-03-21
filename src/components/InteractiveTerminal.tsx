@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, PresentationControls, Environment, useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 import { Terminal, Lightbulb, Minimize2, Cpu, Maximize2, X, Power, BatteryCharging, Wifi } from "lucide-react";
@@ -125,7 +125,7 @@ function InnerOS({ activeApp, setActiveApp, isMaximized, setIsMaximized, onShutD
     );
 }
 
-// --- The 2D Functional OS Desktop (rendered natively over the Canvas for perfect quality) ---
+// --- The Full-Screen OS (rendered via Portal on document.body) ---
 function DesktopOS({ onShutDown }: { onShutDown: () => void }) {
     const [activeApp, setActiveApp] = useState<"python" | "arduino" | "tinkercad" | null>(null);
     const [isMaximized, setIsMaximized] = useState(false);
@@ -133,18 +133,75 @@ function DesktopOS({ onShutDown }: { onShutDown: () => void }) {
 
     return (
         <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.05 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: "circOut" }}
-            className="fixed inset-0 z-[1000] flex justify-center items-center overflow-hidden font-sans select-none bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center"
+            className="fixed inset-0 z-[1000] w-screen h-screen overflow-hidden font-sans select-none bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center"
         >
-            <div className="w-full h-full scale-[3.2] origin-top">
-                <InnerOS 
-                    activeApp={activeApp} setActiveApp={setActiveApp}
-                    isMaximized={isMaximized} setIsMaximized={setIsMaximized}
-                    onShutDown={onShutDown} time={time} 
-                />
+            {/* Top Menu Bar */}
+            <div className="flex items-center justify-between px-4 py-1 bg-black/30 backdrop-blur-xl text-white text-xs z-50">
+                <div className="flex items-center gap-3">
+                    <span className="font-bold">PNT OS</span>
+                    <span className="opacity-60">File</span>
+                    <span className="opacity-60">Edit</span>
+                    <span className="opacity-60">View</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Wifi className="w-3.5 h-3.5 opacity-70" />
+                    <BatteryCharging className="w-3.5 h-3.5 opacity-70" />
+                    <span className="opacity-80 font-medium">{time}</span>
+                </div>
+            </div>
+
+            {/* Desktop Area */}
+            <div className="flex-1 w-full h-[calc(100vh-60px)] relative">
+                {/* App Windows */}
+                <AnimatePresence>
+                    {activeApp && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 30, scale: 0.9 }}
+                            transition={{ type: "spring", damping: 20 }}
+                            className={`absolute bg-slate-900/95 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl flex flex-col ${
+                                isMaximized ? "inset-2" : "top-8 left-[10%] w-[80%] h-[75%]"
+                            }`}
+                        >
+                            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => setActiveApp(null)} className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400" />
+                                    <button className="w-3 h-3 rounded-full bg-yellow-500" />
+                                    <button onClick={() => setIsMaximized(!isMaximized)} className="w-3 h-3 rounded-full bg-green-500" />
+                                </div>
+                                <span className="text-white/70 text-xs font-medium capitalize">{activeApp} IDE</span>
+                                <div />
+                            </div>
+                            <div className="flex-1 p-4 font-mono text-sm text-green-400 overflow-auto">
+                                <p className="text-white/40">// Welcome to PNT {activeApp} IDE</p>
+                                <p>{'>'} Ready to code...</p>
+                                <p className="animate-pulse">█</p>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Dock */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20 shadow-2xl z-50">
+                <button onClick={() => setActiveApp("python")} className="w-12 h-12 rounded-xl bg-gradient-to-b from-blue-400 to-blue-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg" title="Python">
+                    <Terminal className="w-6 h-6 text-white" />
+                </button>
+                <button onClick={() => setActiveApp("arduino")} className="w-12 h-12 rounded-xl bg-gradient-to-b from-teal-400 to-teal-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg" title="Arduino">
+                    <Cpu className="w-6 h-6 text-white" />
+                </button>
+                <button onClick={() => setActiveApp("tinkercad")} className="w-12 h-12 rounded-xl bg-gradient-to-b from-orange-400 to-orange-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg" title="Tinkercad">
+                    <Lightbulb className="w-6 h-6 text-white" />
+                </button>
+                <div className="w-px h-8 bg-white/20 mx-1" />
+                <button onClick={onShutDown} className="w-12 h-12 rounded-xl bg-gradient-to-b from-red-400 to-red-600 flex items-center justify-center hover:scale-110 transition-transform shadow-lg" title="Shutdown">
+                    <Power className="w-6 h-6 text-white" />
+                </button>
             </div>
         </motion.div>
     );
@@ -158,9 +215,10 @@ function ComputerModel({ onClick }: { onClick: () => void }) {
     const groupRef = useRef<THREE.Group>(null);
     const { scene, animations } = useGLTF('/models/macbook_pro_13_inch_2020.glb') as any;
     const { mixer, actions } = useAnimations(animations, groupRef);
+    const animReady = useRef(false);
 
     useEffect(() => {
-        // 1. Use the animation to open the lid: skip to end frame
+        // Start the animation and flag it for useFrame to hold at end
         if (actions && Object.keys(actions).length > 0) {
             const action = actions[Object.keys(actions)[0]];
             if (action) {
@@ -168,18 +226,12 @@ function ComputerModel({ onClick }: { onClick: () => void }) {
                 action.clampWhenFinished = true;
                 action.loop = THREE.LoopOnce;
                 action.play();
-                // Jump to the very last frame (lid fully open) and freeze
-                if (mixer) {
-                    mixer.update(999);
-                }
+                animReady.current = true;
             }
         }
 
-        // 2. Log all node names for debugging + strip baked screen texture
+        // Strip baked screen texture
         scene.traverse((child: any) => {
-            console.log('[GLB Node]', child.name, child.type, child.isMesh ? '(MESH)' : '');
-            
-            // Pure black screen for a clean, sleek floating look
             if (child.isMesh && child.material) {
                 const matName = child.material.name || '';
                 if (matName.includes('Material.001') || child.name.includes('Object_16') || child.name.includes('screen') || child.name.includes('Screen')) {
@@ -187,9 +239,16 @@ function ComputerModel({ onClick }: { onClick: () => void }) {
                 }
             }
         });
+    }, [scene, actions]);
 
-        // 3. Perfect Centering Calculus
-        if (groupRef.current) {
+    // Continuously force the animation to the very last frame so the lid stays OPEN
+    useFrame(() => {
+        if (animReady.current && mixer) {
+            mixer.setTime(999);
+        }
+
+        // Centering (runs once effectively since values stabilize)
+        if (groupRef.current && !groupRef.current.userData.centered) {
             groupRef.current.scale.setScalar(1);
             groupRef.current.position.set(0,0,0);
             groupRef.current.updateMatrixWorld(true);
@@ -205,8 +264,9 @@ function ComputerModel({ onClick }: { onClick: () => void }) {
             groupRef.current.position.x = -center.x * scaleFact;
             groupRef.current.position.y = -center.y * scaleFact; 
             groupRef.current.position.z = -center.z * scaleFact;
+            groupRef.current.userData.centered = true;
         }
-    }, [scene, actions, mixer]);
+    });
 
     return (
         <group 
