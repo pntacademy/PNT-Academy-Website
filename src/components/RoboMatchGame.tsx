@@ -207,7 +207,17 @@ export default function RoboMatchGame() {
                         <h3 className="text-3xl font-black text-white mb-2 tracking-tight">Mission Accomplished!</h3>
                         <p className="text-emerald-100/80 mb-6">You matched all the components in <span className="font-bold text-white">{60 - timeLeft}s</span> flat. You&apos;ve unlocked your reward!</p>
                         
-                        <div className="w-full bg-black/40 border border-white/10 p-4 rounded-xl mb-8 relative group cursor-pointer" onClick={() => navigator.clipboard.writeText("PNTWEB2026")}>
+                        <div 
+                            className="w-full bg-black/40 border border-white/10 p-4 rounded-xl mb-8 relative group cursor-pointer" 
+                            onClick={() => {
+                                if (navigator.clipboard && navigator.clipboard.writeText) {
+                                    navigator.clipboard.writeText("PNTWEB2026");
+                                    alert("Coupon PNTWEB2026 copied to clipboard!");
+                                } else {
+                                    alert("Please copy the code manually: PNTWEB2026");
+                                }
+                            }}
+                        >
                             <div className="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-1">Your Coupon Code</div>
                             <div className="text-3xl font-mono font-bold text-emerald-400 tracking-wider">PNT<span className="text-white">WEB</span>2026</div>
                             <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
