@@ -23,7 +23,7 @@ const SUBJECTS = [
 const DETAILS = [
     {
         icon: MapPin,
-        label: "Visit Us",
+        label: "Visit Our Lab",
         lines: ["Plot no. A115, Infinity Business Park,", "MIDC, Dombivli East, Maharashtra 421203"],
         color: "from-blue-500 to-cyan-500",
         textColor: "text-blue-500 dark:text-blue-400",
@@ -31,7 +31,7 @@ const DETAILS = [
     },
     {
         icon: Mail,
-        label: "Email Us",
+        label: "Drop Us a Line",
         lines: ["contact@pntacademy.com", "pnt-trainings@pntacademy.com"],
         color: "from-purple-500 to-pink-500",
         textColor: "text-purple-500 dark:text-purple-400",
@@ -39,7 +39,7 @@ const DETAILS = [
     },
     {
         icon: Phone,
-        label: "Call Us",
+        label: "Speak to Our Team",
         lines: ["+91 93260 14648", "+91 81691 96916"],
         color: "from-teal-500 to-emerald-500",
         textColor: "text-teal-500 dark:text-teal-400",
@@ -47,8 +47,8 @@ const DETAILS = [
     },
     {
         icon: MessageCircle,
-        label: "WhatsApp",
-        lines: ["Chat with Sales / Support"],
+        label: "Instant WhatsApp",
+        lines: ["Get a reply in minutes, not hours"],
         color: "from-green-500 to-lime-500",
         textColor: "text-green-500 dark:text-green-400",
         href: "https://wa.me/919326014648?text=Hi%20PNT%20Academy,%20I%20have%20an%20enquiry",
@@ -143,7 +143,7 @@ export default function ContactClient({ faqs, settings }: { faqs: Faq[]; setting
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 dark:bg-blue-500/20 border border-blue-500/20 dark:border-blue-400/20 mb-6"
                         >
                             <Sparkles className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-                            <span className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">Get In Touch</span>
+                            <span className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">We&apos;d Love To Hear From You</span>
                         </motion.div>
 
                         <motion.h1
@@ -152,10 +152,10 @@ export default function ContactClient({ faqs, settings }: { faqs: Faq[]; setting
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                         >
-                            <span className="text-slate-900 dark:text-white">Let&apos;s </span>
+                            <span className="text-slate-900 dark:text-white">Start Your </span>
                             <span className="relative">
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient-x">
-                                    Connect
+                                    Journey
                                 </span>
                                 <motion.span
                                     className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
@@ -168,12 +168,12 @@ export default function ContactClient({ faqs, settings }: { faqs: Faq[]; setting
                         </motion.h1>
 
                         <motion.p
-                            className="text-base sm:text-lg text-slate-500 dark:text-slate-400 mt-6 max-w-xl mx-auto leading-relaxed"
+                            className="text-base sm:text-lg text-slate-600 dark:text-slate-400 mt-6 max-w-2xl mx-auto leading-relaxed"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.4, duration: 0.6 }}
                         >
-                            Whether you want to set up a lab, enroll in a course, or explore a partnership — we&apos;re here to help.
+                            From setting up a state-of-the-art robotics lab to enrolling your child in a hands-on AI course — tell us your vision and we&apos;ll make it happen.
                         </motion.p>
 
                         {/* Quick action pills */}
@@ -222,7 +222,7 @@ export default function ContactClient({ faqs, settings }: { faqs: Faq[]; setting
                                     <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                                         <Sparkles className="w-4 h-4 text-white" />
                                     </div>
-                                    We work with
+                                    Trusted By
                                 </h3>
                                 <motion.div className="space-y-2.5" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
                                     {["Schools & Colleges", "Individual Students", "Corporate CSR Programs", "Government Bodies", "EdTech Partners"].map((item, i) => (
@@ -285,7 +285,7 @@ export default function ContactClient({ faqs, settings }: { faqs: Faq[]; setting
                                             <p className="text-xs font-bold uppercase tracking-widest opacity-60">Average Response</p>
                                         </div>
                                         <p className="text-5xl font-black">&lt; 24h</p>
-                                        <p className="text-sm opacity-70 mt-2 mb-6">Business days. We respond to every genuine enquiry.</p>
+                                        <p className="text-sm opacity-70 mt-2 mb-6">That&apos;s our average reply time. Every enquiry matters to us — no auto-replies, just real people.</p>
 
                                         <div className="pt-4 border-t border-white/20">
                                             <p className="text-xs font-bold uppercase tracking-widest opacity-60 mb-3">Follow Us</p>
@@ -316,7 +316,7 @@ export default function ContactClient({ faqs, settings }: { faqs: Faq[]; setting
                                         <h3 className="font-black text-lg text-slate-800 dark:text-white">Careers & Openings</h3>
                                     </div>
                                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-                                        Join our mission to build the future of robotics education. We&apos;re always looking for passionate educators, engineers, and sales rockstars.
+                                        Love robotics and teaching? We&apos;re growing fast and hiring passionate educators, hardware engineers, and business development rockstars across India.
                                     </p>
                                     <a href={careersLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group/link">
                                         Apply Now
@@ -349,9 +349,9 @@ export default function ContactClient({ faqs, settings }: { faqs: Faq[]; setting
                                         >
                                             <CheckCircle className="w-10 h-10 text-white" />
                                         </motion.div>
-                                        <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-2">Message Sent!</h3>
+                                        <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-2">We&apos;ve Got It! 🎉</h3>
                                         <p className="text-slate-500 dark:text-slate-400 max-w-sm">
-                                            Thank you for reaching out. Our team will get back to you within 24 hours.
+                                            Your message is on its way to our team. Expect a personal response within 24 hours — we don&apos;t do auto-replies.
                                         </p>
                                         <button onClick={() => { setStatus("idle"); setForm({ name: "", email: "", phone: "", subject: "General", message: "" }); }}
                                             className="mt-8 px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-sm hover:shadow-xl hover:shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95">
@@ -361,8 +361,8 @@ export default function ContactClient({ faqs, settings }: { faqs: Faq[]; setting
                                 ) : (
                                     <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
                                         <div>
-                                            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-1">Send us a message</h2>
-                                            <p className="text-sm text-slate-500 dark:text-slate-400">Fill in the details below and we&apos;ll reach out promptly.</p>
+                                            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-1">Tell Us What You Need</h2>
+                                            <p className="text-sm text-slate-500 dark:text-slate-400">Whether it&apos;s a lab, a course, or a partnership — share the details and we&apos;ll craft the perfect plan for you.</p>
                                         </div>
 
                                         <div className="grid sm:grid-cols-2 gap-4">
@@ -404,7 +404,7 @@ export default function ContactClient({ faqs, settings }: { faqs: Faq[]; setting
                                             <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Message *</label>
                                             <textarea required name="message" value={form.message} onChange={handleChange} rows={5}
                                                 onFocus={() => setFocusedField("message")} onBlur={() => setFocusedField(null)}
-                                                placeholder="Tell us about your school, the number of students, and what you're looking for..."
+                                                placeholder="E.g. We're a school with 500 students looking to set up a robotics lab for grades 5-10. We'd love to know your packages and timelines."
                                                 className={`${inputBase} resize-none ${focusedField === "message" ? inputFocus : inputRest}`}
                                             />
                                         </div>
