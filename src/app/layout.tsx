@@ -22,6 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  applicationName: "PNT Academy",
   title: {
     default: "PNT Academy | Robotics Training for Kids & Innovators",
     template: "%s | PNT Academy"
