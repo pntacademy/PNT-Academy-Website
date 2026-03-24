@@ -203,7 +203,7 @@ function DesktopOS({ onShutDown }: { onShutDown: () => void }) {
                             </div>
 
                             {/* App Content */}
-                            <div className="flex-1 bg-white relative">
+                            <div className="flex-1 bg-white relative overflow-y-auto">
                                 {activeAppData.id === "game" ? (
                                     <RoboMatchGame />
                                 ) : (activeAppData as any).external ? (

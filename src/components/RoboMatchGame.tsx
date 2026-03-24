@@ -92,14 +92,14 @@ export default function RoboMatchGame() {
     };
 
     return (
-        <div className="w-full h-full bg-slate-900 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div className="w-full h-full bg-slate-900 flex flex-col items-center p-2 sm:p-4 relative overflow-y-auto">
             {/* Background elements */}
             <div className="absolute inset-0 bg-blue-900/10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 50% 50%, rgba(30, 58, 138, 0.2) 0%, transparent 70%)" }} />
 
             {/* Header */}
-            <div className="w-full max-w-2xl flex items-center justify-between mb-6 z-10 px-4">
+            <div className="w-full max-w-2xl flex items-center justify-between mb-3 sm:mb-4 z-10 px-2 sm:px-4 shrink-0">
                 <div className="flex flex-col">
-                    <h2 className="text-2xl font-black text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 flex items-center gap-2">
+                    <h2 className="text-lg sm:text-2xl font-black text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 flex items-center gap-2">
                         <Bot className="text-blue-400 w-6 h-6" /> Robo Match
                     </h2>
                     <p className="text-slate-400 text-sm">Match all parts to win a prize!</p>
@@ -117,7 +117,7 @@ export default function RoboMatchGame() {
             </div>
 
             {/* Game States */}
-            <div className="flex-1 w-full min-h-0 flex flex-col items-center justify-center relative z-10 overflow-hidden p-2 sm:p-4">
+            <div className="flex-1 w-full min-h-0 flex flex-col items-center justify-center relative z-10 overflow-y-auto p-1 sm:p-4">
                 <AnimatePresence mode="wait">
                     {gameState === "start" && (
                         <motion.div
@@ -149,8 +149,8 @@ export default function RoboMatchGame() {
                             initial="hidden"
                             animate="show"
                             exit={{ opacity: 0, scale: 0.9 }}
-                            className="grid grid-cols-4 gap-1.5 sm:gap-3 w-full aspect-square mx-auto z-10 p-1 sm:p-2 scrollbar-hide"
-                            style={{ maxWidth: "min(100%, 65vh, 500px)", alignContent: "center" }}
+                            className="grid grid-cols-4 gap-1 sm:gap-2.5 w-full mx-auto z-10 p-1 sm:p-2"
+                            style={{ maxWidth: "min(100%, 500px)" }}
                         >
                         {cards.map((card, index) => {
                             const Icon = card.icon;
@@ -164,7 +164,7 @@ export default function RoboMatchGame() {
                                     onClick={() => handleCardClick(index)}
                                     whileHover={{ scale: card.isFlipped ? 1 : 1.05 }}
                                     whileTap={{ scale: card.isFlipped ? 1 : 0.95 }}
-                                    className={`relative w-full aspect-square rounded-2xl flex items-center justify-center text-3xl shadow-lg transition-transform perspective-1000 ${
+                                    className={`relative w-full aspect-square rounded-xl sm:rounded-2xl flex items-center justify-center text-3xl shadow-lg transition-transform perspective-1000 ${
                                         card.isFlipped ? "rotate-y-180" : ""
                                     }`}
                                     style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
@@ -172,12 +172,12 @@ export default function RoboMatchGame() {
                                     {/* Card Inner */}
                                     <div className={`absolute inset-0 w-full h-full rounded-2xl transition-all duration-500 ${card.isFlipped || card.isMatched ? "rotate-y-180" : ""}`} style={{ transformStyle: "preserve-3d" }}>
                                         {/* Back (Cover) */}
-                                        <div className="absolute inset-0 w-full h-full bg-slate-800 border-2 border-slate-700 rounded-2xl flex grid grid-cols-3 grid-rows-3 gap-0.5 p-2 backface-hidden items-center justify-center">
-                                            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl" />
+                                        <div className="absolute inset-0 w-full h-full bg-slate-800 border-2 border-slate-700 rounded-xl sm:rounded-2xl flex grid grid-cols-3 grid-rows-3 gap-0.5 p-2 backface-hidden items-center justify-center">
+                                            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-xl sm:rounded-2xl" />
                                             <Bot className="w-6 h-6 sm:w-8 sm:h-8 text-slate-600/50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                                         </div>
                                         {/* Front (Face) */}
-                                        <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-200 border-2 border-white rounded-2xl flex flex-col items-center justify-center backface-hidden !rotate-y-180" style={{ transform: "rotateY(180deg)" }}>
+                                        <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-200 border-2 border-white rounded-xl sm:rounded-2xl flex flex-col items-center justify-center backface-hidden !rotate-y-180" style={{ transform: "rotateY(180deg)" }}>
                                             <div className={`transition-all duration-300 ${card.isMatched ? 'text-green-500 scale-110 drop-shadow-md' : 'text-blue-600'}`}>
                                                 <Icon className="w-8 h-8 sm:w-10 sm:h-10 mb-1" />
                                             </div>
@@ -195,21 +195,21 @@ export default function RoboMatchGame() {
                         key="won"
                         initial={{ opacity: 0, scale: 0.8, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="flex flex-col items-center text-center z-20 bg-emerald-950/80 backdrop-blur-md border border-emerald-500/30 p-8 sm:p-12 rounded-3xl shadow-[0_0_60px_rgba(16,185,129,0.2)] max-w-md w-full"
+                        className="flex flex-col items-center text-center z-20 bg-emerald-950/80 backdrop-blur-md border border-emerald-500/30 p-5 sm:p-8 rounded-3xl shadow-[0_0_60px_rgba(16,185,129,0.2)] max-w-md w-full"
                     >
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1, rotate: 360 }}
                             transition={{ type: "spring", bounce: 0.5, duration: 1 }}
-                            className="w-24 h-24 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/50 mb-6"
+                            className="w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/50 mb-4 sm:mb-6"
                         >
-                            <Award className="w-12 h-12 text-white" />
+                            <Award className="w-8 h-8 sm:w-12 sm:h-12 text-white" />
                         </motion.div>
-                        <h3 className="text-3xl font-black text-white mb-2 tracking-tight">Mission Accomplished!</h3>
+                        <h3 className="text-xl sm:text-3xl font-black text-white mb-2 tracking-tight">Mission Accomplished!</h3>
                         <p className="text-emerald-100/80 mb-6">You matched all the components in <span className="font-bold text-white">{60 - timeLeft}s</span> flat. You&apos;ve unlocked your reward!</p>
                         
                         <div 
-                            className="w-full bg-black/40 border border-white/10 p-4 rounded-xl mb-8 relative group cursor-pointer" 
+                            className="w-full bg-black/40 border border-white/10 p-3 sm:p-4 rounded-xl mb-4 sm:mb-6 relative group cursor-pointer" 
                             onClick={() => {
                                 if (navigator.clipboard && navigator.clipboard.writeText) {
                                     navigator.clipboard.writeText("PNTWEB2026");
@@ -220,7 +220,7 @@ export default function RoboMatchGame() {
                             }}
                         >
                             <div className="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-1">Your Coupon Code</div>
-                            <div className="text-3xl font-mono font-bold text-emerald-400 tracking-wider">PNT<span className="text-white">WEB</span>2026</div>
+                            <div className="text-xl sm:text-3xl font-mono font-bold text-emerald-400 tracking-wider">PNT<span className="text-white">WEB</span>2026</div>
                             <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
                                 <span className="text-xs font-bold text-white bg-black/60 px-2 py-1 rounded">Click to Copy</span>
                             </div>
@@ -240,7 +240,7 @@ export default function RoboMatchGame() {
                         key="lost"
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="flex flex-col items-center text-center z-20 bg-rose-950/80 backdrop-blur-md border border-rose-500/30 p-8 rounded-3xl shadow-xl max-w-sm"
+                        className="flex flex-col items-center text-center z-20 bg-rose-950/80 backdrop-blur-md border border-rose-500/30 p-5 sm:p-8 rounded-3xl shadow-xl max-w-sm"
                     >
                         <div className="w-20 h-20 bg-gradient-to-br from-rose-500 to-red-600 rounded-full flex items-center justify-center shadow-lg shadow-rose-500/50 mb-6">
                             <span className="text-3xl font-black text-white">0:00</span>
