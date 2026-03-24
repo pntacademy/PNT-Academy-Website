@@ -3,6 +3,8 @@ import connectDB from "@/lib/mongodb";
 import { SchoolVideo } from "@/lib/models/SchoolVideo";
 import { v2 as cloudinary } from "cloudinary";
 
+export const dynamic = "force-dynamic";
+
 // Configure Cloudinary for deletions (since uploads happen via unsigned preset on client)
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "dycht8a6s",
