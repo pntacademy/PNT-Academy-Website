@@ -93,9 +93,9 @@ const PROCESS_STEPS = [
 
 /* ── UPI App Buttons Data ── */
 const UPI_APPS = [
-    { name: "GPay", scheme: "tez://upi/pay", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png", color: "from-blue-500 to-blue-600" },
-    { name: "PhonePe", scheme: "phonepe://pay", logo: "/icons/phonepe.svg", color: "from-purple-600 to-indigo-600" },
-    { name: "Paytm", scheme: "paytmmp://pay", logo: "/icons/paytm.svg", color: "from-blue-400 to-cyan-500" },
+    { name: "GPay", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png", color: "from-blue-500 to-blue-600" },
+    { name: "PhonePe", logo: "/icons/phonepe.svg", color: "from-purple-600 to-indigo-600" },
+    { name: "Paytm", logo: "/icons/paytm.svg", color: "from-blue-400 to-cyan-500" },
 ];
 
 /* ══════════════════════════════════════════════════════════════════════════════ */
@@ -165,10 +165,12 @@ export default function PaymentDetailsClient({ details, amount, course, clientNa
         return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(parts)}`;
     };
 
-    // Build UPI intent URL for specific apps
-    const buildUpiIntentUrl = (scheme: string) => {
+    // Build UPI intent URL — uses universal upi://pay scheme (same as QR)
+    // App-specific schemes (tez://, phonepe://) fail from web browsers
+    const buildUpiIntentUrl = () => {
         if (!upiId) return "#";
-        return `${scheme}?pa=${upiId}&pn=${encodeURIComponent(accountName)}${amount ? `&am=${amount}` : ""}&cu=INR`;
+        const amountFormatted = amount ? parseFloat(amount).toFixed(2) : null;
+        return `upi://pay?pa=${upiId}&pn=${encodeURIComponent(accountName)}${amountFormatted ? `&am=${amountFormatted}` : ""}&cu=INR&tn=${encodeURIComponent(course ? `PNT Academy - ${course.replace(/\+/g, ' ')}` : 'PNT Academy Payment')}`;
     };
 
     return (
@@ -368,7 +370,7 @@ export default function PaymentDetailsClient({ details, amount, course, clientNa
                                                 {UPI_APPS.map((app) => (
                                                     <a
                                                         key={app.name}
-                                                        href={buildUpiIntentUrl(app.scheme)}
+                                                        href={buildUpiIntentUrl()}
                                                         className={`flex flex-col items-center gap-1.5 p-3 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500/50 transition-all hover:-translate-y-0.5 hover:shadow-lg`}
                                                     >
                                                         <div className="relative w-8 h-8">
@@ -386,7 +388,7 @@ export default function PaymentDetailsClient({ details, amount, course, clientNa
                                             </div>
                                             {/* Generic UPI Intent */}
                                             <a
-                                                href={upiUrl}
+                                                href={buildUpiIntentUrl()}
                                                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-sm hover:shadow-xl hover:shadow-blue-500/20 transition-all hover:scale-[1.01] active:scale-95"
                                             >
                                                 <Smartphone className="w-4 h-4" />
