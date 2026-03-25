@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   },
 };
 
+// ISR: serve from cache instantly, silently refresh in background every 60s
+export const revalidate = 60;
+
 export default async function SchoolsProgramsPage() {
     const settings = await getAdminSettings();
     const bootcampLink = settings?.bootcampLink || "https://forms.gle/";
