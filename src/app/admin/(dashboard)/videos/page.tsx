@@ -17,6 +17,9 @@ interface VideoItem {
     url: string;      // Cloudinary Secure URL
     size: number;     // File Size in Bytes
     publicId: string; // Cloudinary Public ID
+    order: number;
+    startTime: number;
+    endTime: number;
     createdAt: string;
 }
 
@@ -121,6 +124,57 @@ export default function AdminVideos() {
         }
     };
 
+    const moveVideo = async (index: number, direction: 'up' | 'down') => {
+        if (direction === 'up' && index === 0) return;
+        if (direction === 'down' && index === videos.length - 1) return;
+
+        const newVideos = [...videos];
+        const swapIndex = direction === 'up' ? index - 1 : index + 1;
+        
+        // Swap elements
+        const temp = newVideos[index];
+        newVideos[index] = newVideos[swapIndex];
+        newVideos[swapIndex] = temp;
+
+        // Re-assign order based on array index
+        const bulkItems = newVideos.map((v, i) => ({ ...v, order: i }));
+        setVideos(bulkItems);
+
+        // Save order to DB
+        try {
+            await fetch("/api/admin/videos", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    reorder: true,
+                    items: bulkItems.map(v => ({ _id: v._id, order: v.order }))
+                })
+            });
+        } catch (error) {
+            console.error("Reorder failed:", error);
+            // Optionally could revert state here if fetch fails
+        }
+    };
+
+    const handleTrimSave = async (id: string, start: number, end: number) => {
+        try {
+            const res = await fetch("/api/admin/videos", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    _id: id,
+                    startTime: start,
+                    endTime: end
+                })
+            });
+            if (res.ok) {
+                alert("Trim settings saved!");
+            }
+        } catch (error) {
+            console.error("Trim update failed", error);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <header className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
@@ -215,19 +269,78 @@ export default function AdminVideos() {
                                 <h4 className="text-sm font-bold text-slate-800 dark:text-white truncate" title={video.filename}>
                                     {video.filename}
                                 </h4>
-                                <div className="flex items-center gap-3 mt-auto pt-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                <div className="flex items-center gap-3 mt-1 text-xs text-slate-500 dark:text-slate-400 font-medium pb-3 border-b border-slate-100 dark:border-white/5 whitespace-nowrap">
                                     <span className="flex items-center gap-1"><HardDrive className="w-3 h-3" /> {formatBytes(video.size)}</span>
                                     <span>{new Date(video.createdAt).toLocaleDateString()}</span>
+                                </div>
+                                <div className="mt-3 flex flex-col gap-2 relative z-20">
+                                    <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Trim Video (Seconds)</label>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex flex-col flex-1">
+                                            <span className="text-[10px] text-slate-500 mb-1">Start Time</span>
+                                            <input 
+                                                type="number" 
+                                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                                                value={video.startTime}
+                                                onChange={(e) => {
+                                                    const newVideos = [...videos];
+                                                    newVideos[i].startTime = Number(e.target.value);
+                                                    setVideos(newVideos);
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col flex-1">
+                                            <span className="text-[10px] text-slate-500 mb-1">End Time</span>
+                                            <input 
+                                                type="number" 
+                                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" 
+                                                value={video.endTime}
+                                                onChange={(e) => {
+                                                    const newVideos = [...videos];
+                                                    newVideos[i].endTime = Number(e.target.value);
+                                                    setVideos(newVideos);
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col justify-end h-full">
+                                            <button 
+                                                onClick={() => handleTrimSave(video._id, video.startTime, video.endTime)}
+                                                className="bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors mt-auto mb-[2px]"
+                                            >
+                                                Save
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p className="text-[10px] text-slate-400 leading-tight">If End Time is 0, it plays to the end. The Schools page will only play within this window.</p>
                                 </div>
                             </div>
 
                             <button
                                 onClick={() => handleDelete(video._id, video.filename)}
-                                className="absolute top-3 right-3 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all shadow-lg"
+                                className="absolute top-3 right-3 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all shadow-lg z-30"
                                 title="Delete Video"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
+                            
+                            <div className="absolute top-3 left-3 flex flex-col gap-1 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all z-30">
+                                <button
+                                    onClick={() => moveVideo(i, 'up')}
+                                    disabled={i === 0}
+                                    className="p-1.5 bg-slate-800/80 hover:bg-slate-700 backdrop-blur disabled:opacity-30 disabled:hover:bg-slate-800/80 text-white rounded-md transition-all shadow-lg"
+                                    title="Move Up"
+                                >
+                                    ↑
+                                </button>
+                                <button
+                                    onClick={() => moveVideo(i, 'down')}
+                                    disabled={i === videos.length - 1}
+                                    className="p-1.5 bg-slate-800/80 hover:bg-slate-700 backdrop-blur disabled:opacity-30 disabled:hover:bg-slate-800/80 text-white rounded-md transition-all shadow-lg"
+                                    title="Move Down"
+                                >
+                                    ↓
+                                </button>
+                            </div>
                         </motion.div>
                     ))
                 )}

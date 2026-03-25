@@ -17,6 +17,18 @@ const SchoolVideoSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    order: {
+        type: Number,
+        default: 0,
+    },
+    startTime: {
+        type: Number,
+        default: 0,
+    },
+    endTime: {
+        type: Number,
+        default: 0,
+    },
     createdAt: {
         type: Date,
         default: Date.now,

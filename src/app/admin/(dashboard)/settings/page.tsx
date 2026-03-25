@@ -20,6 +20,7 @@ interface SettingsForm {
         youtube: string;
     };
     careersLink: string;
+    bootcampLink: string;
     sheetsWebhookUrl: string;
     paymentDetails: {
         upiId: string;
@@ -41,6 +42,7 @@ export default function AdminSettings() {
                 youtube: ""
             },
             careersLink: "",
+            bootcampLink: "",
             sheetsWebhookUrl: "",
             paymentDetails: {
                 upiId: "",
@@ -129,6 +131,7 @@ export default function AdminSettings() {
                         setValue("socialLinks.youtube", data.socialLinks.youtube || "");
                     }
                     if (data?.careersLink) setValue("careersLink", data.careersLink);
+                    if (data?.bootcampLink) setValue("bootcampLink", data.bootcampLink);
                     if (data?.sheetsWebhookUrl) setValue("sheetsWebhookUrl", data.sheetsWebhookUrl);
                     if (data?.paymentDetails) {
                         setValue("paymentDetails.upiId", data.paymentDetails.upiId || "");
@@ -164,6 +167,7 @@ export default function AdminSettings() {
                 profileImage: previewImage,
                 socialLinks: formData.socialLinks,
                 careersLink: formData.careersLink,
+                bootcampLink: formData.bootcampLink,
                 sheetsWebhookUrl: formData.sheetsWebhookUrl,
                 paymentDetails: {
                     ...formData.paymentDetails,
@@ -345,6 +349,11 @@ export default function AdminSettings() {
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Careers Form URL (Redirects from Careers Button)</label>
                                             <input type="url" {...register("careersLink")} placeholder="https://forms.gle/your-careers-form" className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all" />
+                                        </div>
+                                        <div className="space-y-2 pt-4">
+                                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">"Free AI & Robotics Bootcamp" Ribbon URL</label>
+                                            <input type="url" {...register("bootcampLink")} placeholder="https://forms.gle/bPqn2usSX7Gfeu3Q6" className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500/50 transition-all" />
+                                            <p className="text-[10px] text-slate-500 ml-1">This link is used on the "Training for Schools" page hero ribbon.</p>
                                         </div>
                                     </section>
                                 </>

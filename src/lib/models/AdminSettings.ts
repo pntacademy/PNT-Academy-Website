@@ -11,6 +11,7 @@ export interface IAdminSettings extends Document {
         youtube?: string;
     };
     careersLink?: string;
+    bootcampLink?: string; // For the Free AI & Robotics Bootcamp ribbon
     sheetsWebhookUrl?: string; // For auto-syncing enquiries to Google Sheets
     paymentDetails?: {
         upiId?: string;
@@ -35,6 +36,7 @@ const AdminSettingsSchema = new Schema<IAdminSettings>({
         youtube: { type: String, default: "" },
     },
     careersLink: { type: String, default: "" },
+    bootcampLink: { type: String, default: "" },
     sheetsWebhookUrl: { type: String, default: "" },
     paymentDetails: {
         upiId: { type: String, default: "" },

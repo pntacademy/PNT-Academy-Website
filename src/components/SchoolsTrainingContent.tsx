@@ -151,9 +151,19 @@ function SeamlessVideoHero() {
     useEffect(() => {
         fetch("/api/admin/videos")
             .then((res) => res.json())
-            .then((data: { url: string }[]) => {
+            .then((data: any[]) => {
                 if (data && data.length > 0) {
-                    setVideoUrls(data.map((v) => v.url));
+                    setVideoUrls(data.map((v) => {
+                        let url = v.url;
+                        const trims = [];
+                        if (v.startTime > 0) trims.push(`so_${v.startTime}`);
+                        if (v.endTime > 0) trims.push(`eo_${v.endTime}`);
+                        
+                        if (trims.length > 0 && url.includes("/upload/")) {
+                            url = url.replace("/upload/", `/upload/${trims.join(",")}/`);
+                        }
+                        return url;
+                    }));
                 } else {
                     // Fallback in case API fails
                     setVideoUrls(["/videos/Students_Build_Robots_Cinematic_Montage.mp4"]);
@@ -231,7 +241,7 @@ function RotatingText() {
 // ═══════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════
-export default function SchoolsTrainingContent() {
+export default function SchoolsTrainingContent({ bootcampLink = "/bootcamp" }: { bootcampLink?: string }) {
     const [liveSchools, setLiveSchools] = useState<any[]>([]);
     const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
 
@@ -293,7 +303,9 @@ export default function SchoolsTrainingContent() {
                         transition={{ delay: 0.2 }}
                     >
                         <Link 
-                            href="/bootcamp" 
+                            href={bootcampLink} 
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-red-500/90 dark:bg-red-600/90 backdrop-blur-xl border border-red-400/50 mb-10 shadow-[0_0_30px_rgba(239,68,68,0.3)] hover:shadow-[0_0_50px_rgba(239,68,68,0.5)] hover:scale-105 transition-all cursor-pointer group"
                         >
                             <span className="flex h-3 w-3 relative">
