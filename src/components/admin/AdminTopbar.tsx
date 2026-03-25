@@ -1,16 +1,18 @@
 "use client";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Sun, Moon, User } from "lucide-react";
+import { Sun, Moon, User, Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSidebar } from "./SidebarContext";
 
 export default function AdminTopbar() {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [adminData, setAdminData] = useState<{ name?: string, profileImage?: string | null } | null>(null);
     const pathname = usePathname();
+    const { toggle } = useSidebar();
 
     // Generate Breadcrumb
     const pathSegments = pathname.split('/').filter(Boolean);
@@ -37,12 +39,20 @@ export default function AdminTopbar() {
     }, []);
 
     return (
-        <header className="h-16 bg-white dark:bg-[#0A0A0A] border-b border-slate-200 dark:border-white/10 flex items-center justify-between px-8 z-10 sticky top-0 transition-colors duration-500">
-            {/* Breadcrumb Left */}
-            <div className="flex items-center text-sm font-medium">
+        <header className="h-16 bg-white dark:bg-[#0A0A0A] border-b border-slate-200 dark:border-white/10 flex items-center justify-between px-4 sm:px-8 z-10 sticky top-0 transition-colors duration-500">
+            {/* Left: Hamburger (mobile) + Breadcrumb */}
+            <div className="flex items-center gap-3 text-sm font-medium">
+                {/* Mobile hamburger */}
+                <button
+                    onClick={toggle}
+                    className="md:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                    aria-label="Open menu"
+                >
+                    <Menu size={18} />
+                </button>
                 <span className="text-slate-400">Admin</span>
-                <span className="mx-2 text-slate-300 dark:text-slate-600">/</span>
-                <span className="text-slate-900 dark:text-slate-100">{breadcrumbText}</span>
+                <span className="mx-1 text-slate-300 dark:text-slate-600">/</span>
+                <span className="text-slate-900 dark:text-slate-100 truncate max-w-[120px] sm:max-w-none">{breadcrumbText}</span>
             </div>
 
             {/* Actions Right */}
