@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, ExternalLink } from "lucide-react";
+import { motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
 
-export default function BootcampCTA() {
-    const [isOpen, setIsOpen] = useState(false);
-
+export default function BootcampCTA({ bootcampLink = "https://forms.gle/" }: { bootcampLink?: string }) {
     return (
         <section className="py-24 relative overflow-hidden bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 border-t border-white/10">
             {/* Background elements */}
@@ -33,57 +30,20 @@ export default function BootcampCTA() {
                         Experience the future of education firsthand. Book a free, no-obligation demo or sign up for our upcoming bootcamp.
                     </p>
 
-                    <button
-                        onClick={() => setIsOpen(true)}
-                        className="group relative inline-flex items-center justify-center px-8 py-5 text-lg font-bold text-indigo-900 bg-white rounded-full overflow-hidden transition-all hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)]"
+                    <a
+                        href={bootcampLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group relative inline-flex items-center justify-center px-8 py-5 text-lg font-bold text-indigo-900 bg-white rounded-full overflow-hidden transition-all hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] cursor-pointer"
                     >
                         <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-white via-blue-50 to-white group-hover:bg-gradient-to-r group-hover:from-blue-100 group-hover:via-white group-hover:to-blue-100 transition-all"></div>
                         <span className="relative flex items-center gap-2">
                             Book a Free Demo / Bootcamp
                             <ExternalLink className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                         </span>
-                    </button>
+                    </a>
                 </motion.div>
             </div>
-
-            {/* Modal */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.9, y: 20 }}
-                            className="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden relative border border-slate-200 dark:border-slate-800"
-                        >
-                            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                                <h3 className="font-bold text-lg text-slate-800 dark:text-white">Register for Bootcamp</h3>
-                                <button
-                                    onClick={() => setIsOpen(false)}
-                                    className="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500 dark:text-slate-400"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
-                            </div>
-                            <div className="h-[60vh] md:h-[70vh] w-full bg-slate-50 dark:bg-slate-950 p-4">
-                                {/* Google Form Iframe Placeholder. Admin can replace this URL later. */}
-                                <iframe
-                                    src="https://docs.google.com/forms/d/e/1FAIpQLScX_placeholder_form_link/viewform?embedded=true"
-                                    className="w-full h-full border-0 rounded-xl"
-                                    title="Bootcamp Registration Form"
-                                >
-                                    Loading…
-                                </iframe>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </section>
     );
 }

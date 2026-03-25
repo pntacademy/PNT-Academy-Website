@@ -20,7 +20,7 @@ import TestimonialsSlider from "@/components/TestimonialsSlider";
 import BootcampCTA from "@/components/BootcampCTA";
 import Footer from "@/components/Footer";
 import AboutSlider from "@/components/AboutSlider";
-import { incrementLiveVisits } from "@/lib/actions/db";
+import { incrementLiveVisits, getAdminSettings } from "@/lib/actions/db";
 
 
 
@@ -34,6 +34,9 @@ export default async function Home() {
 
   // Fire-and-forget — never block page render for a counter update
   incrementLiveVisits().catch(() => { });
+
+  const settings = await getAdminSettings();
+  const bootcampLink = settings?.bootcampLink || "https://forms.gle/";
 
   return (
     <main className="relative min-h-screen text-slate-900 dark:text-slate-50 overflow-x-hidden transition-colors duration-500">
@@ -199,7 +202,7 @@ export default async function Home() {
         </section>
 
         {/* Call to Action */}
-        <BootcampCTA />
+        <BootcampCTA bootcampLink={bootcampLink} />
 
         {/* Footer */}
         <Footer />

@@ -619,13 +619,13 @@ export default function SchoolsTrainingContent({ bootcampLink = "/bootcamp" }: {
                             Join the 100+ schools that have already future-proofed their students. Get a free consultation and customized program proposal.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
-                            <button className="px-10 py-5 rounded-xl font-bold text-blue-700 bg-white hover:bg-blue-50 transition-all shadow-lg flex items-center justify-center gap-2 group text-lg hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,255,255,0.3)]">
+                            <Link href="/contact" className="px-10 py-5 rounded-xl font-bold text-blue-700 bg-white hover:bg-blue-50 transition-all shadow-lg flex items-center justify-center gap-2 group text-lg hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,255,255,0.3)]">
                                 Schedule a Free Consultation
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </button>
-                            <button className="px-10 py-5 rounded-xl font-bold text-white bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all flex items-center justify-center gap-2 text-lg hover:-translate-y-1">
+                            </Link>
+                            <a href="tel:+919326014648" className="px-10 py-5 rounded-xl font-bold text-white bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all flex items-center justify-center gap-2 text-lg hover:-translate-y-1">
                                 📞 Call Us Now
-                            </button>
+                            </a>
                         </div>
                     </motion.div>
                 </div>
