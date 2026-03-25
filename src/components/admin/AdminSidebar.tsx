@@ -3,25 +3,58 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Image as ImageIcon, Briefcase, GraduationCap, FileText, Settings, LogOut, Users, MessageSquare, Inbox, ThumbsDown, Ticket, Video } from "lucide-react";
+import {
+    LayoutDashboard, Image as ImageIcon, Briefcase, GraduationCap,
+    FileText, Settings, LogOut, Users, MessageSquare, Inbox,
+    ThumbsDown, Ticket, Video, HelpCircle, ExternalLink, type LucideIcon
+} from "lucide-react";
 import { auth } from "@/lib/firebase/config";
 import { signOut } from "firebase/auth";
 
-const MENU_ITEMS = [
-    { name: "Overview", href: "/admin", icon: LayoutDashboard },
-    { name: "Enquiries", href: "/admin/enquiries", icon: Inbox },
-    { name: "Payment Tickets", href: "/admin/tickets", icon: Ticket },
-    { name: "Gallery", href: "/admin/gallery", icon: ImageIcon },
-    { name: "School Videos", href: "/admin/videos", icon: Video },
-    { name: "About Photos", href: "/admin/about", icon: Users },
-    { name: "Partner Schools", href: "/admin/schools", icon: GraduationCap },
-    { name: "Partners & Logos", href: "/admin/partners", icon: Briefcase },
-    { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
-    { name: "Internships", href: "/admin/internships", icon: Briefcase },
-    { name: "FAQs", href: "/admin/faq", icon: MessageSquare },
-    { name: "AI Feedback", href: "/admin/ai-feedback", icon: ThumbsDown },
-    { name: "News & Blog", href: "/admin/blog", icon: FileText },
-    { name: "Settings", href: "/admin/settings", icon: Settings },
+type NavItem = { name: string; href: string; icon: LucideIcon };
+type NavGroup = { label: string; items: NavItem[] };
+
+const NAV_GROUPS: NavGroup[] = [
+    {
+        label: "Overview",
+        items: [{ name: "Overview", href: "/admin", icon: LayoutDashboard }],
+    },
+    {
+        label: "Enquiries & Finance",
+        items: [
+            { name: "Enquiries", href: "/admin/enquiries", icon: Inbox },
+            { name: "Payment Tickets", href: "/admin/tickets", icon: Ticket },
+        ],
+    },
+    {
+        label: "Content",
+        items: [
+            { name: "Gallery", href: "/admin/gallery", icon: ImageIcon },
+            { name: "School Videos", href: "/admin/videos", icon: Video },
+            { name: "About Photos", href: "/admin/about", icon: Users },
+            { name: "News & Blog", href: "/admin/blog", icon: FileText },
+        ],
+    },
+    {
+        label: "Partnerships",
+        items: [
+            { name: "Partner Schools", href: "/admin/schools", icon: GraduationCap },
+            { name: "Partners & Logos", href: "/admin/partners", icon: Briefcase },
+            { name: "Internships", href: "/admin/internships", icon: Briefcase },
+        ],
+    },
+    {
+        label: "Engagement",
+        items: [
+            { name: "Testimonials", href: "/admin/testimonials", icon: MessageSquare },
+            { name: "FAQs", href: "/admin/faq", icon: HelpCircle },
+            { name: "AI Feedback", href: "/admin/ai-feedback", icon: ThumbsDown },
+        ],
+    },
+    {
+        label: "System",
+        items: [{ name: "Settings", href: "/admin/settings", icon: Settings }],
+    },
 ];
 
 export default function AdminSidebar() {
@@ -29,68 +62,154 @@ export default function AdminSidebar() {
     const router = useRouter();
 
     const handleLogout = async () => {
-        if (auth) {
-            await signOut(auth);
-        }
+        if (auth) await signOut(auth);
         router.push("/admin/login");
     };
 
     return (
-        <aside className="w-60 bg-white dark:bg-[#050505] border-r border-slate-200 dark:border-white/10 flex flex-col min-h-screen sticky top-0 transition-colors duration-500 z-20">
-            {/* Logo Area */}
-            <div className="p-6 flex items-center justify-center">
-                <Link href="/admin" className="block text-center hover:opacity-80 transition-opacity">
-                    <div className="relative w-28 h-8 mx-auto -ml-2">
+        <aside className="
+            w-60 flex flex-col min-h-screen sticky top-0 z-20 overflow-hidden relative
+            bg-white dark:bg-[#080c1a]
+            border-r border-slate-200 dark:border-white/[0.06]
+            transition-colors duration-300
+        ">
+            {/* ── Animated background orbs ── */}
+            {/* Light mode: soft lavender/indigo orbs */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+                {/* Orb 1 – top */}
+                <motion.div
+                    className="absolute -top-16 -left-16 w-64 h-64 rounded-full
+                        bg-indigo-100/70 dark:bg-indigo-900/20
+                        blur-3xl"
+                    animate={{ scale: [1, 1.12, 1], opacity: [0.6, 0.9, 0.6] }}
+                    transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                />
+                {/* Orb 2 – mid */}
+                <motion.div
+                    className="absolute top-1/2 -right-20 w-52 h-52 rounded-full
+                        bg-violet-100/60 dark:bg-violet-900/15
+                        blur-3xl"
+                    animate={{ scale: [1, 1.08, 1], opacity: [0.5, 0.8, 0.5] }}
+                    transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                />
+                {/* Orb 3 – bottom */}
+                <motion.div
+                    className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full
+                        bg-blue-100/50 dark:bg-blue-900/15
+                        blur-3xl"
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
+                    transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+                />
+                {/* Light mode only: subtle dot grid texture */}
+                <div className="
+                    absolute inset-0 dark:hidden
+                    bg-[radial-gradient(circle,_#6366f120_1px,_transparent_1px)]
+                    bg-[size:20px_20px]
+                    opacity-60
+                "/>
+                {/* Dark mode: faint scanline grid */}
+                <div className="
+                    absolute inset-0 hidden dark:block
+                    bg-[linear-gradient(rgba(99,102,241,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.03)_1px,transparent_1px)]
+                    bg-[size:24px_24px]
+                    opacity-100
+                "/>
+            </div>
+
+            {/* ── Logo ── */}
+            <div className="relative px-5 pt-6 pb-5 border-b border-slate-100 dark:border-white/[0.06]">
+                <Link href="/admin" className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity">
+                    <div className="relative w-28 h-8 mx-auto">
                         <Image
                             src="/logo.png"
-                            alt="PNT Academy Logo"
+                            alt="PNT Academy"
                             fill
-                            className="object-contain dark:invert-0 invert drop-shadow-sm brightness-100 dark:brightness-110 transition-all duration-500"
+                            className="object-contain invert dark:invert-0 drop-shadow-sm transition-all duration-500"
                         />
                     </div>
-                    <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mt-2 block">Admin Panel</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 dark:text-indigo-400 mt-1">
+                        Admin Panel
+                    </span>
                 </Link>
             </div>
 
-            {/* Navigation Menu */}
-            <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-                <div className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4 px-3">Menu</div>
-                
-                {MENU_ITEMS.map((item) => {
-                    const isActive = pathname === item.href;
-                    const Icon = item.icon;
+            {/* ── Navigation ── */}
+            <nav className="relative flex-1 px-3 py-4 overflow-y-auto scrollbar-hide space-y-5">
+                {NAV_GROUPS.map((group, gi) => (
+                    <div key={group.label}>
+                        {gi > 0 && (
+                            <div className="h-px bg-slate-200 dark:bg-white/[0.05] mx-2 mb-3" />
+                        )}
+                        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500 px-3 mb-1.5">
+                            {group.label}
+                        </p>
+                        <div className="space-y-0.5">
+                            {group.items.map((item) => {
+                                const Icon = item.icon;
+                                const isActive =
+                                    pathname === item.href ||
+                                    (item.href !== "/admin" && pathname.startsWith(item.href));
 
-                    return (
-                        <Link key={item.name} href={item.href}>
-                            <div
-                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${
-                                    isActive
-                                    ? "bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white"
-                                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
-                                    }`}
-                            >
-                                {isActive && (
-                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-blue-600 rounded-r-md" />
-                                )}
-                                <Icon className={`w-4 h-4 ${isActive ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors"}`} />
-                                {item.name}
-                            </div>
-                        </Link>
-                    );
-                })}
+                                return (
+                                    <Link key={item.href} href={item.href} className="block">
+                                        <div className="relative">
+                                            {isActive && (
+                                                <motion.div
+                                                    layoutId="sidebar-active-pill"
+                                                    className="absolute inset-0 rounded-xl
+                                                        bg-gradient-to-r from-indigo-500 to-violet-500
+                                                        dark:from-indigo-600 dark:to-indigo-500
+                                                        shadow-lg shadow-indigo-400/20 dark:shadow-indigo-900/40"
+                                                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                                                />
+                                            )}
+                                            <div className={`
+                                                relative flex items-center gap-3 px-3 py-2.5 rounded-xl
+                                                text-[13px] font-semibold transition-colors
+                                                ${isActive
+                                                    ? "text-white"
+                                                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.04]"
+                                                }
+                                            `}>
+                                                <Icon className={`w-4 h-4 shrink-0 transition-colors ${
+                                                    isActive
+                                                        ? "text-indigo-100"
+                                                        : "text-slate-400 dark:text-slate-500"
+                                                }`} />
+                                                {item.name}
+                                            </div>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
             </nav>
 
-            {/* Bottom Actions */}
-            <div className="p-3 border-t border-slate-200 dark:border-white/10 space-y-1">
-                <Link href="/" target="_blank" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                    <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+            {/* ── Bottom actions ── */}
+            <div className="relative px-3 py-4 border-t border-slate-100 dark:border-white/[0.06] space-y-0.5">
+                <Link
+                    href="/"
+                    target="_blank"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold
+                        text-slate-500 dark:text-slate-400
+                        hover:text-slate-800 dark:hover:text-slate-200
+                        hover:bg-slate-100 dark:hover:bg-white/[0.04]
+                        transition-colors group"
+                >
+                    <ExternalLink className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 transition-colors" />
                     View Live Site
                 </Link>
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold
+                        text-slate-500 dark:text-slate-400
+                        hover:text-red-600 dark:hover:text-red-400
+                        hover:bg-red-50 dark:hover:bg-red-500/[0.08]
+                        transition-colors group"
                 >
-                    <LogOut className="w-4 h-4 text-slate-400" />
+                    <LogOut className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-red-500 transition-colors" />
                     Sign Out
                 </button>
             </div>
