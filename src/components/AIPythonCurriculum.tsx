@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Eye, Target, Brain, Code2, Cpu, Layers, Trophy, Rocket } from "lucide-react";
+import { ChevronDown, Eye, Target, Brain, Code2, Cpu, Layers, Trophy, Rocket, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -269,15 +270,17 @@ export default function AIPythonCurriculum() {
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-950 dark:to-slate-900 rounded-3xl p-7 sm:p-10 shadow-xl"
+                className="rounded-3xl p-7 sm:p-10 shadow-xl border border-violet-200 dark:border-violet-800/40 bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40"
             >
+                {/* Header */}
                 <div className="flex items-center gap-3 mb-7">
-                    <div className="w-10 h-10 rounded-xl bg-yellow-400/20 flex items-center justify-center">
-                        <Trophy className="w-5 h-5 text-yellow-400" />
+                    <div className="w-10 h-10 rounded-xl bg-yellow-400/20 dark:bg-yellow-400/10 flex items-center justify-center border border-yellow-300/50 dark:border-yellow-400/20">
+                        <Trophy className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-black text-white">Course Outcomes</h3>
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Course Outcomes</h3>
                 </div>
 
+                {/* Outcome cards */}
                 <div className="grid sm:grid-cols-2 gap-4 mb-8">
                     {OUTCOMES.map((o, i) => (
                         <motion.div
@@ -286,27 +289,36 @@ export default function AIPythonCurriculum() {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.06 }}
-                            className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10"
+                            className="flex items-start gap-4 p-4 rounded-2xl bg-white dark:bg-white/5 border border-violet-100 dark:border-white/10 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
                         >
                             <span className="text-2xl shrink-0 mt-0.5">{o.emoji}</span>
                             <div>
-                                <p className="text-sm font-black text-white mb-0.5">{o.title}</p>
-                                <p className="text-xs text-slate-400 leading-relaxed">{o.desc}</p>
+                                <p className="text-sm font-black text-slate-900 dark:text-white mb-0.5">{o.title}</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{o.desc}</p>
                             </div>
                         </motion.div>
                     ))}
                 </div>
 
-                <div className="border-t border-white/10 pt-6 space-y-3">
-                    <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                {/* Footer text + CTA */}
+                <div className="border-t border-violet-200 dark:border-white/10 pt-6 space-y-3">
+                    <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
                         By completing these 30 days, students move from simple logic to building a fully functional AI companion.
                     </p>
-                    <p className="text-slate-400 text-sm leading-relaxed">
+                    <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
                         This course provides the ultimate foundation for careers in AI development, robotics, and software engineering, encouraging students to become the creators of tomorrow&apos;s technology.
                     </p>
-                    <div className="flex items-center gap-3 pt-2">
-                        <Rocket className="w-5 h-5 text-violet-400 shrink-0" />
-                        <span className="text-sm font-bold text-violet-300">30 Days &middot; 3 Layers &middot; 1 Complete AI Companion</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2">
+                        <div className="flex items-center gap-3">
+                            <Rocket className="w-5 h-5 text-violet-500 dark:text-violet-400 shrink-0" />
+                            <span className="text-sm font-bold text-violet-700 dark:text-violet-300">30 Days &middot; 3 Layers &middot; 1 Complete AI Companion</span>
+                        </div>
+                        <Link
+                            href="/contact"
+                            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-black text-white shadow-lg hover:shadow-violet-500/40 hover:-translate-y-0.5 transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shrink-0"
+                        >
+                            Explore Courses <ArrowRight className="w-4 h-4" />
+                        </Link>
                     </div>
                 </div>
             </motion.div>
