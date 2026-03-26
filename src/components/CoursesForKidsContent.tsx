@@ -64,7 +64,6 @@ function CourseCard({
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             style={{ perspective: 800, transformStyle: "preserve-3d" }}
-            className="group cursor-default"
         >
             <motion.div
                 style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
@@ -168,11 +167,11 @@ function CourseCard({
                         {/* CTA */}
                         <Link
                             href="/contact"
-                            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-black text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                            className="group/btn inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-black text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 pointer-events-auto"
                             style={{ background: `linear-gradient(135deg, ${gradFrom}, ${gradTo})` }}
                         >
                             {ctaLabel}
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
                         </Link>
                     </div>
                 </div>
