@@ -5,17 +5,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import TestimonialCard2D from "./TestimonialCard2D";
 
-export default function TestimonialsSlider() {
-    const [testimonials, setTestimonials] = useState<any[]>([]);
+export default function TestimonialsSlider({ staticData }: { staticData?: any[] }) {
+    const [testimonials, setTestimonials] = useState<any[]>(staticData || []);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
     useEffect(() => {
+        if (staticData && staticData.length > 0) return;
+        
         fetch("/api/admin/testimonials?page=home")
             .then(r => r.json())
             .then(data => { if (Array.isArray(data) && data.length > 0) setTestimonials(data); })
             .catch(console.error);
-    }, []);
+    }, [staticData]);
 
 
     const next = () => setCurrentIndex((prev) => (prev + 1) % testimonials.length);

@@ -8,7 +8,7 @@ import Image from "next/image";
 const PROGRAMS = [
     {
         id: "workshop",
-        title: "2-Day Hands-on Workshop",
+        title: "2 Days Training Program",
         description: "Conducted right at your school campus. Students work in groups of 5 with Take-away Kits. We cover the fundamentals of Robotics, Coding, and Science in an intensive, fun format.",
         icon: Wrench,
         color: "from-blue-500 to-cyan-500",

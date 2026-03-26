@@ -53,6 +53,24 @@
 - [ ] Mobile 375px — single column, app buttons prominent
 - [ ] Desktop 1440px — two-column payment cards
 
+### Phase 4: Content Refinements for Schools Page and Final Review
+
+**Goal:** Refine the exact wording and order of the Schools Page 'Implementation Journey' and fulfill final user-provided prompt data.
+**Requirements**: 
+1. Re-verify the massive prompt data for the 17 modules, 5-step learning timeline, inclusions, and testimonials.
+2. Specifically update the Implementation Journey text to match exactly:
+   1) Schedule a call with our team
+   2) Select a program we offer (2 day training, STEM coding, robotics lab, bootcamp)
+   3) Dedicated teacher will be assigned (will also send kit according to the module selected)
+   4) Execution of the programs (workshop, STEM, robotics lab, bootcamp)
+   5) Internship opportunity on Kavach project by the Indian Navy
+   6) Robotics championship
+**Depends on:** Phase 3
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 4 to break down)
+
 ---
 
 ## Phase Summary

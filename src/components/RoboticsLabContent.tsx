@@ -200,8 +200,8 @@ function PrinterModel() {
     return <GlbModel path="/models/3d_printer_2.0.glb" targetSize={6.0} />;
 }
 
-function WrenchModel() {
-    return <GlbModel path="/models/toolkit_3D.glb" targetSize={7.0} />;
+function DrillModel() {
+    return <GlbModel path="/models/dewalt_drill.glb" targetSize={7.0} />;
 }
 
 function HumanoidModel() {
@@ -490,7 +490,7 @@ function SchoolsContent() {
                         ))}
                     </div>
 
-                    {/* Interactive 3D Wrench Visual on the Right */}
+                    {/* Interactive 3D Drill Visual on the Right */}
                     <div className="relative flex items-center justify-center h-[450px] cursor-grab active:cursor-grabbing order-1 lg:order-2">
 
                         <div className="absolute inset-0 mobile-safe-canvas">
@@ -507,7 +507,7 @@ function SchoolsContent() {
                                 <directionalLight position={[-10, -10, -5]} intensity={0.4} />
                                 <Environment preset="warehouse" />
                                 <Suspense fallback={null}>
-                                    <WrenchModel />
+                                    <DrillModel />
                                 </Suspense>
                                 <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={10} blur={2} far={4} />
                                 {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1.5} enableZoom={false} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 2} />}

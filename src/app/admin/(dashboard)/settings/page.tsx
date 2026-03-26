@@ -20,6 +20,7 @@ interface SettingsForm {
   socialLinks: { instagram: string; linkedin: string; twitter: string; youtube: string };
   careersLink: string;
   bootcampLink: string;
+  roboticsChampionshipLink: string;
   sheetsWebhookUrl: string;
   paymentDetails: {
     upiId: string;
@@ -145,6 +146,7 @@ export default function AdminSettings() {
         }
         setValue("careersLink", d?.careersLink || "");
         setValue("bootcampLink", d?.bootcampLink || "");
+        setValue("roboticsChampionshipLink", d?.roboticsChampionshipLink || "");
         setValue("sheetsWebhookUrl", d?.sheetsWebhookUrl || "");
         if (d?.paymentDetails) {
           setValue("paymentDetails.upiId", d.paymentDetails.upiId || "");
@@ -405,6 +407,11 @@ export default function AdminSettings() {
                         <label className={lbl}>Bootcamp Ribbon URL <span className="normal-case font-normal text-slate-400">(Schools page hero)</span></label>
                         <input type="url" {...register("bootcampLink")} placeholder="https://forms.gle/bPqn2u..." className={pill} />
                         <p className="text-[11px] text-slate-400 mt-1.5 ml-1">Drives the &quot;Free AI &amp; Robotics Bootcamp&quot; ribbon on the Schools page.</p>
+                      </div>
+                      <div>
+                        <label className={lbl}>Robotics Champ. Ribbon URL <span className="normal-case font-normal text-slate-400">(Home page hero)</span></label>
+                        <input type="url" {...register("roboticsChampionshipLink")} placeholder="https://forms.gle/..." className={pill} />
+                        <p className="text-[11px] text-slate-400 mt-1.5 ml-1">Drives the promotional ribbon showing &quot;Register for Robotics Championship 2026-27&quot; on the main Home Page.</p>
                       </div>
                     </div>
                   </SectionCard>

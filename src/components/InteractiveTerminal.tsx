@@ -365,23 +365,24 @@ function RobotModel({ onClick, osActive }: { onClick: () => void; osActive: bool
                 {!osActive && (
                     <Html position={[0, 4.5, 0]} center>
                         <motion.div
-                            initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                            initial={{ opacity: 0, y: 20, scale: 0.5 }}
                             animate={{ 
                                 opacity: hovered ? 0 : 1, 
-                                y: hovered ? 10 : [0, -8, 0],
-                                scale: hovered ? 0.8 : 1
+                                y: hovered ? 20 : [0, -12, 0],
+                                scale: hovered ? 0.8 : [1, 1.05, 1]
                             }}
                             transition={{ 
-                                opacity: { duration: 0.3 },
-                                y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                                opacity: { duration: 0.2 },
+                                y: { duration: 1.5, repeat: Infinity, ease: "easeInOut" },
+                                scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
                             }}
-                            className={`whitespace-nowrap flex flex-col items-center pointer-events-none transition-transform duration-300 ${hovered ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}`}
+                            className={`whitespace-nowrap flex flex-col items-center pointer-events-none transition-all duration-300 ${hovered ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}`}
                         >
-                            <div className="bg-blue-600/90 backdrop-blur-md text-white text-sm font-bold px-4 py-2 rounded-2xl shadow-[0_4px_24px_rgba(37,99,235,0.5)] border border-blue-400/30 flex items-center gap-2">
-                                <span className="animate-wave inline-block origin-[70%_70%]">👋</span> 
-                                Tap me to launch PNT OS
+                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-base md:text-lg font-black px-6 py-3 rounded-2xl shadow-[0_4px_30px_rgba(37,99,235,0.6)] border-2 border-white/40 flex items-center gap-3 ring-4 ring-blue-500/20">
+                                <span className="text-2xl animate-bounce">👋</span> 
+                                TAP ME TO EXPLORE!
                             </div>
-                            <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-blue-600/90 -mt-[1px]" />
+                            <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-l-transparent border-r-transparent border-t-blue-600 -mt-[1px]" />
                         </motion.div>
                     </Html>
                 )}

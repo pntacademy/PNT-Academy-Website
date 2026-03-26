@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { Suspense, useState, useEffect } from "react";
 import { AGV } from "./AGV";
+import { Box } from "lucide-react";
 
 export default function Hero3D() {
     const [isMobile, setIsMobile] = useState(false);
@@ -34,11 +35,13 @@ export default function Hero3D() {
                     <pointLight position={[-10, -10, -10]} intensity={0.3} />
                     <Environment preset="night" />
 
-                    {/* Smaller AGV on mobile so it fits without overflow */}
-                    <AGV
-                        scale={isMobile ? 4.5 : 6}
-                        position={isMobile ? [0, -0.5, 0] : [0, 0, 0]}
-                    />
+                    {/* Hide AGV on mobile to improve performance and prevent rendering bugs, rely on the AR button instead */}
+                    {!isMobile && (
+                        <AGV
+                            scale={6}
+                            position={[0, 0, 0]}
+                        />
+                    )}
 
                     {!isMobile && (
                         <OrbitControls
@@ -50,6 +53,25 @@ export default function Hero3D() {
                     )}
                 </Suspense>
             </Canvas>
+
+            {/* AR Overlay Button */}
+            <div className="absolute bottom-6 right-6 z-10 flex flex-col items-end gap-2">
+                <a
+                    rel="ar"
+                    href="/model.glb"
+                    onClick={(e) => {
+                        if (typeof window !== "undefined" && /android/i.test(navigator.userAgent)) {
+                            e.preventDefault();
+                            const modelUrl = new URL("/model.glb", window.location.origin).toString();
+                            window.location.href = `intent://arvr.google.com/scene-viewer/1.0?file=${modelUrl}&mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                        }
+                    }}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600/90 hover:bg-indigo-500 backdrop-blur-md text-white rounded-full text-sm font-semibold shadow-xl border border-white/10 transition-all hover:scale-105 active:scale-95 group pointer-events-auto"
+                >
+                    <Box className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                    <span>View in AR</span>
+                </a>
+            </div>
         </div>
     );
 }

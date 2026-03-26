@@ -11,6 +11,7 @@ import {
     Wrench, Globe, Brain, Lightbulb, Cog, ExternalLink
 } from "lucide-react";
 import { getLiveSchools } from "@/lib/actions/db";
+import TestimonialsSlider from "./TestimonialsSlider";
 
 // Videos are auto-fetched from /api/admin/videos (auto-detects /public/videos/)
 
@@ -39,30 +40,32 @@ const STATIC_FALLBACK_SCHOOLS = [
     { id: '11', name: "JIJAMATA CONVENT SCHOOL", imageUrl: "" },
 ];
 
-// ── ALL 15+ Workshop Modules ─────────────────────────────────────────
+// ── ALL 17 2-Day Workshop Modules ─────────────────────────────────────────
 const WORKSHOP_MODULES = [
-    { title: "Intro to Robotics", icon: Cpu, desc: "Hands-on chassis building, motor control, and sensor basics.", backDesc: "Students build their first moving robot from scratch using Arduino-compatible kits. Covers DC motors, servo motors, ultrasonic sensors, and basic obstacle avoidance.", age: "Ages 8-14", duration: "8 Sessions" },
-    { title: "Arduino Programming", icon: Code, desc: "C++ fundamentals and sensor integration with hardware.", backDesc: "Deep dive into C++ for embedded systems. Students learn digital/analog I/O, PWM, interrupts, and serial communication. Projects include automated plant watering.", age: "Ages 10-16", duration: "12 Sessions" },
-    { title: "IoT & Smart Devices", icon: Globe, desc: "Connected devices, smart environments, and cloud telemetry.", backDesc: "Build WiFi-connected devices with ESP32 boards. Create smart home dashboards, weather stations, and real-time monitoring systems using MQTT.", age: "Ages 12-16", duration: "10 Sessions" },
-    { title: "Drone Engineering", icon: Rocket, desc: "Flight mechanics, propeller balancing, and autonomous navigation.", backDesc: "From ground up: aerodynamics, motor configurations, flight controllers, and PID tuning. Assemble a quadcopter and program autonomous waypoint missions.", age: "Ages 12-16", duration: "12 Sessions" },
-    { title: "AI Image Recognition", icon: Brain, desc: "Training models to recognize objects using Python & OpenCV.", backDesc: "Introduction to computer vision and machine learning. Train classifiers, build face detection systems, and create object recognition apps.", age: "Ages 13-17", duration: "10 Sessions" },
-    { title: "Cyber Security Basics", icon: Shield, desc: "Network fundamentals, encryption, & ethical hacking principles.", backDesc: "Learn about firewalls, VPNs, password security, and common vulnerabilities. Practice penetration testing in a safe sandbox environment.", age: "Ages 13-17", duration: "8 Sessions" },
-    { title: "Game Development", icon: Trophy, desc: "Logic, loops, and math through building interactive 2D games.", backDesc: "Start with Scratch, progress to Python Pygame. Design levels, implement physics, and learn event-driven programming through game creation.", age: "Ages 8-15", duration: "10 Sessions" },
-    { title: "Renewable Energy Tech", icon: Lightbulb, desc: "Solar panels, wind turbines, and sustainability engineering.", backDesc: "Hands-on with solar cells, mini wind turbines, and energy storage. Analyze efficiency, build hybrid systems, and learn sustainable engineering.", age: "Ages 10-16", duration: "8 Sessions" },
-    { title: "3D Design & Printing", icon: Cog, desc: "CAD fundamentals and translating digital models to physical objects.", backDesc: "Using Tinkercad and Fusion360, design functional objects and print them on FDM 3D printers. Covers tolerances and iterative design.", age: "Ages 10-16", duration: "10 Sessions" },
-    { title: "Python for AI", icon: Code, desc: "Data structures, algorithms, and building simple AI applications.", backDesc: "Comprehensive Python course: data types, functions, OOP, NumPy and Pandas. Build chatbots, recommendation engines, and sentiment analyzers.", age: "Ages 13-17", duration: "14 Sessions" },
-    { title: "App Development", icon: Globe, desc: "Building mobile apps using MIT App Inventor and React Native.", backDesc: "From wireframes to published apps. UI/UX design, state management, API integration. Final project: a school utility app.", age: "Ages 13-17", duration: "12 Sessions" },
-    { title: "Data Science Intro", icon: BarChart, desc: "Collecting, cleaning, and visualizing data for insights.", backDesc: "Using Python, Google Sheets, and Tableau. Work with real datasets, create visualizations, and present data-driven stories.", age: "Ages 14-17", duration: "10 Sessions" },
-    { title: "Advanced Robotics", icon: Wrench, desc: "Multi-sensor integration, PID control, and maze-solving.", backDesc: "Advanced algorithms for line following, wall following, and shortest path navigation. Compete in timed maze-solving challenges.", age: "Ages 13-17", duration: "12 Sessions" },
-    { title: "Space Tech & Satellites", icon: Star, desc: "Satellite communication, GPS, and building CanSat payloads.", backDesc: "Understand orbital mechanics, radio communication, and payload design. Build a CanSat that collects atmospheric data.", age: "Ages 14-17", duration: "10 Sessions" },
-    { title: "Electronics Fundamentals", icon: Zap, desc: "Circuit design, soldering, breadboarding, and components.", backDesc: "Master resistors, capacitors, transistors, and ICs. Read schematics, use multimeters, solder components, and build functional circuits.", age: "Ages 10-16", duration: "8 Sessions" },
+    { title: "Warehouse Robots", icon: Cpu, desc: "Make an Autonomous Robot which can follow a line, identify an Obstacle and manage delivery of parcels.", backDesc: "Make an Autonomous Robot which can follow a line, identify an Obstacle and manage delivery of parcels." },
+    { title: "Industrial Humanoid Robot", icon: Users, desc: "Mini humanoid robots are fun, programmable devices that walk using microcontrollers.", backDesc: "Mini humanoid robots are fun, programmable devices that walk using microcontrollers." },
+    { title: "3D Gaming", icon: Trophy, desc: "Interactive games with three-dimensional graphics—height, width, and depth.", backDesc: "Interactive games with three-dimensional graphics—height, width, and depth." },
+    { title: "Solar Panel & Smart Energy", icon: Lightbulb, desc: "Use the sun to build your own fun, solar-powered car with cool solar panels.", backDesc: "Use the sun to build your own fun, solar-powered car with cool solar panels." },
+    { title: "3D Printing", icon: Cog, desc: "Turns computer designs into real 3D objects by building them layer by layer.", backDesc: "Turns computer designs into real 3D objects by building them layer by layer." },
+    { title: "Android App Development", icon: Globe, desc: "Use the Android OS to create your own apps like a music player, gallery, or mail app.", backDesc: "Use the Android OS to create your own apps like a music player, gallery, or mail app." },
+    { title: "Python", icon: Code, desc: "Beginner-friendly, high-level programming language designed to be easy to read.", backDesc: "Beginner-friendly, high-level programming language designed to be easy to read." },
+    { title: "IoT", icon: Zap, desc: "Connects everyday objects using electronics and software so they can collect and share data.", backDesc: "Connects everyday objects using electronics and software so they can collect and share data." },
+    { title: "Mobi-Robotics", icon: Wrench, desc: "A simple robotics project controlled by a phone—like a line follower or object avoider.", backDesc: "A simple robotics project controlled by a phone—like a line follower or object avoider." },
+    { title: "Medical Robot", icon: Wrench, desc: "Prototype version to deliver food and medicine.", backDesc: "Prototype version to deliver food and medicine." },
+    { title: "Chat GPT", icon: Brain, desc: "Teach students how to build their own chatbot!", backDesc: "Teach students how to build their own chatbot!" },
+    { title: "Smart Farming", icon: Globe, desc: "Using sensors to predict weather and help farmers, just like a weather forecasting robot.", backDesc: "Using sensors to predict weather and help farmers, just like a weather forecasting robot." },
+    { title: "Artificial Intelligence", icon: Brain, desc: "Creating smart machines that think and act like humans.", backDesc: "Creating smart machines that think and act like humans." },
+    { title: "Web Designing", icon: Globe, desc: "Skills and techniques to create functional and visually appealing websites.", backDesc: "Skills and techniques to create functional and visually appealing websites." },
+    { title: "Cyber Security", icon: Shield, desc: "Protects computers, networks, and data from malicious attacks.", backDesc: "Protects computers, networks, and data from malicious attacks." },
+    { title: "Virtual Reality", icon: Star, desc: "Computer-generated worlds with realistic scenes and objects.", backDesc: "Computer-generated worlds with realistic scenes and objects." },
+    { title: "Industrial Robotic Arm", icon: Cpu, desc: "Learn robotic mechanics by designing and programming robotic arms.", backDesc: "Learn robotic mechanics by designing and programming robotic arms." },
 ];
 
 // ── Impact Statistics ────────────────────────────────────────────────
 const STATS = [
     { value: 100, suffix: "+", label: "Schools Partnered" },
     { value: 25000, suffix: "+", label: "Students Trained" },
-    { value: 15, suffix: "+", label: "Workshop Modules" },
+    { value: 17, suffix: "", label: "Workshop Modules" },
     { value: 50, suffix: "+", label: "Certified Trainers" },
 ];
 
@@ -74,13 +77,116 @@ const CORE_PROGRAMS = [
     { title: "Hackathons & Competitions", icon: Trophy, desc: "We prepare students for national-level hackathons, tech fests, and robotics olympiads with dedicated mentorship.", color: "from-green-500 to-emerald-500" },
 ];
 
-// ── Learning Journey Steps ───────────────────────────────────────────
-const JOURNEY_STEPS = [
-    { step: "01", title: "Needs Assessment & Consultation", desc: "Our team evaluates your school's infrastructure, student demographics, and curriculum goals to find the best-fit program." },
-    { step: "02", title: "Customized Program Design", desc: "We design a tailored, semester-wide program covering robotics kits, software licenses, lab layout, and session schedules." },
-    { step: "03", title: "Educator Certification Training", desc: "Your teachers undergo our intensive 40-hour hands-on training program. They receive certification upon completion." },
-    { step: "04", title: "Student Workshops & Rollout", desc: "Workshops begin with students receiving real hardware kits. Each session is project-based with take-home assignments." },
-    { step: "05", title: "Continuous Support & Review", desc: "Dedicated technical support, quarterly assessment reports, parent feedback sessions, and curriculum upgrades." },
+// ── 6-Step Implementation Journey ──────────────────────────────────────
+const IMPLEMENTATION_JOURNEY = [
+    { step: "01", title: "Schedule a Call", desc: "Book a consultation with our experts to discuss your school's vision and requirements." },
+    { step: "02", title: "Select a Program", desc: "Choose from our 2 Days Training Program, STEM Coding curriculum, Robotics Lab setup, or Bootcamp training." },
+    { step: "03", title: "Teacher & Kits Assigned", desc: "A dedicated PNT educator is assigned, and high-quality robotics kits are dispatched to your school." },
+    { step: "04", title: "Execution of Programs", desc: "Hands-on, curriculum-aligned sessions begin with your students, fostering real-world tech skills." },
+    { step: "05", title: "Internship (Kavach Project)", desc: "Top students receive opportunities to work on the prestigious Kavach Cyber Security/Robotics project." },
+    { step: "06", title: "Robotics Championship", desc: "Students showcase their innovations at our annual National Robotics Championship 2026-27." },
+];
+
+// ── 5-Step Learning Journey ───────────────────────────────────────────
+const LEARNING_JOURNEY = [
+    { step: "01", title: "Robotics Curriculum", desc: "Master block coding, logic, and hardware assembly.", icon: Lightbulb },
+    { step: "02", title: "Kavach Program", desc: "Engage in our specialized cyber security and IoT modules.", icon: Shield },
+    { step: "03", title: "Code Submission", desc: "Students submit their capstone projects and smart programs.", icon: Code },
+    { step: "04", title: "Video Presentation", desc: "Pitching and presenting the functional prototypes on video.", icon: FileCheck },
+    { step: "05", title: "IIT Finale", desc: "Compete at the grand finale hosted at premier IIT campuses.", icon: Trophy },
+];
+
+// ── Grade-Wise Project Explorer (Individual Grades 1–10) ─────────────
+const GRADE_EXPLORER_DATA = [
+    {
+        grade: "Grade 1",
+        title: "Foundations of Electricity",
+        desc: "Simple circuits, switches and basic electronic concepts.",
+        tags: ["Table Lamp", "Fire Alarm Game", "Door Bell", "Electric Fan"],
+        color: "bg-blue-500"
+    },
+    {
+        grade: "Grade 2",
+        title: "Electromagnetism & Mechanisms",
+        desc: "Electromagnetic principles and simple automated systems.",
+        tags: ["Make your own Electromagnet", "Elevator", "Street Lamp Project", "Traffic Light System"],
+        color: "bg-cyan-500"
+    },
+    {
+        grade: "Grade 3",
+        title: "Motion & Energy",
+        desc: "Motion, energy conversion and introductory robotics.",
+        tags: ["Windmill", "Military Tank", "Walking Robot", "Hand Electricity Generator"],
+        color: "bg-violet-500"
+    },
+    {
+        grade: "Grade 4",
+        title: "Solar & Remote Technology",
+        desc: "Renewable energy, remote control systems and cranes.",
+        tags: ["Solar Car", "Solar Fan", "Soap Dispenser", "Remote Control Car", "Electromagnet Crane"],
+        color: "bg-green-500"
+    },
+    {
+        grade: "Grade 5",
+        title: "Smart Automation Systems",
+        desc: "Autonomous robots, security systems and smart home tech.",
+        tags: ["Amazon Warehouse Robot", "Obstacle Avoider Robot", "Line Follower Robot", "Theft Detection", "Security Alarm", "Touchless Door Bell"],
+        color: "bg-yellow-500"
+    },
+    {
+        grade: "Grade 6",
+        title: "Sensors & Humanoid Bots",
+        desc: "Sensor integration, real-time systems and bipedal robots.",
+        tags: ["Real-time Street Light System", "Distance Measurement", "People Counter", "Smart Blind Stick", "Walking Robot", "Dancing Robot"],
+        color: "bg-orange-500"
+    },
+    {
+        grade: "Grade 7",
+        title: "Joystick Control & IoT",
+        desc: "Joystick-controlled robots, app control and smart systems.",
+        tags: ["Humanoid Robot with Joystick", "Android App Robot Control", "Smart Dustbin", "Smart Water Tank", "Smart Hand Sanitizer"],
+        color: "bg-red-500"
+    },
+    {
+        grade: "Grade 8",
+        title: "Electronics & Software Projects",
+        desc: "Digital systems, displays and functional software applications.",
+        tags: ["Smart Door Lock", "Digital Clock", "Snake Game", "Smart Calculator", "Virtual Meeting Software"],
+        color: "bg-pink-500"
+    },
+    {
+        grade: "Grade 9",
+        title: "AI & Computer Vision",
+        desc: "Machine learning, image recognition and AI-powered applications.",
+        tags: ["Gender Detection", "Face Mask Detection", "Chatbot", "Age & Gender ML Python", "Emotion Detection"],
+        color: "bg-indigo-500"
+    },
+    {
+        grade: "Grade 10",
+        title: "Data Science & Prediction Models",
+        desc: "Real-world ML models, classification and gesture recognition.",
+        tags: ["Walmart Forecasting", "Cancer Prediction", "Diabetes Prediction", "Gesture Recognition", "IRIS Classification"],
+        color: "bg-emerald-500"
+    },
+];
+
+// ── Specific School Testimonials ─────────────────────────────────────
+const SCHOOL_TESTIMONIALS = [
+    {
+        name: "Mrs. Deena Rawat",
+        role: "Principal, CBM High School",
+        quote: "The robotics curriculum introduced by PNT Academy has been a game-changer. The blend of practical activities and conceptual learning has ignited curiosity and creativity. It is truly heartening to see such innovation become an integral part of our school's academic journey."
+    },
+    {
+        name: "Mrs. Suchita Singh",
+        role: "Principal, SVVNS School, Pune",
+        quote: "PNT Academy has brought a refreshing wave of futuristic learning to SVVNS. The hands-on projects have helped children grasp complex concepts effortlessly. We believe this exposure will give them a strong foundation for life."
+    },
+    {
+        name: "Mr. Bhushan",
+        role: "Principal, Cambria International School, Kalyan",
+        quote: "Partnering with PNT Academy has been one of the most impactful decisions for our school. The sessions are interactive, engaging, and tailored to different learning levels. The feedback from parents and students has been overwhelmingly positive."
+    }
 ];
 
 // ── Why Choose Us ────────────────────────────────────────────────────
@@ -91,6 +197,24 @@ const WHY_CHOOSE = [
     { title: "End-to-End Support", desc: "From lab setup to teacher training to student assessments — we handle the entire tech education lifecycle.", icon: Users },
     { title: "Proven Track Record", desc: "With 100+ schools and 25,000+ students trained, our programs deliver measurable learning outcomes.", icon: Trophy },
     { title: "Government Recognized", desc: "Registered under Startup India and recognized by MSME for contributions to STEM education nationwide.", icon: Shield },
+];
+
+// ── Inclusions ───────────────────────────────────────────────────────
+const INCLUSIONS = [
+    { title: "Curriculum", icon: BookOpen, desc: "Structured, NEP 2020 aligned syllabus." },
+    { title: "Softwares", icon: Code, desc: "Access to all required proprietary & open-source software." },
+    { title: "Training & Delivery", icon: Users, desc: "Expert trainers and systematic classroom delivery." },
+    { title: "Assessment", icon: FileCheck, desc: "Regular evaluation and progress tracking." },
+    { title: "Competitions", icon: Trophy, desc: "National & state-level robotics championships." },
+    { title: "ToolsKit", icon: Wrench, desc: "Comprehensive hardware kits for every student." },
+];
+
+// ── Why Coding ───────────────────────────────────────────────────────
+const WHY_CODING = [
+    { title: "Create Future Innovators", desc: "By coding early, students start building real applications and software.", icon: Rocket },
+    { title: "Develop Logical Skills", desc: "Early learning develops strong logical and analytical thinking skills.", icon: Brain },
+    { title: "Problem Solving", desc: "Enhances problem-solving capability and computational thinking.", icon: Lightbulb },
+    { title: "Gain Recognition", desc: "Start participating and winning in various national coding competitions.", icon: Trophy },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -241,7 +365,7 @@ function RotatingText() {
 // ═══════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════
-export default function SchoolsTrainingContent({ bootcampLink = "https://forms.gle/" }: { bootcampLink?: string }) {
+export default function SchoolsTrainingContent({ championshipLink = "https://forms.gle/" }: { championshipLink?: string }) {
     const [liveSchools, setLiveSchools] = useState<any[]>([]);
     const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
 
@@ -296,14 +420,14 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
 
                 <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 xl:px-0 flex flex-col items-center justify-center text-center py-20 md:py-32">
                     
-                    {/* Clickable Bootcamp Ribbon */}
+                    {/* Clickable Championship Ribbon */}
                     <motion.div 
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
                     >
                         <Link 
-                            href={bootcampLink} 
+                            href={championshipLink} 
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-red-500/90 dark:bg-red-600/90 backdrop-blur-xl border border-red-400/50 mb-10 shadow-[0_0_30px_rgba(239,68,68,0.3)] hover:shadow-[0_0_50px_rgba(239,68,68,0.5)] hover:scale-105 transition-all cursor-pointer group"
@@ -313,7 +437,7 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
                                 <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
                             </span>
                             <span className="text-white text-sm md:text-base font-bold tracking-wide">
-                                🚀 Free AI & Robotics Bootcamp — Register Now!
+                                🏆 Robotics Championship 2026-27 — Register Your School Now!
                             </span>
                             <ExternalLink className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
                         </Link>
@@ -344,10 +468,10 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.6 }}
                     >
-                        <button className="px-10 py-5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2 group text-lg hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(59,130,246,0.4)] mx-auto">
+                        <Link href="/contact" className="px-10 py-5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2 group text-lg hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(59,130,246,0.4)] mx-auto inline-flex">
                             Partner with Us
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </button>
+                        </Link>
                     </motion.div>
                 </div>
             </section>
@@ -377,7 +501,7 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 2: DUAL-RAIL LOGO TICKER
+                SECTION 2: SINGLE-RAIL LOGO TICKER
             ═══════════════════════════════════════════════════════════ */}
             <section className="w-full py-16 bg-white/30 dark:bg-slate-900/30 backdrop-blur-sm relative z-10 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 md:px-8 xl:px-0 mb-8">
@@ -389,32 +513,16 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
                     </p>
                 </div>
 
-                {/* Rail 1: Left to Right */}
-                <div className="w-full overflow-hidden relative mb-4">
+                <div className="w-full overflow-hidden relative">
                     <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-white dark:from-slate-950 to-transparent z-10 pointer-events-none" />
                     <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-white dark:from-slate-950 to-transparent z-10 pointer-events-none" />
                     <motion.div 
-                        className="flex gap-8 items-center whitespace-nowrap min-w-max"
+                        className="flex gap-12 items-center whitespace-nowrap min-w-max py-4"
                         animate={{ x: [0, -1200] }}
                         transition={{ repeat: Infinity, ease: "linear", duration: 35 }}
                     >
                         {marqueeRow1.map((school, i) => (
                             <LogoPill key={`r1-${i}`} school={school} />
-                        ))}
-                    </motion.div>
-                </div>
-
-                {/* Rail 2: Right to Left */}
-                <div className="w-full overflow-hidden relative">
-                    <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-white dark:from-slate-950 to-transparent z-10 pointer-events-none" />
-                    <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-white dark:from-slate-950 to-transparent z-10 pointer-events-none" />
-                    <motion.div 
-                        className="flex gap-8 items-center whitespace-nowrap min-w-max"
-                        animate={{ x: [-1200, 0] }}
-                        transition={{ repeat: Infinity, ease: "linear", duration: 40 }}
-                    >
-                        {marqueeRow2.map((school, i) => (
-                            <LogoPill key={`r2-${i}`} school={school} />
                         ))}
                     </motion.div>
                 </div>
@@ -486,22 +594,190 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 5: 15+ WORKSHOP MODULES (3D FLIP CARDS)
+                SECTION 4.5: PROGRAM INCLUSIONS
+            ═══════════════════════════════════════════════════════════ */}
+            <section className="py-24 w-full bg-white dark:bg-black/80 relative z-10 border-t border-slate-200 dark:border-slate-800">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 xl:px-0">
+                    <div className="text-center mb-16">
+                        <p className="text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest text-sm mb-3">WHAT YOU GET</p>
+                        <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight">Program Inclusions</h2>
+                        <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto mt-6" />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                        {INCLUSIONS.map((item, i) => (
+                            <motion.div 
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                className="flex flex-col items-center text-center p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-blue-500/50 hover:shadow-xl transition-all group"
+                            >
+                                <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-blue-600 transition-all duration-300">
+                                    <item.icon className="w-8 h-8 text-blue-600 dark:text-blue-400 group-hover:text-white transition-colors" />
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
+                                <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed">{item.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 4.7: WHY CODING
+            ═══════════════════════════════════════════════════════════ */}
+            <section className="py-24 w-full bg-slate-50 dark:bg-slate-900/30 relative z-10 border-t border-slate-200 dark:border-slate-800">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 xl:px-0">
+                    <div className="text-center mb-16">
+                        <p className="text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-widest text-sm mb-3">EARLY ADVANTAGE</p>
+                        <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight">Why Teach Coding?</h2>
+                        <div className="w-16 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full mx-auto mt-6" />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {WHY_CODING.map((item, i) => (
+                            <motion.div 
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                className="p-6 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:border-emerald-500/50 hover:shadow-lg transition-all"
+                            >
+                                <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-4">
+                                    <item.icon className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
+                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 5: 1-YEAR STEM CURRICULUM & GRADE EXPLORER
+            ═══════════════════════════════════════════════════════════ */}
+            <section className="py-24 w-full bg-slate-100 dark:bg-black/40 relative z-10 border-y border-slate-200 dark:border-slate-800">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 xl:px-0">
+                    <div className="flex flex-col lg:flex-row gap-16 items-center">
+                        <div className="w-full lg:w-1/2">
+                            <p className="text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest text-sm mb-3">COMPREHENSIVE PROGRAM</p>
+                            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6 tracking-tight">1-Year STEM Robotics Curriculum</h2>
+                            <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 leading-relaxed">
+                                Transform your school&apos;s tech education with our flagship year-long curriculum. From grade 1 to 10, students evolve from basic block coding to complex Python AI and robotics engineering.
+                            </p>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                                    <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1">42+</div>
+                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Hands-on Projects</p>
+                                </div>
+                                <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                                    <div className="text-3xl font-black text-purple-600 dark:text-purple-400 mb-1">100%</div>
+                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-300">NEP 2020 Aligned</p>
+                                </div>
+                                <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                                    <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mb-1">1st-10th</div>
+                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Grade Coverage</p>
+                                </div>
+                                <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                                    <div className="text-3xl font-black text-orange-600 dark:text-orange-400 mb-1">24/7</div>
+                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Technical Support</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="w-full lg:w-1/2 relative">
+                            <div className="bg-white dark:bg-slate-900/50 rounded-3xl p-6 md:p-8 shadow-2xl border border-slate-200 dark:border-slate-800 backdrop-blur-sm">
+                                <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-6">Grade-Wise Project Explorer</h3>
+                                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                                    {GRADE_EXPLORER_DATA.map((grade, i) => (
+                                        <details key={i} className="group bg-slate-50 dark:bg-slate-800 border-none rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                                            <summary className="flex items-center justify-between p-5 cursor-pointer select-none">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${grade.color} shadow-md`}>
+                                                        {i + 1}
+                                                    </div>
+                                                    <span className="font-bold text-slate-900 dark:text-white text-lg">{grade.grade}</span>
+                                                </div>
+                                                <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center text-slate-500 group-open:rotate-90 transition-transform">
+                                                    <ChevronRight className="w-4 h-4" />
+                                                </div>
+                                            </summary>
+                                            <div className="p-5 pt-0 px-5 pb-5">
+                                                <p className="text-slate-600 dark:text-slate-300 text-sm font-medium mb-4">{grade.title} — {grade.desc}</p>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {grade.tags.map((tag, idx) => (
+                                                        <span key={idx} className="bg-white dark:bg-black border border-slate-200 dark:border-slate-700 text-xs font-bold px-3 py-1.5 rounded-full text-slate-700 dark:text-slate-300 shadow-sm">
+                                                            {tag}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </details>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 6: STUDENT LEARNING JOURNEY
+            ═══════════════════════════════════════════════════════════ */}
+            <section className="py-24 w-full bg-transparent relative z-10 overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 xl:px-0">
+                    <div className="text-center mb-16">
+                        <p className="text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-widest text-sm mb-3">STUDENT EXPERIENCE</p>
+                        <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight">5-Step Learning Journey</h2>
+                        <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">How students evolve from absolute beginners to confident innovators.</p>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 relative max-w-6xl mx-auto">
+                        {/* Connecting Line (Desktop) */}
+                        <div className="hidden md:block absolute top-[45px] left-[5%] right-[5%] h-[2px] bg-gradient-to-r from-emerald-500/10 via-emerald-500/40 to-emerald-500/10 z-0"></div>
+                        
+                        {LEARNING_JOURNEY.map((step, i) => (
+                            <motion.div 
+                                key={i}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                className="relative flex flex-col items-center text-center group w-full max-w-[200px]"
+                            >
+                                <div className="w-24 h-24 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg flex items-center justify-center mb-6 z-10 group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-300">
+                                    <step.icon className="w-8 h-8 text-emerald-500" />
+                                    <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-emerald-500 text-white font-black text-sm flex items-center justify-center border-4 border-slate-50 dark:border-slate-900 transition-colors">
+                                        {step.step}
+                                    </div>
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{step.title}</h3>
+                                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{step.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 7: 17 WORKSHOP MODULES (3D FLIP CARDS)
             ═══════════════════════════════════════════════════════════ */}
             <section className="py-24 w-full bg-transparent relative z-10">
                 <div className="max-w-7xl mx-auto px-4 md:px-8 xl:px-0">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
                         <div>
-                            <p className="text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest text-sm mb-3">FULL CURRICULUM</p>
-                            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight">15+ Practical Workshop Modules</h2>
-                            <p className="text-slate-600 dark:text-slate-400 text-lg max-w-xl">Hover or tap to reveal full details about each module.</p>
+                            <p className="text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest text-sm mb-3">2 TRAINING DAYS PROGRAM</p>
+                            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight">17 Workshop Modules</h2>
+                            <p className="text-slate-600 dark:text-slate-400 text-lg max-w-xl">Double tap/hover to flip these interactive preview cards to view more details.</p>
                         </div>
-                        <button className="text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-2 hover:gap-4 transition-all pb-2 border-b border-blue-600/30 shrink-0">
-                            Download Full Curriculum <ArrowRight className="w-4 h-4" />
-                        </button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                         {WORKSHOP_MODULES.map((module, i) => (
                             <motion.div 
                                 key={i}
@@ -535,10 +811,9 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
                                             </div>
                                             <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{module.desc}</p>
                                         </div>
-                                        <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700/50 mt-auto">
-                                            <span className="text-xs font-bold text-blue-600 dark:text-blue-400">{module.age}</span>
-                                            <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 group-hover:text-blue-500 transition-colors">
-                                                Flip for details <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform"/>
+                                        <div className="flex items-center justify-end pt-4 border-t border-slate-200 dark:border-slate-700/50 mt-auto">
+                                            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
+                                                Tap/Hover to view details <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform"/>
                                             </span>
                                         </div>
                                     </div>
@@ -552,9 +827,10 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
                                             <h3 className="text-lg font-bold text-white mb-3">{module.title}</h3>
                                             <p className="text-blue-100 text-sm leading-relaxed">{module.backDesc}</p>
                                         </div>
-                                        <div className="flex items-center justify-between pt-4 border-t border-white/20 mt-auto">
-                                            <span className="text-xs font-bold text-white/80">⏱ {module.duration}</span>
-                                            <span className="text-xs font-bold text-white/80">👤 {module.age}</span>
+                                        <div className="flex flex-col gap-3 pt-4 border-t border-white/20 mt-auto">
+                                            <button className="w-full py-3 bg-white text-blue-600 font-black rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-all active:scale-95">
+                                                Book Workshop
+                                            </button>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -565,18 +841,18 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 6: LEARNING JOURNEY TIMELINE
+                SECTION 8: IMPLEMENTATION JOURNEY TIMELINE
             ═══════════════════════════════════════════════════════════ */}
             <section className="py-24 w-full bg-slate-50/50 dark:bg-slate-900/30 backdrop-blur-sm relative z-10">
                 <div className="max-w-4xl mx-auto px-4 md:px-8 xl:px-0">
                     <div className="text-center mb-16">
-                        <p className="text-green-600 dark:text-green-400 font-bold uppercase tracking-widest text-sm mb-3">HOW IT WORKS</p>
+                        <p className="text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest text-sm mb-3">HOW IT WORKS</p>
                         <h2 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">Implementation Journey</h2>
-                        <p className="text-slate-600 dark:text-slate-400 text-lg max-w-xl mx-auto mt-4">A structured, step-by-step process from initial consultation to continuous student engagement.</p>
+                        <p className="text-slate-600 dark:text-slate-400 text-lg max-w-xl mx-auto mt-4">A structured, 6-step process from initial consultation to continuous student engagement.</p>
                     </div>
                     
                     <div className="relative border-l-2 border-blue-200 dark:border-slate-700 ml-6 md:ml-12 pl-8 md:pl-16 space-y-14">
-                        {JOURNEY_STEPS.map((step, i) => (
+                        {IMPLEMENTATION_JOURNEY.map((step, i) => (
                             <motion.div 
                                 key={i} 
                                 initial={{ opacity: 0, x: -30 }}
@@ -601,7 +877,12 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
             </section>
 
             {/* ═══════════════════════════════════════════════════════════
-                SECTION 7: FINAL CTA
+                SECTION 9: TESTIMONIALS SLIDER
+            ═══════════════════════════════════════════════════════════ */}
+            <TestimonialsSlider staticData={SCHOOL_TESTIMONIALS} />
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION 10: FINAL CTA
             ═══════════════════════════════════════════════════════════ */}
             <section className="py-24 w-full bg-transparent relative z-10">
                 <div className="max-w-4xl mx-auto px-4 md:px-8 xl:px-0 text-center">
@@ -640,7 +921,7 @@ export default function SchoolsTrainingContent({ bootcampLink = "https://forms.g
 function LogoPill({ school }: { school: any }) {
     if (school.imageUrl) {
         return (
-            <div className="relative h-14 w-36 md:h-16 md:w-44 shrink-0 hover:scale-110 transition-transform">
+            <div className="relative h-20 w-48 md:h-24 md:w-56 shrink-0 hover:scale-110 transition-transform">
                 <Image src={school.imageUrl} alt={school.name || "School Logo"} fill className="object-contain" />
             </div>
         );
