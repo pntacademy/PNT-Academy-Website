@@ -5,6 +5,7 @@ import { Monitor, Wrench, Brain, Clock, MessageSquare, ArrowRight, Sparkles, Sta
 import Link from "next/link";
 import { motion } from "framer-motion";
 import RoboticsCurriculum from "./RoboticsCurriculum";
+import AIPythonCurriculum from "./AIPythonCurriculum";
 
 // ─── Reusable Course Card ─────────────────────────────────────────────
 interface CourseCardProps {
@@ -249,6 +250,9 @@ export default function CoursesForKidsContent() {
                     note="* Detailed curriculum updating soon. Contact us for early access."
                 />
             </div>
+
+            {/* ── Visual AI & Python 30-Day Curriculum ──────────── */}
+            <AIPythonCurriculum />
 
             {/* ─── Customized Courses ──────────────────────────── */}
             <motion.div 
