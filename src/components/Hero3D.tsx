@@ -59,25 +59,40 @@ export default function Hero3D() {
             </Canvas>
 
             {/* AR Overlay via Native Model-Viewer Web Component */}
-            <div className="absolute inset-0 z-10 pointer-events-none">
-                {/* @ts-ignore - Custom Web Component */}
-                <model-viewer
-                    src="/model.glb"
-                    ar
-                    ar-modes="webxr scene-viewer quick-look"
-                    reveal="manual"
-                    style={{ width: "100%", height: "100%", backgroundColor: "transparent" }}
-                >
+            {isMobile && (
+                <div className="absolute bottom-6 right-6 z-10 flex flex-col items-end gap-2 pointer-events-auto">
+                    {/* Hidden model-viewer used purely for standardizing AR cross-platform */}
+                    {/* @ts-ignore - Custom Web Component */}
+                    <model-viewer
+                        id="ar-viewer"
+                        src="/model.glb"
+                        ar
+                        ar-modes="webxr scene-viewer quick-look"
+                        reveal="manual"
+                        style={{ display: "none" }}
+                    />
+
                     <button
-                        slot="ar-button"
-                        className="pointer-events-auto absolute bottom-6 right-6 flex items-center gap-2 px-4 py-2.5 bg-indigo-600/90 hover:bg-indigo-500 backdrop-blur-md text-white rounded-full text-sm font-semibold shadow-xl border border-white/10 transition-all hover:scale-105 active:scale-95 group"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            const viewer = document.getElementById("ar-viewer") as any;
+                            if (viewer && typeof viewer.activateAR === "function") {
+                                viewer.activateAR();
+                            } else {
+                                // Fallback intent for Android if model-viewer script hasn't loaded
+                                if (/android/i.test(navigator.userAgent)) {
+                                    const modelUrl = new URL("/model.glb", window.location.origin).toString();
+                                    window.location.href = `intent://arvr.google.com/scene-viewer/1.0?file=${modelUrl}&mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                                }
+                            }
+                        }}
+                        className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600/90 hover:bg-indigo-500 backdrop-blur-md text-white rounded-full text-sm font-semibold shadow-xl border border-white/10 transition-all hover:scale-105 active:scale-95 group"
                     >
                         <Box className="w-4 h-4 group-hover:rotate-12 transition-transform" />
                         <span>View in AR</span>
                     </button>
-                {/* @ts-ignore */}
-                </model-viewer>
-            </div>
+                </div>
+            )}
         </div>
     );
 }
