@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     LayoutDashboard, Image as ImageIcon, Briefcase, GraduationCap,
     FileText, Settings, LogOut, Users, MessageSquare, Inbox,
-    ThumbsDown, Ticket, Video, HelpCircle, ExternalLink, X, type LucideIcon
+    ThumbsDown, Ticket, Video, HelpCircle, ExternalLink, X, Box, type LucideIcon
 } from "lucide-react";
 import { auth } from "@/lib/firebase/config";
 import { signOut } from "firebase/auth";
@@ -42,6 +42,12 @@ const NAV_GROUPS: NavGroup[] = [
             { name: "Partner Schools", href: "/admin/schools", icon: GraduationCap },
             { name: "Partners & Logos", href: "/admin/partners", icon: Briefcase },
             { name: "Internships", href: "/admin/internships", icon: Briefcase },
+        ],
+    },
+    {
+        label: "3D Content",
+        items: [
+            { name: "3D Hardware Models", href: "/admin/hardware-models", icon: Box },
         ],
     },
     {

@@ -5,7 +5,7 @@ export interface ITestimonial extends Document {
     role: string;
     quote: string;
     imageUrl: string;
-    page: "home" | "lab"; // which page this testimonial appears on
+    page: "home" | "lab" | "college"; // which page this testimonial appears on
     createdAt: Date;
 }
 
@@ -14,7 +14,7 @@ const TestimonialSchema: Schema = new Schema({
     role: { type: String, required: true },
     quote: { type: String, required: true },
     imageUrl: { type: String, required: true },
-    page: { type: String, enum: ["home", "lab"], default: "home" },
+    page: { type: String, enum: ["home", "lab", "college"], default: "home" },
     createdAt: { type: Date, default: Date.now },
 });
 
