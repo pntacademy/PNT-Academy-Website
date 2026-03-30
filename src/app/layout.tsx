@@ -41,8 +41,8 @@ export const metadata: Metadata = {
     title: "PNT Academy",
   },
   openGraph: {
-    title: "PNT Academy | Robotics & STEM Education",
-    description: "Shape the Future of Robotics. Hands-on training programs for students and institutions.",
+    title: "PNT Academy | Premier Robotics & STEM Education Hub",
+    description: "Empowering the next generation of innovators through hands-on robotics, AI, and IoT training. Specialized, project-based programs for schools, colleges & kids.",
     url: "https://pntacademy.com",
     siteName: "PNT Academy",
     locale: "en_IN",
@@ -51,8 +51,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PNT Academy | Robotics & STEM",
-    description: "Shape the Future of Robotics with PNT Academy's hands-on programs.",
+    title: "PNT Academy | Premier Robotics & STEM Hub",
+    description: "Empowering the next generation of innovators through hands-on robotics, AI, and IoT training. Explore our project-based programs today.",
   },
   robots: {
     index: true,
