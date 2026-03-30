@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { 
-    Trophy, Users, Lightbulb, Presentation, Building2, 
-    Calendar, CheckCircle2, ChevronRight, Medal, 
+import {
+    Trophy, Users, Lightbulb, Presentation, Building2,
+    Calendar, CheckCircle2, ChevronRight, Medal,
     Star, Rocket, ArrowRight
 } from "lucide-react";
 import Link from "next/link";
@@ -62,24 +62,24 @@ const ELIGIBILITY_INDIVIDUAL = [
 
 // Reusing some basic SVG icons as components for variety
 function GraduationCapIcon(props: any) {
-    return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>;
+    return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" /></svg>;
 }
 function MapPinIcon(props: any) {
-    return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>;
+    return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>;
 }
 
 
-export default function ChampionshipContent({ 
-    isIndividual = false, 
-    registrationLink = "#" 
-}: { 
-    isIndividual?: boolean; 
+export default function ChampionshipContent({
+    isIndividual = false,
+    registrationLink = "#"
+}: {
+    isIndividual?: boolean;
     registrationLink?: string;
 }) {
     const currentYear = new Date().getFullYear();
     const nextYear = currentYear + 1;
-    const yearString = `${currentYear}-${nextYear}`;
-    
+    const yearString = `${currentYear}-${nextYear.toString().slice(-2)}`;
+
     const eligibilityData = isIndividual ? ELIGIBILITY_INDIVIDUAL : ELIGIBILITY_SCHOOL;
 
     return (
@@ -91,9 +91,9 @@ export default function ChampionshipContent({
                 {/* Visual Background Elements */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full blur-[100px] opacity-50 dark:opacity-30 pointer-events-none" />
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[80px] pointer-events-none" />
-                
+
                 <div className="max-w-5xl mx-auto px-4 relative z-10 text-center py-20">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 font-bold uppercase tracking-widest text-sm mb-6 shadow-sm"
@@ -101,17 +101,22 @@ export default function ChampionshipContent({
                         <Trophy className="w-4 h-4" />
                         PNT Academy Presents
                     </motion.div>
-                    
-                    <motion.h1 
+
+                    <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white tracking-tight mb-6 leading-tight"
+                        className="text-5xl md:text-7xl font-black tracking-tight mb-6 leading-tight flex items-center justify-center gap-3 flex-wrap"
                     >
-                        Skill Tank <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-600">{yearString}</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 animate-gradient-x">
+                            Skill Tank
+                        </span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-600">
+                            {yearString}
+                        </span>
                     </motion.h1>
-                    
-                    <motion.p 
+
+                    <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
@@ -119,8 +124,8 @@ export default function ChampionshipContent({
                     >
                         The ultimate inter-school innovation and robotics competition fostering experiential STEM learning and structured problem-solving.
                     </motion.p>
-                    
-                    <motion.div 
+
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
@@ -130,7 +135,7 @@ export default function ChampionshipContent({
                             Contact Organizers
                         </a>
                         <a href={registrationLink} target="_blank" rel="noopener noreferrer" className="px-8 py-4 rounded-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1 transition-all flex items-center gap-2">
-                            {isIndividual ? "Register Now" : "School Registration"} <ArrowRight className="w-5 h-5"/>
+                            {isIndividual ? "Register Now" : "School Registration"} <ArrowRight className="w-5 h-5" />
                         </a>
                     </motion.div>
                 </div>
@@ -143,7 +148,7 @@ export default function ChampionshipContent({
             <section className="max-w-6xl mx-auto px-4 mb-24 relative z-10">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                     {eligibilityData.map((item, i) => (
-                        <motion.div 
+                        <motion.div
                             key={i}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -172,7 +177,7 @@ export default function ChampionshipContent({
 
                 <div className="grid md:grid-cols-2 gap-8">
                     {ROUNDS.map((round, i) => (
-                        <motion.div 
+                        <motion.div
                             key={i}
                             initial={{ opacity: 0, x: i === 0 ? -30 : 30 }}
                             whileInView={{ opacity: 1, x: 0 }}
@@ -180,7 +185,7 @@ export default function ChampionshipContent({
                             className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-xl relative overflow-hidden group hover:border-blue-500/50 transition-colors"
                         >
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-bl-full pointer-events-none transition-transform group-hover:scale-110" />
-                            
+
                             <div className="flex items-center justify-between mb-8">
                                 <div className="px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-sm uppercase tracking-wider">
                                     {round.round}
@@ -219,7 +224,7 @@ export default function ChampionshipContent({
             ════════════════════════════════════════════════════════ */}
             <section className="max-w-6xl mx-auto px-4 mb-24 relative z-10">
                 <div className="grid lg:grid-cols-12 gap-12 items-center">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -231,7 +236,7 @@ export default function ChampionshipContent({
                         <p className="text-blue-100 leading-relaxed max-w-md mb-8">
                             Skill Tank is evaluated by a panel of industry professionals and academic experts. To provide true real-world validation, this includes a startup entrepreneur previously featured as a contestant on <strong className="text-white bg-blue-900/50 px-2 py-0.5 rounded">Shark Tank</strong>.
                         </p>
-                        
+
                         <div className="space-y-4">
                             <h4 className="text-sm font-bold uppercase tracking-widest text-blue-300">Outcomes & Awards</h4>
                             <div className="flex items-center gap-3">
@@ -257,7 +262,7 @@ export default function ChampionshipContent({
 
                         <div className="space-y-4">
                             {OBJECTIVES.map((obj, i) => (
-                                <motion.div 
+                                <motion.div
                                     key={i}
                                     initial={{ opacity: 0, x: 20 }}
                                     whileInView={{ opacity: 1, x: 0 }}
@@ -283,7 +288,7 @@ export default function ChampionshipContent({
                 ROLE OF SCHOOLS & CONTACT BANNER
             ════════════════════════════════════════════════════════ */}
             <section className="max-w-4xl mx-auto px-4 relative z-10">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -338,7 +343,7 @@ export default function ChampionshipContent({
                         <div>
                             <h3 className="font-bold text-xl text-slate-900 dark:text-white mb-1">Official Contact Contact</h3>
                             <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">Reach out to our Relationship Manager for registration packets and school guidelines.</p>
-                            
+
                             <div className="space-y-1 text-sm font-medium text-slate-700 dark:text-slate-300">
                                 <div className="flex items-center gap-2"><span className="text-blue-500 font-bold">Name:</span> Srushti Angane</div>
                                 <div className="flex items-center gap-2"><span className="text-blue-500 font-bold">Phone:</span> +91 9326014648</div>
