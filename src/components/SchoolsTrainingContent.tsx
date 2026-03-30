@@ -84,7 +84,7 @@ const IMPLEMENTATION_JOURNEY = [
     { step: "03", title: "Teacher & Kits Assigned", desc: "A dedicated PNT educator is assigned, and high-quality robotics kits are dispatched to your school." },
     { step: "04", title: "Execution of Programs", desc: "Hands-on, curriculum-aligned sessions begin with your students, fostering real-world tech skills." },
     { step: "05", title: "Internship (Kavach Project)", desc: "Top students receive opportunities to work on the prestigious Kavach Cyber Security/Robotics project." },
-    { step: "06", title: "Robotics Championship", desc: "Students showcase their innovations at our annual National Robotics Championship 2026-27." },
+    { step: "06", title: "Robotics Championship", desc: `Students showcase their innovations at our annual National Robotics Championship ${new Date().getFullYear()}-${new Date().getFullYear() + 1}.` },
 ];
 
 // ── 5-Step Learning Journey ───────────────────────────────────────────
@@ -365,10 +365,14 @@ function RotatingText() {
 // ═══════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════
-export default function SchoolsTrainingContent({ championshipLink = "https://forms.gle/" }: { championshipLink?: string }) {
+export default function SchoolsTrainingContent({ championshipLink = "/championship" }: { championshipLink?: string }) {
     const [liveSchools, setLiveSchools] = useState<any[]>([]);
     const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
     const [activeGrade, setActiveGrade] = useState(0);
+
+    const currentYear = new Date().getFullYear();
+    const nextYear = currentYear + 1;
+    const yearString = `${currentYear}-${nextYear}`;
 
     useEffect(() => {
         const fetchSchools = async () => {
@@ -447,7 +451,7 @@ export default function SchoolsTrainingContent({ championshipLink = "https://for
                             {/* Text block */}
                             <span className="flex flex-col items-start">
                                 <span className="text-yellow-200 text-[10px] font-black uppercase tracking-[0.2em]">Now Open for Registration</span>
-                                <span className="text-white text-base md:text-xl font-black tracking-wide leading-tight">National Robotics Championship 2026-27</span>
+                                <span className="text-white text-base md:text-xl font-black tracking-wide leading-tight">National Robotics Championship {yearString}</span>
                             </span>
                             {/* Arrow */}
                             <span className="ml-auto flex items-center justify-center w-8 h-8 rounded-full bg-white/20 border border-white/30 text-white text-sm group-hover:translate-x-1 transition-transform shrink-0">

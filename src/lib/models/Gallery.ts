@@ -12,7 +12,7 @@ const GallerySchema: Schema = new Schema({
     category: {
         type: String,
         required: true,
-        enum: ["All", "Projects", "Workshop", "Industrial Visit", "Schools", "Lab Setup"]
+        enum: ["All", "Projects", "Workshop", "Industrial Visit", "Schools", "Lab Setup", "Robotics Lab"]
     },
     imageUrl: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },

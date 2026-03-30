@@ -8,6 +8,9 @@ import dynamic from "next/dynamic";
 const InteractiveTerminal = dynamic(() => import("./InteractiveTerminal"), { ssr: false });
 
 export default function CoursesForKidsHero() {
+    const currentYear = new Date().getFullYear();
+    const nextYear = currentYear + 1;
+
     return (
         <section className="relative pt-28 pb-16 sm:pt-32 sm:pb-24 flex flex-col justify-center overflow-hidden min-h-[90vh]">
             {/* Subtle color tint — NetworkBackground comes from root layout */}
@@ -17,10 +20,35 @@ export default function CoursesForKidsHero() {
 
                 {/* ─── Left Content ─── */}
                 <div className="max-w-2xl z-20 order-first">
+                    {/* Robotics Championship Promotional Ribbon */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
+                        className="pointer-events-auto w-fit mb-6"
+                    >
+                        <Link
+                            href="/championship/individual"
+                            className="inline-flex items-center gap-3 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full font-bold text-sm md:text-base text-white border border-blue-400/40 shadow-[0_0_20px_rgba(37,99,235,0.35)] hover:shadow-[0_0_35px_rgba(99,102,241,0.55)] transition-all duration-300 hover:scale-105 relative overflow-hidden group"
+                            style={{ background: 'linear-gradient(135deg, #1d4ed8 0%, #4f46e5 60%, #7c3aed 100%)' }}
+                        >
+                            <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                            <span className="relative flex h-3 w-3 shrink-0">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-300 opacity-75" />
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-300" />
+                            </span>
+                            <span className="text-lg leading-none">🏆</span>
+                            <span className="font-black tracking-wide">Robotics Championship {currentYear}-{nextYear} — Register Now!</span>
+                            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 border border-white/30 text-xs group-hover:translate-x-1 transition-transform shrink-0">
+                                →
+                            </span>
+                        </Link>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm mb-6 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-slate-200 dark:border-slate-700"
                     >
                         <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
@@ -32,7 +60,7 @@ export default function CoursesForKidsHero() {
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
                         className="font-black leading-[1.1] tracking-tight mb-6 sm:mb-8 text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-slate-900 dark:text-white"
                     >
                         Unleash the Innovator Within:{" "}
@@ -44,7 +72,7 @@ export default function CoursesForKidsHero() {
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
                         className="leading-relaxed mb-8 sm:mb-10 text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400"
                     >
                         Turn screen time into a springboard for the future. From crafting their first lines of code to wiring intelligent robots and training AI models, we empower the next generation of creators, thinkers, and tech pioneers.
@@ -53,7 +81,7 @@ export default function CoursesForKidsHero() {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
                         className="flex flex-col sm:flex-row gap-3 sm:gap-4"
                     >
                         <Link
@@ -74,7 +102,7 @@ export default function CoursesForKidsHero() {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
+                        transition={{ duration: 0.6, delay: 0.5 }}
                         className="grid grid-cols-2 gap-3 mt-8 lg:hidden"
                     >
                         {[

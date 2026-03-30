@@ -12,7 +12,8 @@ export interface IAdminSettings extends Document {
     };
     careersLink?: string;
     bootcampLink?: string; // For the Free AI & Robotics Bootcamp ribbon
-    roboticsChampionshipLink?: string; // Link for the Robotics Championship ribbon
+    roboticsChampionshipLink?: string; // Link for the Robotics Championship ribbon (Schools)
+    individualChampionshipLink?: string; // Link for the Individual Student Championship Registration
     sheetsWebhookUrl?: string; // For auto-syncing enquiries to Google Sheets
     paymentDetails?: {
         upiId?: string;
@@ -39,6 +40,7 @@ const AdminSettingsSchema = new Schema<IAdminSettings>({
     careersLink: { type: String, default: "" },
     bootcampLink: { type: String, default: "" },
     roboticsChampionshipLink: { type: String, default: "" },
+    individualChampionshipLink: { type: String, default: "" },
     sheetsWebhookUrl: { type: String, default: "" },
     paymentDetails: {
         upiId: { type: String, default: "" },

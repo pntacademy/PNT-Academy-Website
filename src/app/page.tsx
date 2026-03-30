@@ -40,6 +40,9 @@ export default async function Home() {
   const bootcampLink = settings?.bootcampLink || "https://forms.gle/";
   const roboticsChampionshipLink = settings?.roboticsChampionshipLink || "https://forms.gle/";
 
+  const currentYear = new Date().getFullYear();
+  const nextYear = currentYear + 1;
+
   return (
     <main className="relative min-h-screen text-slate-900 dark:text-slate-50 overflow-x-hidden transition-colors duration-500">
       <div className="relative">
@@ -53,10 +56,8 @@ export default async function Home() {
               
               {/* Robotics Championship Promotional Ribbon */}
               <div className="pointer-events-auto w-fit">
-                <a
-                  href={roboticsChampionshipLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/championship/individual"
                   className="inline-flex items-center gap-3 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full font-bold text-sm md:text-base text-white border border-blue-400/40 shadow-[0_0_20px_rgba(37,99,235,0.35)] hover:shadow-[0_0_35px_rgba(99,102,241,0.55)] transition-all duration-300 hover:scale-105 relative overflow-hidden group"
                   style={{ background: 'linear-gradient(135deg, #1d4ed8 0%, #4f46e5 60%, #7c3aed 100%)' }}
                 >
@@ -68,11 +69,11 @@ export default async function Home() {
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-300" />
                   </span>
                   <span className="text-lg leading-none">🏆</span>
-                  <span className="font-black tracking-wide">Robotics Championship 2026-27 — Register Now!</span>
+                  <span className="font-black tracking-wide">Robotics Championship {currentYear}-{nextYear} — Register Now!</span>
                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 border border-white/30 text-xs group-hover:translate-x-1 transition-transform shrink-0">
                     →
                   </span>
-                </a>
+                </Link>
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight text-slate-900 dark:text-white drop-shadow-sm dark:drop-shadow-lg transition-colors duration-500">

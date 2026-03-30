@@ -21,6 +21,7 @@ interface SettingsForm {
   careersLink: string;
   bootcampLink: string;
   roboticsChampionshipLink: string;
+  individualChampionshipLink: string;
   sheetsWebhookUrl: string;
   paymentDetails: {
     upiId: string;
@@ -87,7 +88,7 @@ export default function AdminSettings() {
   const { register, handleSubmit, setValue, watch } = useForm<SettingsForm>({
     defaultValues: {
       socialLinks: { instagram: "", linkedin: "", twitter: "", youtube: "" },
-      careersLink: "", bootcampLink: "", sheetsWebhookUrl: "",
+      careersLink: "", bootcampLink: "", roboticsChampionshipLink: "", individualChampionshipLink: "", sheetsWebhookUrl: "",
       paymentDetails: { upiId: "", accountName: "", accountNumber: "", ifscCode: "", bankName: "" },
     },
   });
@@ -147,6 +148,7 @@ export default function AdminSettings() {
         setValue("careersLink", d?.careersLink || "");
         setValue("bootcampLink", d?.bootcampLink || "");
         setValue("roboticsChampionshipLink", d?.roboticsChampionshipLink || "");
+        setValue("individualChampionshipLink", d?.individualChampionshipLink || "");
         setValue("sheetsWebhookUrl", d?.sheetsWebhookUrl || "");
         if (d?.paymentDetails) {
           setValue("paymentDetails.upiId", d.paymentDetails.upiId || "");
@@ -200,6 +202,8 @@ export default function AdminSettings() {
           name: form.name, email: form.email, profileImage: previewImage,
           socialLinks: form.socialLinks,
           careersLink: form.careersLink, bootcampLink: form.bootcampLink,
+          roboticsChampionshipLink: form.roboticsChampionshipLink,
+          individualChampionshipLink: form.individualChampionshipLink,
           sheetsWebhookUrl: form.sheetsWebhookUrl,
           paymentDetails: { ...form.paymentDetails, upiQrCodeBase64: qrPreviewImage },
         }),
@@ -409,9 +413,14 @@ export default function AdminSettings() {
                         <p className="text-[11px] text-slate-400 mt-1.5 ml-1">Drives the &quot;Free AI &amp; Robotics Bootcamp&quot; ribbon on the Schools page.</p>
                       </div>
                       <div>
-                        <label className={lbl}>Robotics Champ. Ribbon URL <span className="normal-case font-normal text-slate-400">(Home page hero)</span></label>
+                        <label className={lbl}>Robotics Champ. Form (Schools) <span className="normal-case font-normal text-slate-400">(School page hero)</span></label>
                         <input type="url" {...register("roboticsChampionshipLink")} placeholder="https://forms.gle/..." className={pill} />
-                        <p className="text-[11px] text-slate-400 mt-1.5 ml-1">Drives the promotional ribbon showing &quot;Register for Robotics Championship 2026-27&quot; on the main Home Page.</p>
+                        <p className="text-[11px] text-slate-400 mt-1.5 ml-1">Form link used for schools registering teams.</p>
+                      </div>
+                      <div>
+                        <label className={lbl}>Robotics Champ. Form (Individual) <span className="normal-case font-normal text-slate-400">(Home & Kids pg)</span></label>
+                        <input type="url" {...register("individualChampionshipLink")} placeholder="https://forms.gle/..." className={pill} />
+                        <p className="text-[11px] text-slate-400 mt-1.5 ml-1">Form link used for individual student registrations.</p>
                       </div>
                     </div>
                   </SectionCard>
