@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin/', '/admin/*'],
     },
-    sitemap: 'https://pnt-academy.vercel.app/sitemap.xml',
+    sitemap: 'https://pntacademy.com/sitemap.xml',
   };
 }
