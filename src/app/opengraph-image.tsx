@@ -28,8 +28,19 @@ export default function Image() {
                 <div style={{ fontSize: 60, fontWeight: 700, color: 'white', letterSpacing: '-0.02em', marginBottom: 16 }}>
                     Shape the Future of Robotics
                 </div>
-                <div style={{ fontSize: 32, fontWeight: 500, color: '#94a3b8' }}>
-                    Explore Hands-On STEM & AI Programs Today
+                <div style={{
+                    marginTop: 24,
+                    background: '#2563eb',
+                    color: 'white',
+                    padding: '16px 40px',
+                    borderRadius: '100px',
+                    fontSize: 32,
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
+                    Visit pntacademy.com →
                 </div>
             </div>
         ),
