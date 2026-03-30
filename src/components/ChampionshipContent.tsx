@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import NetworkBackground from "./NetworkBackground";
+
 // ── DATA STRUCTURES FOR CLEAN RENDERING ─────────────────────────────
 
 const OBJECTIVES = [
@@ -84,6 +86,8 @@ export default function ChampionshipContent({
 
     return (
         <div className="w-full relative z-10 pt-24 pb-20">
+            <NetworkBackground />
+            
             {/* ════════════════════════════════════════════════════════
                 HERO SECTION
             ════════════════════════════════════════════════════════ */}

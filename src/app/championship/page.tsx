@@ -11,7 +11,19 @@ const nextYear = currentYear + 1;
 export const metadata: Metadata = {
   title: `Skill Tank ${currentYear}-${nextYear} | Inter-School Robotics Championship | PNT Academy`,
   description: `Join Skill Tank ${currentYear}, the ultimate inter-school robotics and innovation competition. Build, present, and showcase your STEM problem-solving skills to industry experts.`,
-  keywords: [`Skill Tank ${currentYear}`, "Robotics Championship", "School Robotics Competition", "STEM Innovation", "PNT Academy Event"],
+  keywords: [`Skill Tank ${currentYear}`, "Robotics Championship", "School Robotics Competition", "STEM Innovation", "PNT Academy Event", "National Robotics Competition", "Robotics for Kids", "AI Competition"],
+  openGraph: {
+    title: `Skill Tank ${currentYear}-${nextYear} | Inter-School Robotics Championship`,
+    description: `Join the ultimate inter-school robotics and innovation competition by PNT Academy. Showcase your STEM problem-solving skills to industry experts.`,
+    url: "https://pntacademy.com/championship",
+    type: "website",
+    siteName: "PNT Academy",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Skill Tank ${currentYear}-${nextYear} | Robotics Championship`,
+    description: `The ultimate inter-school robotics competition. Register your school team today!`,
+  },
   alternates: {
     canonical: "/championship",
   },
