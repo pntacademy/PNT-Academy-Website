@@ -661,19 +661,19 @@ const PRODUCTS = [
         icon: "🦾", name: "Educational Robotic Arm", specs: "4 DOF | 3D Printed | Customizable Components",
         tagline: "Unlike plug-and-play labs, our robots are fully open — enabling circuit-level customization, DOF expansion, and multi-robot integration.",
         features: ["Demonstration of pick and place automation", "Demonstration of gesture-controlled robotic arm", "Sensor Feedback Integration with robot arm", "Path Planning and Motion Control", "Object Detection using OpenCV", "Object Sorting by Colour & by Size", "Programming for Industrial Applications", "Integration with IoT for Remote Control", "AI integration with robot arm"],
-        image: "/images/robotics-lab/8.jpeg",
+        image: "/images/robotics-lab/robotic-arm.jpeg",
     },
     {
         name: "Industrial Robotic Arm", specs: "4–6 Axis Articulated | Payload: 1–2 kg | Repeatability: ±0.1 mm",
         tagline: "Industrial-grade precision for real-world manufacturing simulation.",
         features: ["Forward & inverse kinematics programming", "Pick-and-place task execution", "Tool path planning for repetitive tasks", "Payload testing and accuracy calibration"],
-        image: "/images/robotics-lab/9.jpeg",
+        image: "/images/robotics-lab/robotic-arm.jpeg",
     },
     {
         name: "Industrial AGV", specs: "Industrial-grade | Custom-design capabilities | Smart factory integration",
         tagline: "Automated guided vehicles for smart warehouse and factory floor applications.",
         features: ["Line following AGV demonstration", "Obstacle avoidance demonstration", "RFID-based navigation system", "Automated goods transportation", "Speed and acceleration control", "Wireless & IoT-based Control", "Path planning via custom algorithms", "Battery and Power Optimization", "Integration of external sensors"],
-        image: "/images/robotics-lab/10.jpeg",
+        image: "/images/robotics-lab/agv.jpeg",
     },
     {
         name: "Robotic Hand", specs: "Multi-finger | Customizable Parts | Gesture-Controlled Interface",
@@ -691,7 +691,7 @@ const PRODUCTS = [
         name: "Industrial AMR", specs: "Differential / Mecanum wheel drive | ROS-based | LiDAR optional",
         tagline: "Addressing real-world challenges in logistics and defense deployment scenarios.",
         features: ["Hardware interfacing and integration of sensors and actuators with ROS", "Odometry sensor data and teleoperation control for AMRs", "Mapping indoor environments using LiDAR sensors", "Autonomous navigation with parameter tuning"],
-        image: "/images/robotics-lab/13.jpeg",
+        image: "/images/robotics-lab/amr.jpeg",
         extraSpecs: ["Onboard microcontroller / SBC (Raspberry Pi / equivalent)", "Li-ion battery: 2–3 hours operational time", "Sensors: Ultrasonic, IR, IMU, optional LiDAR", "Supports ROS-based & block-based programming"],
     },
 ];
