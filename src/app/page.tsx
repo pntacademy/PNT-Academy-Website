@@ -50,10 +50,10 @@ export default async function Home() {
 
         {/* Hero Section */}
         <section id="hero" className="relative h-screen flex items-center pt-20">
-        <div className="container mx-auto px-4 sm:px-6 z-10 grid lg:grid-cols-2 gap-6 items-center h-full">
+          <div className="container mx-auto px-4 sm:px-6 z-10 grid lg:grid-cols-2 gap-6 items-center h-full">
             {/* Text Content */}
             <div className="flex flex-col gap-4 lg:gap-6" style={{ pointerEvents: 'none' }}>
-              
+
               {/* Robotics Championship Promotional Ribbon */}
               <div className="pointer-events-auto w-full max-w-full">
                 <Link
@@ -115,7 +115,7 @@ export default async function Home() {
                   { label: "10,000+", sub: "Students" },
                   { label: "Since 2016", sub: "Founded" },
                   { label: "Shark Tank", sub: "Funded" },
-                  { label: "PM Award", sub: "Received" },
+                  { label: "PM MODI", sub: "Appreciated" },
                 ].map((s) => (
                   <div key={s.label} className="rounded-xl p-3 bg-white/60 dark:bg-slate-800/60 backdrop-blur border border-white/40 dark:border-slate-700/50 shadow-sm text-center">
                     <div className="font-black text-blue-600 dark:text-blue-400 text-sm">{s.label}</div>
