@@ -15,7 +15,7 @@ export default function Icon() {
         (
             <div
                 style={{
-                    background: 'white',
+                    background: 'linear-gradient(to bottom right, #020617, #0f172a, #1e1b4b)',
                     width: '100%',
                     height: '100%',
                     display: 'flex',
@@ -23,7 +23,7 @@ export default function Icon() {
                     justifyContent: 'center',
                 }}
             >
-                <img src={logoBase64} width="80%" style={{ objectFit: 'contain' }} />
+                <img src={logoBase64} height={90} />
             </div>
         ),
         { ...size }

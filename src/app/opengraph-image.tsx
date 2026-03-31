@@ -16,23 +16,22 @@ export default function Image() {
         (
             <div
                 style={{
-                    background: 'white',
+                    background: 'linear-gradient(to bottom right, #020617, #0f172a, #1e1b4b)',
                     width: '100%',
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    borderTop: '20px solid #2563eb', // Cool blue accent
                 }}
             >
                 <div style={{ display: 'flex', marginBottom: '50px' }}>
                     <img src={logoBase64} height={180} />
                 </div>
-                <div style={{ color: '#0f172a', fontSize: 60, fontWeight: 900, fontFamily: 'sans-serif', textAlign: 'center' }}>
+                <div style={{ color: 'white', fontSize: 60, fontWeight: 900, fontFamily: 'sans-serif', textAlign: 'center' }}>
                     Shape the Future of Robotics.
                 </div>
-                <div style={{ color: '#64748b', fontSize: 32, marginTop: '20px', fontWeight: 500, fontFamily: 'sans-serif', textAlign: 'center' }}>
+                <div style={{ color: '#94a3b8', fontSize: 32, marginTop: '20px', fontWeight: 500, fontFamily: 'sans-serif', textAlign: 'center' }}>
                     Internships & Real-World Tech Projects for Innovators
                 </div>
             </div>

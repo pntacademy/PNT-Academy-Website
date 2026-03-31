@@ -13,15 +13,16 @@ export default function Icon() {
         (
             <div
                 style={{
-                    background: 'transparent',
+                    background: 'linear-gradient(to bottom right, #020617, #0f172a, #1e1b4b)',
                     width: '100%',
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    borderRadius: '128px',
                 }}
             >
-                <img src={logoBase64} width="100%" style={{ objectFit: 'contain' }} />
+                <img src={logoBase64} height={256} />
             </div>
         ),
         { ...size }
