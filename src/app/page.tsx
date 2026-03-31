@@ -52,7 +52,7 @@ export default async function Home() {
         <section id="hero" className="relative h-screen flex items-center pt-20">
         <div className="container mx-auto px-4 sm:px-6 z-10 grid lg:grid-cols-2 gap-6 items-center h-full">
             {/* Text Content */}
-            <div className="flex flex-col gap-6" style={{ pointerEvents: 'none' }}>
+            <div className="flex flex-col gap-4 lg:gap-6" style={{ pointerEvents: 'none' }}>
               
               {/* Robotics Championship Promotional Ribbon */}
               <div className="pointer-events-auto w-full max-w-full">
@@ -127,8 +127,8 @@ export default async function Home() {
             </div>
           </div>
 
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce z-10 pointer-events-none">
+          {/* Scroll Indicator — desktop only so it doesn't overlap the AR button on mobile */}
+          <div className="hidden lg:flex absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce z-10 pointer-events-none">
             <div className="w-8 h-12 rounded-full border-2 border-slate-900/20 dark:border-white/30 flex justify-center p-2 transition-colors duration-500">
               <div className="w-1 h-3 bg-blue-500 rounded-full animate-pulse" />
             </div>
@@ -163,20 +163,23 @@ export default async function Home() {
                   At PNT Academy, our mission is to bridge the gap between classroom learning and real-world industry demands—empowering students with the future-ready skills needed to <strong className="text-slate-900 dark:text-white">innovate, build, and lead</strong> in tomorrow&apos;s world.
                 </p>
 
-                {/* Stat pills */}
-                <div className="flex flex-wrap gap-3 pt-4">
-                  {[
-                    { label: "Founded In", value: "2016" },
-                    { label: "Funded By", value: "Shark Tank India" },
-                    { label: "Appreciated By", value: "PM Modi" },
-                    { label: "Students", value: "10,000+" },
-                  ].map((s) => (
-                    <div key={s.label} className="px-4 py-2 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 text-center">
-                      <div className="text-xs text-slate-400 dark:text-slate-500 font-medium uppercase tracking-wider">{s.label}</div>
-                      <div className="text-sm font-bold text-slate-800 dark:text-white">{s.value}</div>
-                    </div>
-                  ))}
-                </div>
+              {/* Achievement Cards */}
+              <div className="grid grid-cols-2 gap-3 pt-4">
+                {[
+                  { icon: "🏫", stat: "2016", label: "Est. Year", accent: "from-blue-500 to-cyan-400" },
+                  { icon: "🦈", stat: "Funded", label: "Shark Tank India", accent: "from-indigo-500 to-blue-400" },
+                  { icon: "🏛️", stat: "PM Modi", label: "Appreciation Award", accent: "from-orange-500 to-amber-400" },
+                  { icon: "🎓", stat: "10,000+", label: "Students Trained", accent: "from-purple-500 to-pink-400" },
+                ].map((card) => (
+                  <div key={card.label} className="group relative rounded-2xl p-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur border border-white dark:border-slate-700 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 overflow-hidden">
+                    {/* Gradient accent bar */}
+                    <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${card.accent}`} />
+                    <div className="text-2xl mb-1">{card.icon}</div>
+                    <div className={`text-base font-black bg-gradient-to-r ${card.accent} bg-clip-text text-transparent`}>{card.stat}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-tight mt-0.5">{card.label}</div>
+                  </div>
+                ))}
+              </div>
               </div>
 
               {/* Big slider */}
