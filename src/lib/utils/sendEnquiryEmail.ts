@@ -25,14 +25,16 @@ interface EnquiryPayload {
 
 export async function sendEnquiryEmail(data: EnquiryPayload): Promise<void> {
     const apiKey = process.env.RESEND_API_KEY;
-    const toEmail = process.env.ADMIN_NOTIFY_EMAIL;
-    const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev"; // sandbox default
+    // Always deliver to pnt-trainings inbox; env var can override if needed
+    const toEmail = process.env.ADMIN_NOTIFY_EMAIL || "pnt-trainings@pntacademy.com";
+    const fromEmail = process.env.RESEND_FROM_EMAIL || "notifications@pntacademy.com";
 
-    // Silently skip if not configured — never break the form submission
-    if (!apiKey || !toEmail) {
-        console.warn("[EMAIL] RESEND_API_KEY or ADMIN_NOTIFY_EMAIL not set — skipping notification.");
+    // Silently skip if Resend API key not set — never break the form submission
+    if (!apiKey) {
+        console.warn("[EMAIL] RESEND_API_KEY not set — skipping notification.");
         return;
     }
+
 
     const html = `
 <!DOCTYPE html>
