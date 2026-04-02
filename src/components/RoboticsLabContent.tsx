@@ -3,6 +3,34 @@ import React, { useState, useRef, useEffect, Suspense, useMemo, Component, Error
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Microchip, Radar, MonitorPlay, Cog, School, University, Star, Quote } from "lucide-react";
 import Image from "next/image";
+
+// -------------------------------------------------------------
+// IntersectionObserver Lazy Canvas Wrapper
+// Prevents WebGL Context limits by only mounting Canvas when visible
+// -------------------------------------------------------------
+function LazyCanvas({ children, className = "" }: { children: ReactNode, className?: string }) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) setIsVisible(true);
+            },
+            { rootMargin: "300px" }
+        );
+        observer.observe(containerRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div ref={containerRef} className={`w-full h-full relative ${className}`}>
+            {isVisible && children}
+        </div>
+    );
+}
+
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Float, ContactShadows, Environment, useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
@@ -399,13 +427,13 @@ function MechanicalLabSection() {
                     {/* Decorative glow */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-slate-500/10 dark:bg-slate-400/5 rounded-full blur-[60px] pointer-events-none" />
 
-                    <div className="absolute inset-0 mobile-safe-canvas">
+                    <LazyCanvas className="absolute inset-0 mobile-safe-canvas">
                         <Canvas
                             shadows
-                            gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
+                            gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0, powerPreference: "high-performance" }}
                             camera={{ position: isMobile ? [8, 6, 14] : [6, 5, 12], fov: isMobile ? 48 : 38 }}
                             frameloop={isMobile ? "demand" : "always"}
-                            dpr={isMobile ? [1, 1.5] : [1, 2]}
+                            dpr={1}
                         >
                             <ambientLight intensity={0.4} />
                             <spotLight position={[10, 10, 10]} intensity={1.5} angle={0.2} castShadow />
@@ -415,10 +443,10 @@ function MechanicalLabSection() {
                             <Suspense fallback={null}>
                                 <MechModel path={current.path} targetSize={current.targetSize} />
                             </Suspense>
-                            <ContactShadows position={[0, -2.5, 0]} opacity={0.35} scale={10} blur={2.5} far={5} />
+                            <ContactShadows position={[0, -2.5, 0]} opacity={0.35} scale={10} blur={2.5} far={5} resolution={256} frames={1} />
                             {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1.2} enableZoom={false} minPolarAngle={Math.PI / 5} maxPolarAngle={Math.PI / 1.8} />}
                         </Canvas>
-                    </div>
+                    </LazyCanvas>
 
                     {/* Model label */}
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none z-10">
@@ -454,13 +482,13 @@ function PrinterLabSection() {
                 <div className="flex flex-col gap-6">
                     <div className="relative flex items-center justify-center h-[500px] cursor-grab active:cursor-grabbing">
 
-                        <div className="absolute inset-0 mobile-safe-canvas">
+                        <LazyCanvas className="absolute inset-0 mobile-safe-canvas">
                             <Canvas 
                                 shadows 
-                                gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
+                                gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0, powerPreference: "high-performance" }}
                                 camera={{ position: isMobile ? [15, 6, 15] : [10, 4, 10], fov: isMobile ? 50 : 40 }}
                                 frameloop={isMobile ? "demand" : "always"}
-                                dpr={isMobile ? [1, 1.5] : [1, 2]}
+                                dpr={1}
                             >
                                 <ambientLight intensity={0.4} />
                                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.5} castShadow />
@@ -472,7 +500,7 @@ function PrinterLabSection() {
                                 </Suspense>
                                 {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1} enableZoom={false} />}
                             </Canvas>
-                        </div>
+                        </LazyCanvas>
 
 
                         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none">
@@ -643,11 +671,12 @@ function SchoolsContent() {
                         
                         {currentModel ? (
                             <>
-                                <div className="absolute inset-0">
+                                <LazyCanvas className="absolute inset-0">
                                     <Canvas 
                                         camera={{ position: isMobile ? [7, 5, 7] : [5, 4, 5], fov: isMobile ? 50 : 40 }}
+                                        gl={{ antialias: true, powerPreference: "high-performance" }}
                                         frameloop={isMobile ? "demand" : "always"}
-                                        dpr={isMobile ? [1, 1.5] : [1, 2]}
+                                        dpr={1}
                                     >
                                         <ambientLight intensity={0.4} />
                                         <directionalLight position={[5, 8, 5]} intensity={1.0} />
@@ -656,10 +685,10 @@ function SchoolsContent() {
                                         <Suspense fallback={null}>
                                             <HardwareModel path={currentModel} />
                                         </Suspense>
-                                        <ContactShadows position={[0, -2.5, 0]} opacity={0.3} scale={8} blur={2.5} far={5} />
+                                        <ContactShadows position={[0, -2.5, 0]} opacity={0.3} scale={8} blur={2.5} far={5} resolution={256} frames={1} />
                                         {!isMobile && <OrbitControls makeDefault target={[0, 0, 0]} enablePan={false} enableZoom={false} autoRotate autoRotateSpeed={0.5} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 1.5} />}
                                     </Canvas>
-                                </div>
+                                </LazyCanvas>
                                 {/* Model label overlay */}
                                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none z-10">
                                     <div className="bg-slate-900/60 dark:bg-black/60 backdrop-blur-md border border-white/10 text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-xl">
@@ -708,13 +737,13 @@ function SchoolsContent() {
                     {/* Interactive 3D Humanoid Robot Visual */}
                     <div className="relative flex items-center justify-center h-[500px] cursor-grab active:cursor-grabbing lg:order-2">
 
-                        <div className="absolute inset-0 mobile-safe-canvas">
+                        <LazyCanvas className="absolute inset-0 mobile-safe-canvas">
                             <Canvas 
                                 shadows
-                                gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
+                                gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0, powerPreference: "high-performance" }}
                                 camera={{ position: isMobile ? [0, 6, 30] : [0, 4, 22], fov: isMobile ? 45 : 35 }}
                                 frameloop={isMobile ? "demand" : "always"}
-                                dpr={isMobile ? [1, 1.5] : [1, 2]}
+                                dpr={1}
                             >
                                 <ambientLight intensity={0.5} />
                                 <spotLight position={[5, 15, 10]} intensity={2} angle={0.3} castShadow />
@@ -724,10 +753,10 @@ function SchoolsContent() {
                                 <Suspense fallback={null}>
                                     <HumanoidModel />
                                 </Suspense>
-                                <ContactShadows position={[0, -3.5, 0]} opacity={0.5} scale={15} blur={2.5} far={6} />
+                                <ContactShadows position={[0, -3.5, 0]} opacity={0.5} scale={15} blur={2.5} far={6} resolution={256} frames={1} />
                                 {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1} enableZoom={false} minPolarAngle={0} maxPolarAngle={Math.PI / 2 + 0.1} />}
                             </Canvas>
-                        </div>
+                        </LazyCanvas>
 
                         {/* Interactive label */}
                         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none hidden md:block">
@@ -952,9 +981,9 @@ function ProductMiniModel({ accentColor, glbPath, image }: { accentColor: string
         <div className="w-full h-full relative">
             <Canvas
                 camera={{ position: [4, 3, 4], fov: 40 }}
-                gl={{ antialias: true, alpha: true }}
+                gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
                 frameloop="always"
-                dpr={[1, 1.5]}
+                dpr={1}
             >
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[3, 5, 3]} intensity={1.5} color={accentColor} />
@@ -1094,7 +1123,8 @@ function ProductDetailModel3D({ accentColor, glbPath, image }: { accentColor: st
                                 
                                 if (/android/i.test(navigator.userAgent)) {
                                     const modelUrl = new URL(glbPath, window.location.origin).toString();
-                                    window.location.href = `intent://arvr.google.com/scene-viewer/1.0?file=${modelUrl}&mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+                                    const encodedUrl = encodeURIComponent(modelUrl);
+                                    window.location.href = `intent://arvr.google.com/scene-viewer/1.0?file=${encodedUrl}&mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
                                     return;
                                 }
 
@@ -1142,9 +1172,9 @@ function ProductDetailModel3D({ accentColor, glbPath, image }: { accentColor: st
                             position: [5, 5, 5],
                             fov: 40,
                         }}
-                        gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.8 }}
+                        gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.8, powerPreference: "high-performance" }}
                         frameloop="always"
-                        dpr={[1, 2]}
+                        dpr={1}
                         style={{ background: 'transparent', width: '100%', height: '100%' }}
                     >
                         <ambientLight intensity={0.25} />
@@ -1162,7 +1192,7 @@ function ProductDetailModel3D({ accentColor, glbPath, image }: { accentColor: st
                                 {glbPath && <GlbModel path={glbPath} targetSize={glbPath.toLowerCase().includes('tello') ? 2.2 : 3.5} />}
                             </Suspense>
                         </ModelErrorBoundary>
-                        <ContactShadows position={[0, -2.2, 0]} opacity={0.3} scale={20} blur={4} far={5} />
+                        <ContactShadows position={[0, -2.2, 0]} opacity={0.3} scale={20} blur={4} far={5} resolution={256} frames={1} />
                     </Canvas>
                 </div>
             )}
