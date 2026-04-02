@@ -2,9 +2,7 @@ import { ImageResponse } from 'next/og';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-export const runtime = 'nodejs';
-
-export const size = { width: 180, height: 180 };
+export const size = { width: 512, height: 512 };
 export const contentType = 'image/png';
 
 export default function Icon() {
@@ -21,9 +19,10 @@ export default function Icon() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    borderRadius: '128px',
                 }}
             >
-                <img src={logoBase64} height={90} />
+                <img src={logoBase64} height={256} />
             </div>
         ),
         { ...size }
