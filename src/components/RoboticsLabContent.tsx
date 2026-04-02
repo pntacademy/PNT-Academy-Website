@@ -1101,12 +1101,11 @@ function ProductDetailModel3D({ accentColor, glbPath, image }: { accentColor: st
                         <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
                     </svg>
                 </div>
-                <h4 className="text-lg font-black text-slate-900 dark:text-white">3D Model Available on Desktop</h4>
-                <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs">Switch to desktop mode in your browser to explore the interactive 3D model of this product.</p>
+                <h4 className="text-lg font-black text-slate-900 dark:text-white">View in AR</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs">Point your camera at a flat surface to place the robot in your real environment.</p>
 
                 {glbPath && (
                     <>
-                        {/* Hidden model-viewer for iOS Quick Look conversion */}
                         {/* @ts-ignore */}
                         <model-viewer
                             id={`ar-viewer-${glbPath.replace(/[^a-zA-Z0-9]/g, '-')}`}
@@ -1120,38 +1119,23 @@ function ProductDetailModel3D({ accentColor, glbPath, image }: { accentColor: st
                         <button
                             onClick={(e) => {
                                 e.preventDefault();
-                                
                                 if (/android/i.test(navigator.userAgent)) {
-                                    // new URL automatically handles encoding spaces in the path (e.g. 'Advance AMR.glb' -> 'Advance%20AMR.glb')
-                                    // DO NOT use encodeURIComponent on the entire URL or the Intent parser will fail to identify the 'https' scheme
                                     const modelUrl = new URL(glbPath, window.location.origin).toString();
                                     window.location.href = `intent://arvr.google.com/scene-viewer/1.0?file=${modelUrl}&mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
                                     return;
                                 }
-
                                 const viewer = document.getElementById(`ar-viewer-${glbPath.replace(/[^a-zA-Z0-9]/g, '-')}`) as any;
                                 if (viewer && typeof viewer.activateAR === "function") {
                                     viewer.activateAR();
                                 }
                             }}
-                            className="mt-4 w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-bold shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all hover:scale-105 active:scale-95 group border border-white/10"
+                            className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all hover:scale-105 active:scale-95 group border border-white/10"
                         >
                             <svg className="w-5 h-5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
                             <span>Open in AR</span>
                         </button>
                     </>
                 )}
-
-                <button
-                    onClick={() => {
-                        const url = new URL(window.location.href);
-                        window.location.href = url.href;
-                    }}
-                    className="mt-2 px-6 py-2.5 rounded-full text-sm font-bold text-white shadow-lg transition-all hover:scale-105 text-opacity-90 hover:text-opacity-100"
-                    style={{ background: `linear-gradient(135deg, ${accentColor}, ${accentColor}aa)` }}
-                >
-                    Open Desktop Mode
-                </button>
             </div>
         );
     }
