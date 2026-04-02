@@ -34,7 +34,7 @@ function LazyCanvas({ children, className = "" }: { children: ReactNode, classNa
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Float, ContactShadows, Environment, useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
-import { getLiveGallery } from "@/lib/actions/db";
+// Gallery is fetched via the API route to avoid calling a server action from a client component
 import Script from "next/script";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -851,7 +851,7 @@ const PRODUCTS = [
             "Aerial Photography, Surveillance, and inspection missions",
             "PC dashboard application developed by PNT for fleet control",
         ],
-        image: "/images/robotics-lab/12.jpeg",
+        image: "/images/robotics-lab/agv.jpeg",
         glbPath: "/models/dji_tello.glb",
         color: "from-sky-500 to-cyan-400",
         accentColor: "#22d3ee",
@@ -1787,7 +1787,9 @@ function LabGallerySection() {
     const [images, setImages] = useState<any[]>([]);
 
     useEffect(() => {
-        getLiveGallery().then(data => {
+        fetch("/api/admin/gallery")
+            .then(r => r.json())
+            .then((data: any[]) => {
             // Filter to show primarily "Lab Setup" photos
             const labPhotos = data.filter((item: any) => item.category === "Lab Setup" || item.category === "Projects");
             if (labPhotos.length > 0) {
