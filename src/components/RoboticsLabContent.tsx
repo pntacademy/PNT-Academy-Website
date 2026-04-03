@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect, Suspense, useMemo, Component, Error
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Microchip, Radar, MonitorPlay, Cog, School, University, Star, Quote } from "lucide-react";
 import Image from "next/image";
+import { SectionCAlumni, LabPartnersSection } from "./CollegesTrainingContent";
 
 // -------------------------------------------------------------
 // IntersectionObserver Lazy Canvas Wrapper
@@ -1595,154 +1596,11 @@ function CollegesContent() {
                 </div>
             </section>
 
-            {/* ===== SECTION 16: INSTITUTE LAB ASSOCIATION ===== */}
-            <section className="py-24 bg-slate-50 dark:bg-slate-800/40 overflow-hidden relative">
-                <div className="container mx-auto max-w-6xl text-center px-4">
-                    <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-                        <h2 className="text-4xl md:text-5xl font-black mb-12">Institute Lab Association</h2>
-                    </motion.div>
-                </div>
+            {/* ===== SECTION 16: TOP INDUSTRY ASSOCIATIONS & HIRING PARTNERS ===== */}
+            <LabPartnersSection labPartners={labPartners} />
 
-                {/* Edge-to-Edge Marquee */}
-                <div className="relative w-full overflow-hidden py-4">
-                    {/* Optional edge fades */}
-                    <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-r from-slate-50 dark:from-[rgba(30,41,59,0.4)] to-transparent" />
-                    <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 md:w-32 z-10 bg-gradient-to-l from-slate-50 dark:from-[rgba(30,41,59,0.4)] to-transparent" />
-
-                    <div className="flex gap-10 w-max" style={{ animation: 'instituteMarquee 40s linear infinite' }}>
-                        {(() => {
-                            const clients = labPartners.filter(p => p.category === 'client');
-                            // Quadruplicate to ensure seamless infinite scroll across ultra-wide monitors
-                            const displayPartners = clients.length > 0
-                                ? [...clients, ...clients, ...clients, ...clients]
-                                : Array(16).fill({ name: "Partner Institute", imageUrl: "" });
-
-                            return displayPartners.map((c: any, i: number) => (
-                                <div key={i} className="w-56 bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 shrink-0 hover:border-blue-500/40 transition-all shadow-md dark:shadow-none group">
-                                    {c.imageUrl ? (
-                                        <img src={c.imageUrl} alt={c.name} className="h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-110" />
-                                    ) : (
-                                        <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center text-2xl">🏢</div>
-                                    )}
-                                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 text-center">{c.name}</span>
-                                </div>
-                            ));
-                        })()}
-                    </div>
-                </div>
-
-                <div className="container mx-auto max-w-6xl text-center px-4 mt-8">
-                    <p className="text-slate-500 text-sm">Trusted by leading technical institutions across India</p>
-                </div>
-
-                <style>{`
-                    @keyframes instituteMarquee {
-                        0%   { transform: translateX(0); }
-                        100% { transform: translateX(-25%); }
-                    }
-                `}</style>
-            </section>
-
-            {/* ===== SECTION 17: COMPANIES HIRING — MARQUEE ===== */}
-            {/* 
-            <section className="py-24 px-4 overflow-hidden">
-                <div className="container mx-auto max-w-6xl text-center">
-                    <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-                        <h2 className="text-4xl md:text-5xl font-black mb-12">Companies Hiring for AGV & Robotic Arm</h2>
-                    </motion.div>
-                    <div className="relative overflow-hidden py-4">
-                        <div className="flex gap-6 animate-[marquee_30s_linear_infinite]" style={{ width: 'max-content' }}>
-                            {(() => {
-                                const hiringPartners = labPartners.filter(p => p.category === 'hiring');
-                                const displayPartners = hiringPartners.length > 0 
-                                    ? [...hiringPartners, ...hiringPartners, ...hiringPartners] // Triplicate for smooth infinite scroll
-                                    : Array(10).fill({ name: "Partner Company", imageUrl: "" }); // Fallback
-
-                                return displayPartners.map((c, i) => (
-                                    <div key={i} className="px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm dark:shadow-none rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap hover:border-blue-500/40 transition-all flex items-center gap-3">
-                                        {c.imageUrl && (
-                                            <div className="bg-white p-1 rounded-md">
-                                                <img src={c.imageUrl} alt={c.name} className="h-6 w-auto object-contain" />
-                                            </div>
-                                        )}
-                                        <span>{c.name}</span>
-                                    </div>
-                                ));
-                            })()}
-                        </div>
-                    </div>
-                </div>
-            </section>
-            */}
-
-            {/* ===== SECTION 18: TOP INDUSTRY ASSOCIATIONS ===== */}
-            <section className="py-24 px-4 bg-slate-50 dark:bg-slate-800/40">
-                <div className="container mx-auto max-w-5xl">
-                    <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-12">
-                        <h2 className="text-4xl md:text-5xl font-black">Our Top Industry Associations</h2>
-                    </motion.div>
-                    <div className="flex overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory md:grid md:grid-cols-4 md:gap-6 md:overflow-visible md:pb-0 md:px-0 scrollbar-hide">
-                        {(labPartners.filter(p => p.category === 'industry').length > 0
-                            ? labPartners.filter(p => p.category === 'industry')
-                            : [{ name: 'Indian Army', imageUrl: '' }, { name: 'TATA Power', imageUrl: '' }, { name: 'Wockhardt', imageUrl: '' }, { name: 'Unilever UK', imageUrl: '' }]
-                        ).map((a: any, i: number) => (
-                            <motion.div key={a._id || i} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.4 }}
-                                className="min-w-[65vw] md:min-w-0 snap-center shrink-0 mr-4 md:mr-0 last:mr-0 bg-white dark:bg-slate-900/60 backdrop-blur-xl shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-200/60 dark:border-slate-800 rounded-2xl p-8 text-center hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
-                                {a.imageUrl ? (
-                                    <div className="bg-white rounded-2xl p-4 mb-4 shadow-inner ring-1 ring-slate-100 flex items-center justify-center">
-                                        <img src={a.imageUrl} alt={a.name} className="h-16 w-auto object-contain" />
-                                    </div>
-                                ) : (
-                                    <div className="h-16 w-16 mx-auto rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center text-3xl mb-4">🏭</div>
-                                )}
-                                <h3 className="font-bold text-slate-800 dark:text-white text-lg">{a.name}</h3>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ===== SECTION 19: STUDENT TESTIMONIALS ===== */}
-            <section className="py-24 px-4">
-                <div className="container mx-auto max-w-6xl">
-                    <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-16">
-                        <span className="text-indigo-400 font-bold tracking-widest uppercase text-sm mb-4 block">Student Voices</span>
-                        <h2 className="text-4xl md:text-5xl font-black">Student Testimonials</h2>
-                    </motion.div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {testimonialsToShow.map((test: any, i: number) => {
-                            const initial = test.name?.charAt(0) || "?";
-                            return (
-                                <motion.div key={test._id || i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.5 }}
-                                    className="bg-white dark:bg-slate-900/60 backdrop-blur-xl shadow-xl shadow-slate-200/40 dark:shadow-none border border-slate-200/60 dark:border-slate-800 rounded-3xl overflow-hidden hover:border-indigo-500/30 transition-all group flex flex-col">
-                                    {/* Photo */}
-                                    <div className="relative h-56 w-full overflow-hidden bg-gradient-to-br from-indigo-900/40 to-blue-900/40">
-                                        {test.imageUrl ? (
-                                            <img src={test.imageUrl} alt={test.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center">
-                                                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-400 to-blue-600 flex items-center justify-center text-white font-black text-4xl">{initial}</div>
-                                            </div>
-                                        )}
-                                        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-white to-transparent dark:from-[#0A0A0F] dark:to-transparent p-5">
-                                            <h4 className="font-bold text-slate-900 dark:text-white text-lg">{test.name}</h4>
-                                            <p className="text-indigo-600 dark:text-indigo-300 text-xs font-semibold">{test.role}</p>
-                                        </div>
-                                    </div>
-                                    {/* Quote */}
-                                    <div className="p-6 flex-1 flex flex-col">
-                                        <div className="flex text-amber-400 mb-3 gap-0.5">
-                                            {[...Array(5)].map((_, j) => <Star key={j} className="w-4 h-4 fill-current" />)}
-                                        </div>
-                                        <blockquote className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic flex-1">&ldquo;{test.quote}&rdquo;</blockquote>
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </section>
+            {/* ===== SECTION 17: STUDENT TESTIMONIALS ===== */}
+            <SectionCAlumni testimonials={testimonialsToShow} />
 
             {/* ===== SECTION 20: CONCLUSION CTA ===== */}
             <section className="py-32 px-4 text-center relative overflow-hidden">

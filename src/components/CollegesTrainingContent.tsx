@@ -1000,7 +1000,7 @@ function SectionBPNTEdge() {
     );
 }
 
-function SectionCAlumni({ testimonials }: { testimonials: any[] }) {
+export function SectionCAlumni({ testimonials }: { testimonials: any[] }) {
     // Graceful fallback dummy data if the database is empty or lacks 'college' tagged testimonials
     const displayTestimonials = testimonials && testimonials.length > 0 ? testimonials : [
         { name: "Dewang Kanekar", role: "Bharati Vidyapeeth", quote: "Completed an Industrial Robotics Internship Program and am now an intern at PNT Robotics, working on robotic hands and trolley robots.", imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop" },
@@ -1088,7 +1088,7 @@ function HardwareSpecsGrid({ programId }: { programId: string }) {
 
 // --- Lab Partners Section --- //
 
-function LabPartnersSection({ labPartners = [] }: { labPartners?: any[] }) {
+export function LabPartnersSection({ labPartners = [] }: { labPartners?: any[] }) {
     const clients = labPartners.filter(p => p.category === 'client');
     if (clients.length === 0) return null;
 
