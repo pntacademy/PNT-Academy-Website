@@ -12,8 +12,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RoboticsLabPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
-    const tab = typeof searchParams.tab === 'string' ? searchParams.tab : "schools";
+export default async function RoboticsLabPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+    const params = await searchParams;
+    const tab = typeof params.tab === 'string' ? params.tab : "schools";
     
     return (
         <main className="min-h-screen text-slate-900 dark:text-slate-50 overflow-x-hidden transition-colors duration-500">
