@@ -4,11 +4,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 
-const College3DHardwareViewer = dynamic(
-    () => import('@/components/College3DHardwareViewer'),
-    { ssr: false, loading: () => <div className="w-full h-[500px] rounded-3xl bg-slate-200 dark:bg-slate-800 animate-pulse flex items-center justify-center"><span className="text-slate-500 font-bold uppercase tracking-widest text-sm">Loading 3D Hardware...</span></div> }
-);
-
 const NetworkBackground = dynamic(
     () => import('@/components/NetworkBackground'),
     { ssr: false }
@@ -628,7 +623,7 @@ const PROGRAMS: Program[] = [
     }
 ];
 
-export default function CollegesTrainingContent({ testimonials = [], extraModels = [], labPartners = [] }: { testimonials?: any[]; extraModels?: any[]; labPartners?: any[] }) {
+export default function CollegesTrainingContent({ testimonials = [], labPartners = [] }: { testimonials?: any[]; labPartners?: any[] }) {
     const [selectedProgram, setSelectedProgram] = useState<Program>(PROGRAMS[0]);
     const [expandedDays, setExpandedDays] = useState<string[]>([]);
 
@@ -901,15 +896,6 @@ export default function CollegesTrainingContent({ testimonials = [], extraModels
                         </AnimatePresence>
                     </div>
 
-                </div>
-
-                <div className="py-12 md:py-24 border-t border-slate-200 dark:border-slate-800" style={{ isolation: "isolate", position: "relative", zIndex: 0 }}>
-                    <div className="text-center mb-8">
-                        <span className="inline-block bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold tracking-widest uppercase text-xs px-4 py-2 rounded-full mb-3 border border-indigo-200 dark:border-indigo-500/30">Hardware Lab</span>
-                        <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2">Explore Our Equipment</h2>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm max-w-md mx-auto">Interact with the actual 3D models of hardware used in our training programs. Drag to rotate.</p>
-                    </div>
-                    <College3DHardwareViewer extraModels={extraModels} />
                 </div>
 
                 <SectionBPNTEdge />
