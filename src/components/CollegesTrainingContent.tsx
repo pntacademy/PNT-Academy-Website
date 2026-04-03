@@ -8,13 +8,19 @@ const College3DHardwareViewer = dynamic(
     () => import('@/components/College3DHardwareViewer'),
     { ssr: false, loading: () => <div className="w-full h-[500px] rounded-3xl bg-slate-200 dark:bg-slate-800 animate-pulse flex items-center justify-center"><span className="text-slate-500 font-bold uppercase tracking-widest text-sm">Loading 3D Hardware...</span></div> }
 );
+
+const NetworkBackground = dynamic(
+    () => import('@/components/NetworkBackground'),
+    { ssr: false }
+);
 import { 
     Activity, Navigation, Settings, RadioTower, Hand, 
     ChevronDown, CheckCircle2, Award, Briefcase, FileCheck, Calendar, List, Download, Mail,
-    ArrowRight, Star, Quote, Microchip
+    ArrowRight, Star, Quote, Microchip, GraduationCap
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import ClientOnly from "@/components/ClientOnly";
 
 type ProgramDay = {
     day: string;
@@ -635,8 +641,15 @@ export default function CollegesTrainingContent({ testimonials = [], extraModels
     };
 
     return (
-        <section className="py-12 md:py-24 relative bg-slate-50 dark:bg-slate-950">
-            <div className="container mx-auto px-4 max-w-7xl">
+        <section className="py-12 md:py-24 relative bg-slate-50 dark:bg-slate-950 overflow-hidden">
+            {/* Network Background */}
+            <div className="absolute inset-0 z-0 opacity-30">
+                <ClientOnly>
+                    <NetworkBackground />
+                </ClientOnly>
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-50/80 via-transparent to-slate-50/80 dark:from-slate-950/80 dark:via-transparent dark:to-slate-950/80 z-0" />
+            <div className="container mx-auto px-4 max-w-7xl relative z-10">
                 <CredibilityBadge />
                 <SectionAIndustryGap />
                 
@@ -900,6 +913,7 @@ export default function CollegesTrainingContent({ testimonials = [], extraModels
                 </div>
 
                 <SectionBPNTEdge />
+                <InternshipInstituteSection labPartners={labPartners} />
                 <LabPartnersSection labPartners={labPartners} />
                 <SectionCAlumni testimonials={testimonials} />
 
@@ -1086,11 +1100,72 @@ function HardwareSpecsGrid({ programId }: { programId: string }) {
     );
 }
 
-// --- Lab Partners Section --- //
+
+// --- Internship & Placement Institute Association Section --- //
+
+function InternshipInstituteSection({ labPartners = [] }: { labPartners?: any[] }) {
+    const hiringPartners = labPartners.filter(p => p.category === 'hiring');
+
+    let displayPartners = [...hiringPartners, ...hiringPartners];
+    if (displayPartners.length < 8) {
+        displayPartners = [...displayPartners, ...displayPartners, ...displayPartners, ...displayPartners];
+    }
+
+    return (
+        <div className="py-16 md:py-24 border-t border-slate-200 dark:border-slate-800">
+            <div className="text-center mb-12">
+                <span className="inline-block bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold tracking-widest uppercase text-xs px-4 py-2 rounded-full mb-3 border border-emerald-200 dark:border-emerald-500/30">Placement Network</span>
+                <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-4">Internship &amp; Placement Institute Association</h2>
+                <p className="text-slate-500 dark:text-slate-400 max-w-xl mx-auto">Our students are placed and interned at top industrial and research organizations across India.</p>
+            </div>
+
+            {hiringPartners.length === 0 ? (
+                <div className="flex flex-wrap justify-center gap-6">
+                    {["Indian Navy", "DRDO", "TATA Power", "Bosch", "Siemens"].map((name, i) => (
+                        <div key={i} className="w-44 h-24 rounded-2xl border-2 border-dashed border-emerald-200 dark:border-emerald-800 flex flex-col items-center justify-center gap-2">
+                            <GraduationCap className="w-6 h-6 text-emerald-400" />
+                            <span className="text-xs font-bold text-slate-400 text-center px-2">{name}</span>
+                        </div>
+                    ))}
+                    <div className="w-full text-center mt-4">
+                        <p className="text-xs text-slate-400 font-medium">Upload logos via Admin → Partners &amp; Logos → Internship &amp; Placement Association</p>
+                    </div>
+                </div>
+            ) : (
+                <div className="relative overflow-hidden group">
+                    <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
+                    <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
+
+                    <motion.div
+                        className="flex gap-8 items-center"
+                        animate={{ x: ["0%", "-50%"] }}
+                        transition={{ ease: "linear", duration: 30, repeat: Infinity }}
+                        style={{ width: "max-content" }}
+                    >
+                        {displayPartners.map((c: any, i: number) => (
+                            <div key={`${c._id || i}-${i}`} className="w-56 h-32 shrink-0 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm flex items-center justify-center p-4 hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700/50 transition-all group">
+                                {c.imageUrl ? (
+                                    <Image src={c.imageUrl} alt={c.name} width={160} height={90} className="object-contain max-h-20 transition-transform duration-300 group-hover:scale-110" />
+                                ) : (
+                                    <div className="flex flex-col items-center gap-2">
+                                        <GraduationCap className="w-8 h-8 text-emerald-400" />
+                                        <span className="font-bold text-slate-500 dark:text-slate-400 text-xs text-center truncate px-2">{c.name}</span>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </motion.div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// --- Lab Partners Section (Institute Lab Association) --- //
 
 export function LabPartnersSection({ labPartners = [] }: { labPartners?: any[] }) {
+
     const clients = labPartners.filter(p => p.category === 'client');
-    if (clients.length === 0) return null;
 
     // Duplicate clients array to ensure infinite scrolling looks seamless
     let displayPartners = [...clients, ...clients];
@@ -1106,27 +1181,42 @@ export function LabPartnersSection({ labPartners = [] }: { labPartners?: any[] }
                 <p className="text-slate-500 dark:text-slate-400">Trusted by leading technical institutions across India.</p>
             </div>
 
-            <div className="relative overflow-hidden group">
-                <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
-                <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
-
-                <motion.div
-                    className="flex gap-8 items-center"
-                    animate={{ x: ["0%", "-50%"] }}
-                    transition={{ ease: "linear", duration: 25, repeat: Infinity }}
-                    style={{ width: "max-content" }}
-                >
-                    {displayPartners.map((c: any, i: number) => (
-                        <div key={`${c._id || i}-${i}`} className="w-56 h-32 shrink-0 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm flex items-center justify-center p-4 hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-700/50 transition-all group">
-                            {c.imageUrl ? (
-                                <Image src={c.imageUrl} alt={c.name} width={160} height={90} className="object-contain max-h-20 transition-transform duration-300 group-hover:scale-110" />
-                            ) : (
-                                <span className="font-bold text-slate-400 dark:text-slate-600 truncate px-2">{c.name}</span>
-                            )}
+            {clients.length === 0 ? (
+                <div className="flex flex-wrap justify-center gap-6">
+                    {["IIT Mumbai", "Pune University", "VIT", "MIT College", "Symbiosis"].map((name, i) => (
+                        <div key={i} className="w-44 h-24 rounded-2xl border-2 border-dashed border-indigo-200 dark:border-indigo-800 flex flex-col items-center justify-center gap-2">
+                            <Briefcase className="w-6 h-6 text-indigo-400" />
+                            <span className="text-xs font-bold text-slate-400 text-center px-2">{name}</span>
                         </div>
                     ))}
-                </motion.div>
-            </div>
+                    <div className="w-full text-center mt-4">
+                        <p className="text-xs text-slate-400 font-medium">Upload logos via Admin → Partners &amp; Logos → Institute Partners (Colleges)</p>
+                    </div>
+                </div>
+            ) : (
+                <div className="relative overflow-hidden group">
+                    <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
+                    <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
+
+                    <motion.div
+                        className="flex gap-8 items-center"
+                        animate={{ x: ["0%", "-50%"] }}
+                        transition={{ ease: "linear", duration: 25, repeat: Infinity }}
+                        style={{ width: "max-content" }}
+                    >
+                        {displayPartners.map((c: any, i: number) => (
+                            <div key={`${c._id || i}-${i}`} className="w-56 h-32 shrink-0 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm flex items-center justify-center p-4 hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-700/50 transition-all group">
+                                {c.imageUrl ? (
+                                    <Image src={c.imageUrl} alt={c.name} width={160} height={90} className="object-contain max-h-20 transition-transform duration-300 group-hover:scale-110" />
+                                ) : (
+                                    <span className="font-bold text-slate-400 dark:text-slate-600 truncate px-2">{c.name}</span>
+                                )}
+                            </div>
+                        ))}
+                    </motion.div>
+                </div>
+            )}
         </div>
     );
 }
+

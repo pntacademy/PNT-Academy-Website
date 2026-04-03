@@ -59,6 +59,9 @@ function TestimonialCard({ item, index, onDelete }: { item: any; index: number; 
                         {item.page === "lab" && (
                             <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400 font-bold uppercase tracking-wider">Lab</span>
                         )}
+                        {item.page === "college" && (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider">Colleges</span>
+                        )}
                     </h4>
                     <p className="text-blue-600 dark:text-blue-400 text-sm font-semibold mt-0.5">{item.role}</p>
                 </div>
@@ -116,7 +119,7 @@ export default function AdminTestimonials() {
             <header className="mb-6">
                 <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Student Testimonials</h1>
                 <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm max-w-lg">
-                    Manage the student and partner quotes displayed on the Home page and College Research Lab.
+                    Manage the student and partner quotes displayed on the Home page, College Research Lab, and College Trainings page.
                 </p>
             </header>
 

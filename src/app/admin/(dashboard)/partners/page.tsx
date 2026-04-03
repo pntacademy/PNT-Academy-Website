@@ -5,8 +5,8 @@ import { Loader2, Plus, Trash2, Shield, Building2, Briefcase } from "lucide-reac
 import ImageCropper from "@/components/admin/ImageCropper";
 
 const CATEGORIES = [
-    { id: "client", label: "Client Logos", icon: Shield },
-    { id: "hiring", label: "Hiring Companies", icon: Briefcase },
+    { id: "client", label: "Institute Partners (Colleges)", icon: Shield },
+    { id: "hiring", label: "Internship & Placement Association", icon: Briefcase },
     { id: "industry", label: "Industry Associates", icon: Building2 },
 ];
 

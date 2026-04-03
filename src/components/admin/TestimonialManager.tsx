@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { UploadCloud, CheckCircle2, X, Home, FlaskConical } from "lucide-react";
+import { Upload, Home, FlaskConical, School, CheckCircle2, X } from "lucide-react";
 import Image from "next/image";
 import ImageCropper from "./ImageCropper";
 
@@ -9,7 +9,7 @@ export default function TestimonialManager({ onSuccess }: { onSuccess?: () => vo
     const [name, setName] = useState("");
     const [college, setCollege] = useState("");
     const [quote, setQuote] = useState("");
-    const [page, setPage] = useState<"home" | "lab">("home");
+    const [page, setPage] = useState<"home" | "lab" | "college">("home");
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileToCrop, setFileToCrop] = useState<File | null>(null);
@@ -128,6 +128,7 @@ export default function TestimonialManager({ onSuccess }: { onSuccess?: () => vo
                         {([
                             { id: "home", label: "Home Page", icon: Home, desc: "Appears in the homepage slider" },
                             { id: "lab", label: "Robotics Lab", icon: FlaskConical, desc: "Appears in the College Lab tab" },
+                            { id: "college", label: "College Trainings", icon: School, desc: "Appears in College Programs" },
                         ] as const).map((opt) => (
                             <button
                                 key={opt.id}
@@ -204,7 +205,7 @@ export default function TestimonialManager({ onSuccess }: { onSuccess?: () => vo
                             ) : (
                                 <>
                                     <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-3 text-blue-600 dark:text-blue-400">
-                                        <UploadCloud className="w-7 h-7" />
+                                        <Upload className="w-7 h-7" />
                                     </div>
                                     <p className="font-bold text-sm text-slate-700 dark:text-slate-300 mb-1">Drag & drop or click to upload</p>
                                     <p className="text-xs text-slate-400 uppercase tracking-widest font-semibold mt-2">JPG · PNG · WEBP · GIF</p>
