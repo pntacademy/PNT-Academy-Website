@@ -87,7 +87,7 @@ export default function ChampionshipContent({
     return (
         <div className="w-full relative z-10 pt-24 pb-20">
             <NetworkBackground />
-            
+
             {/* ════════════════════════════════════════════════════════
                 HERO SECTION
             ════════════════════════════════════════════════════════ */}
@@ -345,13 +345,13 @@ export default function ChampionshipContent({
 
                     <div className="bg-gradient-to-r from-blue-50 dark:from-blue-950/30 to-purple-50 dark:to-purple-950/30 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 border border-blue-100 dark:border-blue-900">
                         <div>
-                            <h3 className="font-bold text-xl text-slate-900 dark:text-white mb-1">Official Contact Contact</h3>
+                            <h3 className="font-bold text-xl text-slate-900 dark:text-white mb-1">Official Contact</h3>
                             <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">Reach out to our Relationship Manager for registration packets and school guidelines.</p>
 
                             <div className="space-y-1 text-sm font-medium text-slate-700 dark:text-slate-300">
                                 <div className="flex items-center gap-2"><span className="text-blue-500 font-bold">Name:</span> Srushti Angane</div>
                                 <div className="flex items-center gap-2"><span className="text-blue-500 font-bold">Phone:</span> +91 9326014648</div>
-                                <div className="flex items-center gap-2 hidden"><span className="text-blue-500 font-bold">Email:</span> Contact@pntacademy.com</div>
+                                <div className="flex items-center gap-2 hidden"><span className="text-blue-500 font-bold">Email:</span> pnt-trainings@pntacademy.com</div>
                             </div>
                         </div>
                         <a href="tel:9326014648" className="w-full md:w-auto text-center px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black rounded-xl shadow-lg hover:scale-105 transition-transform shrink-0">
