@@ -999,7 +999,15 @@ function SectionBPNTEdge() {
     );
 }
 
-export function SectionCAlumni({ testimonials }: { testimonials: any[] }) {
+export function SectionCAlumni({ 
+    testimonials, 
+    title = "Intern Testimonials", 
+    subtitle = "Hear from students who built real industrial hardware inside our labs, bridging the gap between classroom theory and industry demands." 
+}: { 
+    testimonials: any[], 
+    title?: string, 
+    subtitle?: string 
+}) {
     // Graceful fallback dummy data if the database is empty or lacks 'college' tagged testimonials
     const displayTestimonials = testimonials && testimonials.length > 0 ? testimonials : [
         { name: "Dewang Kanekar", role: "Bharati Vidyapeeth", quote: "Completed an Industrial Robotics Internship Program and am now an intern at PNT Robotics, working on robotic hands and trolley robots.", imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop" },
@@ -1010,9 +1018,9 @@ export function SectionCAlumni({ testimonials }: { testimonials: any[] }) {
     return (
         <div className="py-24 border-t border-slate-200 dark:border-slate-800 relative z-20">
             <div className="text-center mb-16 relative z-10 w-full overflow-hidden">
-                <span className="inline-block bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold tracking-widest uppercase text-xs px-4 py-2 rounded-full mb-5 border border-blue-200 dark:border-blue-500/30">Intern Testimonials</span>
+                <span className="inline-block bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold tracking-widest uppercase text-xs px-4 py-2 rounded-full mb-5 border border-blue-200 dark:border-blue-500/30">{title}</span>
                 <h2 className="text-4xl md:text-5xl font-black mb-4 text-slate-900 dark:text-white">Proven Outcomes</h2>
-                <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto">Hear from students who built real industrial hardware inside our labs, bridging the gap between classroom theory and industry demands.</p>
+                <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto">{subtitle}</p>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">

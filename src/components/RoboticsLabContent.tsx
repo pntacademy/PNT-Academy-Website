@@ -1600,7 +1600,11 @@ function CollegesContent() {
             <LabPartnersSection labPartners={labPartners} />
 
             {/* ===== SECTION 17: STUDENT TESTIMONIALS ===== */}
-            <SectionCAlumni testimonials={testimonialsToShow} />
+            <SectionCAlumni 
+                testimonials={testimonialsToShow} 
+                title="College Testimonials"
+                subtitle="Hear from technical directors and deans who trust our industrial hardware labs to bridge the gap between classroom theory and industry demands."
+            />
 
             {/* ===== SECTION 20: CONCLUSION CTA ===== */}
             <section className="py-32 px-4 text-center relative overflow-hidden">
