@@ -75,7 +75,7 @@ const jsonLd = {
   "@type": "EducationalOrganization",
   "name": "PNT Academy",
   "url": "https://pntacademy.com",
-  "logo": "https://pntacademy.com/logo.png",
+  "logo": "https://pntacademy.com/logo-color.svg",
   "description": "Empowering the next generation of innovators with hands-on robotics, AI, and IoT training.",
   "sameAs": [
     "https://instagram.com/pntacademy",
