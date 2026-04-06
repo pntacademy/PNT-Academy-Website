@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect, Suspense, useMemo, Component, ErrorInfo, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Microchip, Radar, MonitorPlay, Cog, School, University, Star, Quote } from "lucide-react";
+import { CheckCircle2, Microchip, Radar, MonitorPlay, Cog, School, University, Star, Quote, Truck, Hand, Plane } from "lucide-react";
 import Image from "next/image";
 import { SectionCAlumni, LabPartnersSection } from "./CollegesTrainingContent";
 
@@ -247,85 +247,130 @@ function GlbModel({ path, targetSize = 5 }: { path: string; targetSize?: number 
     const isDrone = path.toLowerCase().includes("tello");
 
     // Smooth physics refs for drone
-    const vel = useRef({ x: 0, y: 0, z: 0 });
-    const targetPos = useRef({ x: 0, y: 0, z: 0 });
-    const targetRot = useRef({ x: 0, y: 0, z: 0 });
-    const propSpeed = useRef(0);  // 0 = stopped, 1 = full
+    // Drone physics state — persists across frames and loop transitions
+    const dronePos  = useRef(new THREE.Vector3(0, -0.15, 0));
+    const droneVel  = useRef(new THREE.Vector3());
+    const droneRot  = useRef(new THREE.Euler());
+    const propSpeed = useRef(0); // 0 = off, 1 = full speed
+    // Track last cycle's end-phase so we know when the loop reset happens
+    const prevT = useRef(0);
 
     useFrame((state, delta) => {
-        if (groupRef.current && !isDrone) {
+        const dt = Math.min(delta, 0.05); // physics cap
+        if (!groupRef.current) return;
+
+        if (!isDrone) {
             // Ground robots gently rotate on turntable
-            groupRef.current.rotation.y += delta * 0.35;
-        } else if (groupRef.current && isDrone) {
-            const cycleDuration = 9.0;
-            const t = state.clock.elapsedTime % cycleDuration;
-
-            // --- Determine desired state & target values ---
-            let desiredPropSpeed = 0;
-
-            if (t < 2.0) {
-                // LANDED — engines off
-                targetPos.current = { x: 0, y: -0.1, z: 0 };
-                targetRot.current = { x: 0, y: groupRef.current.rotation.y, z: 0 };
-                desiredPropSpeed = 0;
-            } else if (t < 2.8) {
-                // SPOOL UP — idle hover before lifting
-                desiredPropSpeed = Math.min(1, (t - 2.0) / 0.8);
-                targetPos.current = { x: 0, y: 0, z: 0 };
-                targetRot.current = { x: 0, y: 0, z: 0 };
-            } else if (t < 7.4) {
-                // ACTIVE FLIGHT — big figure-8
-                const flightTime = t - 2.8;
-                const flightDur = 4.6;
-                const flightProgress = flightTime / flightDur; // 0→1
-                const angle = flightProgress * Math.PI * 2;
-                const envelope = Math.sin(flightProgress * Math.PI); // peak in middle
-
-                targetPos.current = {
-                    x: Math.sin(angle) * 3.0,
-                    y: 0.6 + Math.sin(angle * 3) * 0.25,
-                    z: Math.sin(angle * 2) * 2.0,
-                };
-                targetRot.current = {
-                    x: Math.cos(angle * 2) * -0.25 * envelope,
-                    y: 0,
-                    z: Math.cos(angle) * -0.5 * envelope,
-                };
-                desiredPropSpeed = 1;
-            } else if (t < 8.2) {
-                // RETURN CENTER
-                desiredPropSpeed = 1.0 - (t - 7.4) / 0.8 * 0.3; // slowly reduce
-                targetPos.current = { x: 0, y: 0.3, z: 0 };
-                targetRot.current = { x: 0, y: 0, z: 0 };
-            } else {
-                // LANDING (8.2s → 9s)
-                const lp = (t - 8.2) / 0.8; // 0→1
-                desiredPropSpeed = Math.max(0, 1 - lp * 1.5);
-                targetPos.current = { x: 0, y: Math.max(-0.1, 0.3 * (1 - lp)), z: 0 };
-                targetRot.current = { x: 0, y: 0, z: 0 };
-            }
-
-            // Smooth propeller speed
-            propSpeed.current += (desiredPropSpeed - propSpeed.current) * Math.min(1, delta * 4);
-
-            // Drive prop animations by mutating playback rate
-            if (actions) {
-                Object.values(actions).forEach(action => {
-                    if (action) action.timeScale = propSpeed.current * 3.0;
-                });
-            }
-
-            // LERP position — fast response when flying, sluggish when landing
-            const posLerp = Math.min(1, delta * 3.5);
-            groupRef.current.position.x += (targetPos.current.x - groupRef.current.position.x) * posLerp;
-            groupRef.current.position.y += (targetPos.current.y - groupRef.current.position.y) * posLerp;
-            groupRef.current.position.z += (targetPos.current.z - groupRef.current.position.z) * posLerp;
-
-            // LERP rotation for smooth banking
-            const rotLerp = Math.min(1, delta * 5);
-            groupRef.current.rotation.x += (targetRot.current.x - groupRef.current.rotation.x) * rotLerp;
-            groupRef.current.rotation.z += (targetRot.current.z - groupRef.current.rotation.z) * rotLerp;
+            groupRef.current.rotation.y += dt * 0.35;
+            return;
         }
+
+        // ── Phase clock ─────────────────────────────────────────────────────
+        // Total cycle: 14 s
+        //  0.0 – 2.0  : LANDED (props off)
+        //  2.0 – 3.2  : SPOOL UP  (props spin up, drone twitches)
+        //  3.2 – 10.5 : ACTIVE FLIGHT (arc path with banking)
+        // 10.5 – 12.0 : APPROACH/DECELERATE back to origin
+        // 12.0 – 14.0 : TOUCH DOWN + SPOOL DOWN
+        const CYCLE = 14.0;
+        const t = state.clock.elapsedTime % CYCLE;
+
+        // Detect loop reset → keep physical state continuous
+        if (prevT.current > 12.0 && t < 1.0) {
+            // Force position & velocity back to landed state smoothly
+            dronePos.current.set(0, -0.15, 0);
+            droneVel.current.set(0, 0, 0);
+        }
+        prevT.current = t;
+
+        // ── Desired prop speed & target force direction ──────────────────────
+        let desiredPropSpeed = 0;
+        const targetPos  = new THREE.Vector3();
+        const targetPitch = { x: 0, z: 0 }; // bank angles
+
+        if (t < 2.0) {
+            // LANDED
+            desiredPropSpeed = 0;
+            targetPos.set(0, -0.15, 0);
+
+        } else if (t < 3.2) {
+            // SPOOL UP — props spin, drone vibrates slightly before liftoff
+            const p = (t - 2.0) / 1.2; // 0→1
+            desiredPropSpeed = p;
+            // tiny pre-liftoff shudder
+            targetPos.set(
+                Math.sin(t * 18) * 0.015 * p,
+                -0.15 + p * 0.05,
+                Math.cos(t * 14) * 0.015 * p
+            );
+
+        } else if (t < 10.5) {
+            // ACTIVE FLIGHT — smooth figure-8 arc, tight and within frame
+            desiredPropSpeed = 1.0;
+            const ft  = t - 3.2;
+            const dur = 7.3;
+            const a   = (ft / dur) * Math.PI * 2; // full loop over flight window
+            // Lemniscate (figure-8) — reduced scale so drone stays within canvas
+            const scale = 0.9;
+            targetPos.set(
+                Math.sin(a) * scale,
+                0.40 + Math.sin(ft * 1.4) * 0.10,  // gentle altitude oscillation
+                Math.sin(a * 2) * scale * 0.4        // Z figure-8 half-amplitude
+            );
+            // Natural banking: lean into direction of travel
+            targetPitch.z = -Math.cos(a) * 0.14;   // roll with horizontal movement
+            targetPitch.x =  Math.sin(a * 2) * 0.08; // pitch with Z movement
+
+        } else if (t < 12.0) {
+            // APPROACH — glide back to origin, reduce throttle slightly
+            const p = (t - 10.5) / 1.5; // 0→1
+            desiredPropSpeed = 1.0 - p * 0.25;
+            // ease back to center
+            targetPos.set(
+                dronePos.current.x * (1 - p),
+                0.40 * (1 - p) + 0.05,
+                dronePos.current.z * (1 - p)
+            );
+
+        } else {
+            // TOUCH DOWN + SPOOL DOWN (12s → 14s)
+            const p = (t - 12.0) / 2.0; // 0→1
+            desiredPropSpeed = Math.max(0, 1 - p * 1.3); // props slow ~1.3x landing speed
+            targetPos.set(0, Math.max(-0.15, 0.05 - p * 0.2), 0);
+        }
+
+        // ── Prop speed: smooth exponential approach ──────────────────────────
+        // Spin-up is faster; spin-down after landing is more gradual (inertia)
+        const isSpinningDown = desiredPropSpeed < propSpeed.current;
+        const propAlpha = isSpinningDown
+            ? Math.min(1, dt * 1.8)   // slow spool-down (rotor inertia)
+            : Math.min(1, dt * 6.0);  // fast spool-up
+        propSpeed.current += (desiredPropSpeed - propSpeed.current) * propAlpha;
+
+        // Drive GLB prop animations
+        if (actions) {
+            Object.values(actions).forEach(action => {
+                if (action) action.timeScale = propSpeed.current * 1.2;
+            });
+        }
+
+        // ── Position physics: spring + drag ─────────────────────────────────
+        const stiffness = 4.5;
+        const drag      = 3.2;
+        const diff      = new THREE.Vector3().subVectors(targetPos, dronePos.current);
+        const force     = diff.multiplyScalar(stiffness);
+        droneVel.current.addScaledVector(droneVel.current, -drag * dt);
+        droneVel.current.addScaledVector(force, dt);
+        dronePos.current.addScaledVector(droneVel.current, dt);
+
+        groupRef.current.position.copy(dronePos.current);
+
+        // ── Rotation: damp toward target bank angles ────────────────────────
+        const rotLerp = Math.min(1, dt * 4.5);
+        droneRot.current.x += (targetPitch.x - droneRot.current.x) * rotLerp;
+        droneRot.current.z += (targetPitch.z - droneRot.current.z) * rotLerp;
+        groupRef.current.rotation.x = droneRot.current.x;
+        groupRef.current.rotation.z = droneRot.current.z;
     });
 
     const content = <primitive object={clonedScene} />;
@@ -548,6 +593,7 @@ useGLTF.preload("/models/esp8266.glb");            // 0.3 MB
 useGLTF.preload("/models/pir_sensor.glb");         // 0.1 MB
 useGLTF.preload("/models/MQ2_sensor.glb");         // 1.1 MB
 useGLTF.preload("/models/bo_battery_operated_motor.glb"); // 0.3 MB
+useGLTF.preload("/models/DOFBOT.glb");             // Robotic Arm
 
 // All hardware categories — each has its model file paths
 const HARDWARE_ITEMS = [
@@ -558,6 +604,7 @@ const HARDWARE_ITEMS = [
         desc: "From basic logic to AI-grade computing — the heart of every project.",
         iconBg: "bg-blue-100 dark:bg-blue-900/30",
         iconColor: "text-blue-600 dark:text-blue-400",
+        border: "border-blue-500",
         models: ["/models/arduino_uno.glb", "/models/esp8266.glb", "/models/raspberry_pi_1k.glb"],
     },
     {
@@ -591,6 +638,128 @@ const HARDWARE_ITEMS = [
         models: ["/models/bo_battery_operated_motor.glb", "/models/servomotor_sg90_compressed.glb", "/models/aula_28_-_motor_de_passo_compressed.glb"],
     },
 ];
+
+const INDUSTRIAL_ROBOTS = [
+    {
+        title: "Basic AGV",
+        subtitle: "Automated guided vehicles for smart warehouse and factory floor automation.",
+        icon: Truck, 
+        models: ["/model.glb"],
+        iconBg: "bg-red-500/10",
+        iconColor: "text-red-500",
+        border: "border-red-500/50 hover:border-red-500",
+    },
+    {
+        title: "Robotic Hand",
+        subtitle: "Educational dexterous manipulation and research platform.",
+        icon: Hand,
+        models: [],
+        iconBg: "bg-violet-500/10",
+        iconColor: "text-violet-500",
+        border: "border-violet-500/50 hover:border-violet-500",
+    },
+    {
+        title: "PNT Mini Drone",
+        subtitle: "A PNT-customized aerial platform — fully programmable AI drone.",
+        icon: Plane, 
+        models: ["/models/dji_tello.glb"],
+        iconBg: "bg-sky-500/10",
+        iconColor: "text-sky-500",
+        border: "border-sky-500/50 hover:border-sky-500",
+    },
+    {
+        title: "Mini/Basic Robotic Arm",
+        subtitle: "Built on customizable integrated circuits — enabling circuit-level customization.",
+        icon: Cog,
+        models: ["/models/DOFBOT.glb"],
+        iconBg: "bg-blue-500/10",
+        iconColor: "text-blue-500",
+        border: "border-blue-500/50 hover:border-blue-500",
+    }
+];
+
+function IndustrialRobotLabSection() {
+    const isMobile = useIsMobile();
+    const [activeCat, setActiveCat] = useState(0);
+
+    const currentItem = INDUSTRIAL_ROBOTS[activeCat];
+    const currentModel = currentItem.models[0] ?? null;
+
+    return (
+        <section className="mb-24">
+            <div className="text-center mb-16">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-100 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 text-xs font-black uppercase tracking-widest mb-4">🤖 Lab 4</span>
+                <h2 className="text-3xl md:text-5xl font-black mb-6">Industrial Robot Lab</h2>
+                <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">The future of industrial automation relies on versatile robotics. Students program, interact with, and study industrial-grade AGVs, drones, robotic hands, and robotic arms.</p>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-10 items-stretch">
+                {/* Left: Category cards */}
+                <div className="flex flex-col gap-4">
+                    {INDUSTRIAL_ROBOTS.map((item, i) => (
+                        <button
+                            key={i}
+                            onClick={() => setActiveCat(i)}
+                            onMouseEnter={() => setActiveCat(i)}
+                            className={`text-left p-6 rounded-3xl transition-all duration-300 flex items-center gap-6 ${activeCat === i
+                                    ? `bg-white dark:bg-slate-900 shadow-xl scale-105 z-10 relative ring-2 ${item.border.split(' ')[0].replace('border', 'ring')}`
+                                    : "bg-slate-50 dark:bg-slate-800/40 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:scale-[1.02]"
+                                }`}
+                        >
+                            <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center ${item.iconBg} ${item.iconColor}`}>
+                                <item.icon className="w-8 h-8" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <h3 className="text-xl font-bold mb-1">{item.title}</h3>
+                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-2">{item.subtitle}</p>
+                            </div>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Right: 3D Canvas */}
+                <div className="h-[400px] lg:h-[600px] w-full relative flex items-center justify-center mobile-safe-canvas">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-blue-500/10 dark:bg-blue-400/5 rounded-full blur-[60px] pointer-events-none" />
+
+                    {currentModel ? (
+                        <>
+                            <LazyCanvas className="absolute inset-0 outline-none">
+                                <Canvas
+                                    camera={{ position: isMobile ? [7, 5, 7] : [5, 4, 5], fov: isMobile ? 50 : 40 }}
+                                    gl={{ antialias: true, powerPreference: "high-performance" }}
+                                    frameloop={isMobile ? "demand" : "always"}
+                                    dpr={1}
+                                    style={{ outline: "none" }}
+                                >
+                                    <ambientLight intensity={0.4} />
+                                    <directionalLight position={[5, 8, 5]} intensity={1.0} />
+                                    <directionalLight position={[-3, -2, -4]} intensity={0.3} />
+                                    <Environment preset="warehouse" />
+                                    <Suspense fallback={null}>
+                                        <HardwareModel path={currentModel} />
+                                    </Suspense>
+                                    {!isMobile && <OrbitControls makeDefault target={[0, 0, 0]} enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 1.5} />}
+                                </Canvas>
+                            </LazyCanvas>
+                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none z-10">
+                                <div className="bg-slate-900/60 dark:bg-black/60 backdrop-blur-md border border-white/10 text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-xl">
+                                    {currentItem.title}
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center text-center p-10 bg-slate-900/5 dark:bg-white/5 rounded-3xl w-full h-full border border-slate-200 dark:border-slate-800">
+                            <div className="w-20 h-20 rounded-full bg-slate-200 dark:bg-white/5 flex items-center justify-center mb-5">
+                                <currentItem.icon className="w-10 h-10 text-slate-400" />
+                            </div>
+                            <p className="text-slate-500 font-semibold text-sm mb-1">3D Model Coming Soon</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </section>
+    );
+}
 
 function SchoolsContent() {
     const isMobile = useIsMobile();
@@ -651,9 +820,9 @@ function SchoolsContent() {
                                 key={i}
                                 onClick={() => setActiveCat(i)}
                                 onMouseEnter={() => setActiveCat(i)}
-                                className={`text-left p-6 rounded-3xl border-2 transition-all duration-300 flex items-center gap-6 ${activeCat === i
-                                        ? `bg-white dark:bg-slate-900 ${item.border} shadow-xl scale-105 z-10 relative`
-                                        : "bg-slate-50 dark:bg-slate-800/40 border-transparent hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:scale-[1.02]"
+                                className={`text-left p-6 rounded-3xl transition-all duration-300 flex items-center gap-6 ${activeCat === i
+                                        ? `bg-white dark:bg-slate-900 shadow-xl scale-105 z-10 relative ring-2 ${item.border.split(' ')[0].replace('border', 'ring')}`
+                                        : "bg-slate-50 dark:bg-slate-800/40 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md hover:scale-[1.02]"
                                     }`}
                             >
                                 <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center ${item.iconBg} ${item.iconColor}`}>
@@ -674,12 +843,13 @@ function SchoolsContent() {
 
                         {currentModel ? (
                             <>
-                                <LazyCanvas className="absolute inset-0">
+                                <LazyCanvas className="absolute inset-0 outline-none">
                                     <Canvas
                                         camera={{ position: isMobile ? [7, 5, 7] : [5, 4, 5], fov: isMobile ? 50 : 40 }}
                                         gl={{ antialias: true, powerPreference: "high-performance" }}
                                         frameloop={isMobile ? "demand" : "always"}
                                         dpr={1}
+                                        style={{ outline: "none" }}
                                     >
                                         <ambientLight intensity={0.4} />
                                         <directionalLight position={[5, 8, 5]} intensity={1.0} />
@@ -688,8 +858,7 @@ function SchoolsContent() {
                                         <Suspense fallback={null}>
                                             <HardwareModel path={currentModel} />
                                         </Suspense>
-                                        <ContactShadows position={[0, -2.5, 0]} opacity={0.3} scale={8} blur={2.5} far={5} resolution={256} frames={1} />
-                                        {!isMobile && <OrbitControls makeDefault target={[0, 0, 0]} enablePan={false} enableZoom={false} autoRotate autoRotateSpeed={0.5} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 1.5} />}
+                                        {!isMobile && <OrbitControls makeDefault target={[0, 0, 0]} enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 1.5} />}
                                     </Canvas>
                                 </LazyCanvas>
                                 {/* Model label overlay */}
@@ -728,70 +897,8 @@ function SchoolsContent() {
             {/* ===== MECHANICAL LAB ===== */}
             <MechanicalLabSection />
 
-            {/* ===== HUMANOID ROBOT LAB ===== */}
-            <section className="mb-8">
-                <div className="text-center mb-12">
-                    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-100 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 text-xs font-black uppercase tracking-widest mb-4">🤖 Lab 4</span>
-                    <h2 className="text-3xl md:text-5xl font-black mb-4">Humanoid Robot Lab</h2>
-                    <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto">The future of robotics is human-shaped. Students program, interact with, and study full bipedal humanoid platforms.</p>
-                </div>
-
-                <div className="grid lg:grid-cols-2 gap-10 items-center">
-                    {/* Interactive 3D Humanoid Robot Visual */}
-                    <div className="relative flex items-center justify-center h-[500px] cursor-grab active:cursor-grabbing lg:order-2">
-
-                        <LazyCanvas className="absolute inset-0 mobile-safe-canvas">
-                            <Canvas
-                                shadows
-                                gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0, powerPreference: "high-performance" }}
-                                camera={{ position: isMobile ? [0, 6, 30] : [0, 4, 22], fov: isMobile ? 45 : 35 }}
-                                frameloop={isMobile ? "demand" : "always"}
-                                dpr={1}
-                            >
-                                <ambientLight intensity={0.5} />
-                                <spotLight position={[5, 15, 10]} intensity={2} angle={0.3} castShadow />
-                                <directionalLight position={[10, 10, 5]} intensity={1.2} />
-                                <directionalLight position={[-10, -10, -5]} intensity={0.4} />
-                                <Environment preset="studio" />
-                                <Suspense fallback={null}>
-                                    <HumanoidModel />
-                                </Suspense>
-                                <ContactShadows position={[0, -3.5, 0]} opacity={0.5} scale={15} blur={2.5} far={6} resolution={256} frames={1} />
-                                {!isMobile && <OrbitControls makeDefault autoRotate autoRotateSpeed={1} enableZoom={false} minPolarAngle={0} maxPolarAngle={Math.PI / 2 + 0.1} />}
-                            </Canvas>
-                        </LazyCanvas>
-
-                        {/* Interactive label */}
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none hidden md:block">
-                            <span className="bg-cyan-500/90 backdrop-blur text-white text-xs font-black px-4 py-1.5 rounded-full flex items-center gap-2 shadow-lg">
-                                👆 Drag to inspect ED-U 01
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Description */}
-                    <div className="flex flex-col gap-5 lg:order-1">
-                        <div className="p-6 bg-gradient-to-br from-cyan-50 to-slate-50 dark:from-cyan-900/20 dark:to-slate-900 rounded-2xl border border-cyan-100 dark:border-cyan-800/30">
-                            <h3 className="text-2xl font-black text-slate-800 dark:text-white mb-3">What Students Learn</h3>
-                            <ul className="space-y-3">
-                                {[
-                                    "Bipedal locomotion & balance control",
-                                    "Voice and gesture interaction programming",
-                                    "Facial recognition & emotion detection",
-                                    "Sensor fusion: LiDAR, depth camera, IMU",
-                                    "Real-time navigation in dynamic environments",
-                                    "Human-Robot Interaction design & ethics",
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
-                                        <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-xs font-black shrink-0">✓</span>
-                                        {item}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {/* ===== INDUSTRIAL ROBOT LAB ===== */}
+            <IndustrialRobotLabSection />
         </div>
     );
 }
@@ -801,46 +908,68 @@ function SchoolsContent() {
 // State 2: For Colleges — Full PDF Content
 // -------------------------------------------------------------
 
-// Product data for the solution grid & detail sections
-// glbPath: set to a real /models/*.glb path once model files are ready
+// Product data for the solution grid
 const PRODUCTS = [
     {
         icon: "",
-        name: "PNT Mini Robotic ARM",
-        specs: "4 DOF | 3D Printed | Customizable Components",
-        tagline: "Unlike plug-and-play labs, our robots are fully open — enabling circuit-level customization, DOF expansion, and multi-robot integration.",
+        name: "PNT Mini/Basic Robotic Arm",
+        specs: "6 DOF | Raspberry Pi 5 | 0.3MP Camera",
+        tagline: "Unlike plug-and-play labs, our robots are built on customizable integrated circuits — enabling circuit-level customization, DOF expansion, and multi-robot integration.",
         features: ["Demonstration of pick and place automation", "Demonstration of gesture-controlled robotic arm", "Sensor Feedback Integration with robot arm", "Path Planning and Motion Control", "Object Detection using OpenCV", "Object Sorting by Colour & by Size", "Programming for Industrial Applications", "Integration with IoT for Remote Control", "AI integration with robot arm"],
         image: "/images/robotics-lab/robotic-arm.jpeg",
-        glbPath: null as string | null,
+        glbPath: "/models/DOFBOT.glb",
         color: "from-blue-500 to-cyan-500",
         accentColor: "#38bdf8",
+        extraSpecs: [
+            "Dimensions: 500x500x573 mm | Weight: 10 kg", 
+            "Actuators: 5 x 180° & 1 x 270° Bus Servo Motors (11kg/cm)",
+            "Microcontroller: Raspberry Pi 5 with WiFi", 
+            "Display: 0.96-inch OLED Display",
+            "Camera: 0.3MP High-resolution Camera", 
+            "Ports: 2x USB 2.0, 1x HDMI"
+        ],
     },
     {
         icon: "",
-        name: "PNT Industrial Robotic ARM",
-        specs: "4–6 Axis Articulated | Payload: 1–2 kg | Repeatability: ±0.1 mm",
-        tagline: "Industrial-grade precision for real-world manufacturing simulation and research.",
-        features: ["Forward & inverse kinematics programming", "Pick-and-place task execution", "Tool path planning for repetitive tasks", "Payload testing and accuracy calibration", "Integration with vision systems", "Multi-axis coordination"],
+        name: "PNT Advance Robotic Arm",
+        specs: "6 DOF | ROS System | Depth Camera",
+        tagline: "Advanced research robotic arm equipped with ROS and MoveIt simulation.",
+        features: ["Forward & inverse kinematics programming", "Pick-and-place task execution", "MoveIt simulation integration", "Depth camera for complex AI object detection", "Multi-axis coordination under ROS"],
         image: "/images/robotics-lab/industrial-arm.png",
         glbPath: null as string | null,
         color: "from-indigo-500 to-purple-500",
         accentColor: "#818cf8",
+        extraSpecs: [
+            "Dimensions: 310x420x900 mm | Weight: ~15kg",
+            "Actuators: 6x High Torque Stepper motors, 1x Servo for gripper",
+            "Control System: ROS System on Single Board Computer",
+            "Sensors: Depth Camera (30 FPS, 90° FOV) for AI",
+            "Pay Load: Max 250g (extended) / 350g (retracted)",
+            "Simulation: Built-in MoveIt Simulation Software"
+        ],
     },
     {
         icon: "",
-        name: "PNT Robotic Hand",
-        specs: "Multi-finger | Customizable Parts | Gesture-Controlled Interface",
+        name: "PNT Mini/Basic Robotic Hand",
+        specs: "6 DOF | ATmega328P | Capacitive Touch Sensor",
         tagline: "Advanced dexterous manipulation and prosthetic hand research platform.",
         features: ["Finger movement coordination", "Feedback mechanism demonstration", "EMG-based hand control", "Gesture-based hand control", "Prosthetic Hand Demonstration", "Haptic Feedback System", "AI-Based control of hand", "AI-based gesture control", "Integration with Wearable Tech", "Remote-controlled hand movement"],
         image: "/images/robotics-lab/robotic_hand.png",
         glbPath: null as string | null,
         color: "from-violet-500 to-pink-500",
         accentColor: "#c084fc",
+        extraSpecs: [
+            "Weight: 4 kg", 
+            "Actuators: 6x 180° Servo Motors (11kg/cm)", 
+            "Microcontroller: ATmega328P via USB 2.0", 
+            "Sensors: Capacitive Touch Sensor", 
+            "Interface: Rotary Encoder With Button, 16x2 LCD Display"
+        ],
     },
     {
         icon: "",
         name: "PNT Mini Drone",
-        specs: "Custom PNT Software | Autonomous Flight | AI-Integrated | Camera-Ready",
+        specs: "Custom Firmware | 5MP HD720p30 | Vision System",
         tagline: "A PNT-customized aerial platform — we build our own software stack on top of the hardware, turning it into a fully programmable AI drone lab tool unique to every deployment.",
         features: [
             "PNT custom software layer for autonomous mission control",
@@ -859,47 +988,87 @@ const PRODUCTS = [
         color: "from-sky-500 to-cyan-400",
         accentColor: "#22d3ee",
         extraSpecs: [
-            "Hardware platform: compact quadrotor airframe",
-            "Flight time: approx. 13 min | Max Speed: 28.8 km/h",
-            "Camera: 720p HD stabilized video stream",
-            "PNT custom firmware — fully configured for lab use",
+            "Dimensions: 98×92.5×41 mm | Weight: 80g",
+            "Flight: 13 min per battery (3 included) | Max Speed: 8m/s (Max Height: 30m)",
+            "Camera: 5MP (2592×1936) HD720p30 with 720p Live View",
+            "Hardware: Intel Processor, 2.4 GHz WiFi, Detachable 1.1Ah Fireproof Battery",
+            "Sensors: Range Finder, Barometer, Optical Sensors"
         ],
     },
     {
         icon: "",
         name: "PNT Advance AMR",
-        specs: "Mecanum / Differential Drive | ROS2 | LiDAR + Vision",
+        specs: "Mecanum Drive | Raspberry Pi 5 + Teensy 4.1 | LiDAR",
         tagline: "Next-generation Autonomous Mobile Robot for complex indoor and outdoor navigation.",
         features: ["Hardware interfacing and integration of sensors and actuators with ROS", "Odometry sensor data and teleoperation control", "Mapping indoor environments using LiDAR sensors", "Autonomous navigation with parameter tuning", "SLAM-based real-time mapping", "Multi-floor navigation capability"],
         image: "/images/robotics-lab/amr.jpeg",
         glbPath: "/models/Advance_AMR_compressed.glb",
         color: "from-emerald-500 to-teal-500",
         accentColor: "#34d399",
-        extraSpecs: ["Li-ion battery: 3–4 hours operational time", "Sensors: Ultrasonic, IR, IMU, LiDAR, Depth Camera", "ROS2 based open-source software", "Remote monitoring via web dashboard"],
+        extraSpecs: [
+            "Dimensions: 415x510x282 mm | Weight: 10-11 kg",
+            "Payload Capacity: 2 kg | Top Speed: 0.5 m/s",
+            "Drive System: Mecanum Drive (4 wheels)",
+            "Battery: 12V 12Ah Fireproof LiFePO4 (3 hours run time)",
+            "Sensors: Encoder based motors, IMU, LIDAR, RGB Camera",
+            "Control System: ROS System (Raspberry Pi 5 + Teensy 4.1)"
+        ],
     },
     {
         icon: "",
         name: "PNT Standard AMR",
-        specs: "Differential / Mecanum wheel drive | ROS-based | LiDAR optional",
+        specs: "Differential Drive | Raspberry Pi 5 | LiDAR",
         tagline: "Addressing real-world challenges in logistics and defense deployment scenarios.",
         features: ["Hardware interfacing and integration of sensors and actuators with ROS", "Odometry sensor data and teleoperation control for AMRs", "Mapping indoor environments using LiDAR sensors", "Autonomous navigation with parameter tuning"],
         image: "/images/robotics-lab/amr.jpeg",
         glbPath: "/models/Basic_AMR.glb",
         color: "from-orange-500 to-amber-500",
         accentColor: "#fb923c",
-        extraSpecs: ["Onboard microcontroller / SBC (Raspberry Pi / equivalent)", "Li-ion battery: 2–3 hours operational time", "Sensors: Ultrasonic, IR, IMU, optional LiDAR", "Supports ROS-based & block-based programming"],
+        extraSpecs: [
+            "Dimensions: 300x356x328 mm | Weight: 5 kg",
+            "Payload Capacity: 2 kg | Top Speed: 0.3 m/s",
+            "Drive System: Differential Drive (2 wheels + 2 casters)",
+            "Battery: 12V 12Ah Fireproof LiFePO4 (3 hours run time)",
+            "Sensors: Encoder based motors, IMU, LIDAR, RGB Camera",
+            "Control System: ROS System (Raspberry Pi 5)"
+        ],
     },
     {
         icon: "",
-        name: "PNT Industrial AGV",
-        specs: "Industrial-grade | Custom-design capabilities | Smart factory integration",
+        name: "PNT Basic AGV",
+        specs: "Dual high-torque DC motors | 100 kg Payload | Line Following",
         tagline: "Automated guided vehicles for smart warehouse and factory floor automation.",
-        features: ["Line following AGV demonstration", "Obstacle avoidance demonstration", "RFID-based navigation system", "Automated goods transportation", "Speed and acceleration control", "Wireless & IoT-based Control", "Path planning via custom algorithms", "Battery and Power Optimization", "Integration of external sensors"],
+        features: ["Line following AGV demonstration", "Obstacle avoidance demonstration", "Automated goods transportation", "Speed and acceleration control", "Wireless & IoT-based Control"],
         image: "/images/robotics-lab/agv.jpeg",
         glbPath: "/model.glb",
         color: "from-red-500 to-rose-500",
         accentColor: "#f87171",
+        extraSpecs: [
+            "Dimensions: 800x500x200 mm | Weight: < 20 kg | Payload: Up to 100 kg",
+            "Drive System: Dual DC motors with integrated encoders",
+            "Navigation: 8-sensor pair line follower, Ultrasonic obstacle detection",
+            "Processor: Dual-core microcontroller with Wi-Fi & Bluetooth",
+            "Power: 12V Fireproof Rechargeable LiFePO4 Battery (Up to 6 hours)"
+        ],
     },
+    {
+        icon: "",
+        name: "PNT Advance AGV",
+        specs: "SLAM Navigation | 100 kg Payload | ROS System",
+        tagline: "Advanced SLAM-based Automated Guided Vehicle for independent dynamic pathfinding.",
+        features: ["RFID-based navigation system", "SLAM-based real-time mapping", "Path planning via custom algorithms", "Automated goods transportation", "Integration of external sensors"],
+        image: "/images/robotics-lab/agv.jpeg",
+        glbPath: "/model.glb",
+        color: "from-rose-500 to-pink-500",
+        accentColor: "#fb7185",
+        extraSpecs: [
+            "Dimensions: 800x500x200 mm | Weight: < 20 kg | Payload: Up to 100 kg",
+            "Drive System: Dual DC motors with integrated encoders",
+            "Navigation: Lidar Sensors for auto navigation and line independent movements",
+            "Control System: ROS System on Single Board Computer (SLAM Technology)",
+            "Power: 12V Fireproof Rechargeable LiFePO4 Battery (Up to 6 hours)"
+        ]
+    }
 ];
 
 // HIRING_COMPANIES array removed as it is now fetched dynamically
@@ -917,12 +1086,14 @@ function ProductMiniPlaceholder({ color, icon }: { color: string; icon: string }
     // Parse the first color from a Tailwind gradient string (e.g. "from-blue-500 to-cyan-500")
     const colorMap: Record<string, string> = {
         "#38bdf8": "#38bdf8",
+        "#6366f1": "#6366f1",
         "#818cf8": "#818cf8",
         "#c084fc": "#c084fc",
         "#22d3ee": "#22d3ee",
         "#34d399": "#34d399",
         "#fb923c": "#fb923c",
         "#f87171": "#f87171",
+        "#fb7185": "#fb7185",
     };
 
     // Just use the accentColor passed via the `color` prop
@@ -1222,31 +1393,47 @@ function CollegesContent() {
                         <h2 className="text-4xl md:text-5xl font-black mb-4 text-slate-900 dark:text-white">The Problem Statement</h2>
                     </motion.div>
 
-                    <div className="grid md:grid-cols-3 gap-6 mb-12">
-                        {[
-                            { stat: "10%", text: "of Indian engineering graduates are employable in robotics-related fields", source: "NASSCOM", color: "red", bg: "from-red-50 to-orange-50 dark:from-red-950/40 dark:to-orange-950/20", border: "border-red-200 dark:border-red-500/20", statColor: "text-red-500 dark:text-red-400" },
-                            { stat: "0%", text: "Theoretical-heavy curriculums fail to provide hands-on experience and industry-ready skills", source: "Industry Report", color: "orange", bg: "from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/20", border: "border-orange-200 dark:border-orange-500/20", statColor: "text-orange-500 dark:text-orange-400" },
-                            { stat: "3×", text: "India highly lags behind China and Japan in adoption of AMR, AGVs, and Robotic Arms", source: "Global Index", color: "rose", bg: "from-rose-50 to-red-50 dark:from-rose-950/40 dark:to-red-950/20", border: "border-rose-200 dark:border-rose-500/20", statColor: "text-rose-500 dark:text-rose-400" },
-                        ].map((card, i) => (
-                            <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.5 }}
-                                whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                                className={`bg-gradient-to-br ${card.bg} border ${card.border} rounded-3xl p-8 text-center shadow-lg shadow-slate-200/60 dark:shadow-none hover:shadow-xl transition-all duration-300 cursor-default`}>
-                                <span className={`text-6xl md:text-7xl font-black ${card.statColor} block mb-4 leading-none`}>{card.stat}</span>
-                                <p className="text-slate-700 dark:text-slate-300 text-base leading-relaxed mb-5">{card.text}</p>
-                                <span className={`text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full bg-white/60 dark:bg-white/10 ${card.statColor}`}>Source: {card.source}</span>
-                            </motion.div>
-                        ))}
-                    </div>
+                    <div className="flex flex-col lg:flex-row gap-8 mb-12">
+                        {/* India Problem Statement */}
+                        <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+                            className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-500/20 rounded-3xl p-8 lg:w-1/2 shadow-lg">
+                            <h3 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-6 flex items-center gap-2">🇮🇳 The Current Landscape</h3>
+                            <ul className="space-y-5 text-slate-700 dark:text-slate-300 leading-relaxed">
+                                <li className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">1</div>
+                                    <p>A study by NASSCOM reveals <span className="font-bold text-red-600 dark:text-red-400">only 10% of Indian engineering graduates</span> are employable in robotics-related fields.</p>
+                                </li>
+                                <li className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">2</div>
+                                    <p>Theoretical-heavy curriculum fail to provide hands-on experience and industry-ready skills.</p>
+                                </li>
+                                <li className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">3</div>
+                                    <p>India highly lags behind countries like China and Japan in the adoption of AMR, AGVs and robotic arms.</p>
+                                </li>
+                            </ul>
+                        </motion.div>
 
-                    {/* China comparison */}
-                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3, duration: 0.5 }}
-                        className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:bg-gradient-to-r dark:from-cyan-950/30 dark:to-blue-950/30 backdrop-blur-xl shadow-xl shadow-cyan-100/60 dark:shadow-none border border-cyan-200 dark:border-cyan-500/20 rounded-3xl p-8 md:p-10 max-w-4xl mx-auto">
-                        <h3 className="text-xl font-bold text-cyan-600 dark:text-cyan-400 mb-5 flex items-center gap-2">🇨🇳 The Global Benchmark</h3>
-                        <ul className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
-                            <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-cyan-500 dark:text-cyan-400 shrink-0 mt-1" /> China&apos;s &ldquo;Made in China 2025&rdquo; initiative produces 150,000+ robotics graduates annually who seamlessly integrate into the workforce.</li>
-                            <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-cyan-500 dark:text-cyan-400 shrink-0 mt-1" /> Colleges in China partner with robotics manufacturers to offer students live project experience and internships.</li>
-                        </ul>
-                    </motion.div>
+                        {/* China comparison */}
+                        <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+                            className="bg-cyan-50 dark:bg-cyan-950/20 border border-cyan-200 dark:border-cyan-500/20 rounded-3xl p-8 lg:w-1/2 shadow-lg">
+                            <h3 className="text-2xl font-bold text-cyan-600 dark:text-cyan-400 mb-6 flex items-center gap-2">🇨🇳 The Global Benchmark</h3>
+                            <ul className="space-y-5 text-slate-700 dark:text-slate-300 leading-relaxed">
+                                <li className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-5 h-5" /></div>
+                                    <p>China's "Made in China 2025" initiative heavily promotes industrial automation.</p>
+                                </li>
+                                <li className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-5 h-5" /></div>
+                                    <p>Result: China produces 150,000+ robotics graduates annually, who seamlessly integrate into the workforce.</p>
+                                </li>
+                                <li className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 mt-0.5"><CheckCircle2 className="w-5 h-5" /></div>
+                                    <p>Colleges partner with robotics manufacturers to offer students live project experience and internships.</p>
+                                </li>
+                            </ul>
+                        </motion.div>
+                    </div>
                 </div>
             </section>
 
@@ -1380,7 +1567,7 @@ function CollegesContent() {
                                 </div>
                                 <ul className="space-y-4 relative z-10">
                                     {[
-                                        "Fully open-source, flexible platforms (ROS, Python, C++).",
+                                        "Custom-integrated circuits and flexible platforms (ROS, Python, C++).",
                                         "Deployment of modern industrial-grade AGVs, AMRs, and 6-axis Arms.",
                                         "Project-based learning encouraging reverse-engineering and innovation.",
                                         "Direct placement assistance and pipeline to top robotics companies.",
@@ -1439,7 +1626,8 @@ function CollegesContent() {
                         {[
                             { icon: "🔧", title: "Modular Design", points: ["Add or replace microcontrollers/SBCs", "Integrate additional sensors, drivers, communication modules", "Increase degrees of freedom in robotic arms", "Redesign power distribution, control logic, and feedback loops"] },
                             { icon: "🖨️", title: "3D Printed & Customizable", points: ["Parts of robotic arm, AGV, or AMR are 3D printed", "CAD files and tutorials provided", "Students can experiment with different designs", "Encourages reverse engineering & system-level thinking"] },
-                            { icon: "💻", title: "Open-Source Software", points: ["Robotic Arm + AMR integration", "AGV + Robotic Hand coordination", "Custom hybrid robotic systems for research projects", "Full coding flexibility — no black-box controllers"] },
+                            { icon: "💻", title: "Customizable Architectures", points: ["Robotic Arm + AMR integration", "AGV + Robotic Hand coordination", "Custom hybrid robotic systems for research projects", "Full coding flexibility — no black-box controllers"] },
+                            { icon: "🔋", title: "Fireproof Battery Systems", points: ["Industry-grade Fireproof LiFePO4 power cells", "Guaranteed safe continuous operation", "Integrated Battery Management System (BMS)", "Extended 6-hour rigorous testing lifespan"] },
                             { icon: "🔬", title: "Research & IIC Enablement", points: ["Encourages reverse engineering", "System-level thinking", "Innovation beyond predefined experiments", "IEEE / Scopus paper guidance"] },
                         ].map((pillar, i) => (
                             <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.5 }}
@@ -1507,18 +1695,18 @@ function CollegesContent() {
                                 </span>
                                 <p className="text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">{p.tagline}</p>
                                 {(p as any).extraSpecs && (
-                                    <div className="bg-slate-50/80 dark:bg-slate-900/50 shadow-inner rounded-xl p-4 mb-6 border border-slate-200/60 dark:border-slate-800">
-                                        {(p as any).extraSpecs.map((s: string, j: number) => (
-                                            <p key={j} className="text-xs text-slate-500 dark:text-slate-400 flex items-start gap-2 mb-1">
-                                                <span style={{ color: p.accentColor }}>•</span>{s}
-                                            </p>
-                                        ))}
+                                    <div className="bg-slate-50/80 dark:bg-slate-900/50 shadow-inner rounded-xl p-5 mb-5 border border-slate-200/60 dark:border-slate-800" style={{ borderLeft: `4px solid ${p.accentColor}` }}>
+                                        <h4 className="font-bold text-slate-800 dark:text-white mb-3 text-sm">Technical Specifications</h4>
+                                        <div className="space-y-2">
+                                            {(p as any).extraSpecs.map((s: string, j: number) => (
+                                                <p key={j} className="text-sm text-slate-600 dark:text-slate-300 flex items-start gap-2 leading-relaxed">
+                                                    <span className="mt-1 flex-shrink-0" style={{ color: p.accentColor }}>•</span>
+                                                    <span>{s}</span>
+                                                </p>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
-                                {/* Coming soon info placeholder */}
-                                <div className="p-4 rounded-xl border mb-5" style={{ borderColor: `${p.accentColor}33`, background: `${p.accentColor}08` }}>
-                                    <p className="text-xs text-slate-400 dark:text-slate-500 font-semibold">Product details coming soon — check back for full specifications, pricing, and documentation.</p>
-                                </div>
                                 <ul className="space-y-2">
                                     {p.features.map((f, j) => (
                                         <li key={j} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -1602,8 +1790,8 @@ function CollegesContent() {
             {/* ===== SECTION 17: STUDENT TESTIMONIALS ===== */}
             <SectionCAlumni 
                 testimonials={testimonialsToShow} 
-                title="College Testimonials"
-                subtitle="Hear from technical directors and deans who trust our industrial hardware labs to bridge the gap between classroom theory and industry demands."
+                title="Student's Testimonials"
+                subtitle="Hear from engineering students who have gained hands-on experience, secured internships, and accelerated their careers through our industrial automation labs."
             />
 
             {/* ===== SECTION 20: CONCLUSION CTA ===== */}
