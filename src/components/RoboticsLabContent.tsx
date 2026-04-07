@@ -198,8 +198,6 @@ class ModelErrorBoundary extends Component<{ children: ReactNode, fallback: Reac
 // Auto-normalizing GLB model: synchronously centers and scales to fill the viewport
 // flightStyle: "hover" = gentle centered hover (school), "circular" = circular orbit path (college)
 function GlbModel({ path, targetSize = 5, flightStyle = "hover" }: { path: string; targetSize?: number; flightStyle?: "hover" | "circular" }) {
-    // Set Draco decoder path before any useGLTF call so compressed models load correctly
-    useGLTF.setDecoderPath('/draco/');
     const { scene, animations } = useGLTF(path);
     const groupRef = useRef<THREE.Group>(null);
     const { actions } = useAnimations(animations, groupRef);
@@ -935,7 +933,7 @@ const PRODUCTS = [
         tagline: "Advanced research robotic arm equipped with ROS and MoveIt simulation.",
         features: ["Forward & inverse kinematics programming", "Pick-and-place task execution", "MoveIt simulation integration", "Depth camera for complex AI object detection", "Multi-axis coordination under ROS"],
         image: "/images/robotics-lab/industrial-arm.png",
-        glbPath: "/models/Advance_Robotic_Arm_compressed.glb",
+        glbPath: "/models/Advance_Robotic_Arm_safe.glb",
         color: "from-indigo-500 to-purple-500",
         accentColor: "#818cf8",
         extraSpecs: [
@@ -1057,7 +1055,7 @@ const PRODUCTS = [
         tagline: "Advanced SLAM-based Automated Guided Vehicle for independent dynamic pathfinding.",
         features: ["RFID-based navigation system", "SLAM-based real-time mapping", "Path planning via custom algorithms", "Automated goods transportation", "Integration of external sensors"],
         image: "/images/robotics-lab/agv.jpeg",
-        glbPath: "/models/Advance_AGV_compressed.glb",
+        glbPath: "/models/Advance_AGV_safe.glb",
         color: "from-rose-500 to-pink-500",
         accentColor: "#fb7185",
         extraSpecs: [
