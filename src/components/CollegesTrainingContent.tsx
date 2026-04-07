@@ -916,13 +916,8 @@ function CredibilityBadge() {
                 <p className="text-sm font-bold text-slate-500 uppercase tracking-widest text-center">Recognized & Backed By</p>
                 <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
                     {/* Add your logos here matching these dimensions/aspect ratio */}
-                    <div className="relative h-12 w-32 md:w-40 flex items-center justify-center">
-                        <Image 
-                            src="/images/shark-tank-logo.png" 
-                            alt="Shark Tank India" 
-                            fill
-                            className="object-contain" 
-                        />
+                    <div className="font-black text-xl text-slate-800 dark:text-slate-200">
+                        Shark Tank India
                     </div>
                     <div className="flex items-center gap-2 font-black text-xl text-slate-800 dark:text-slate-200">
                         <Award className="w-6 h-6 text-blue-500" /> PM Modi Recognized
