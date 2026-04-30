@@ -14,7 +14,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/curriculum/cbse-icse-ib',
     '/curriculum/nep-aligned',
     '/kit',
-    '/lms',
     '/payments',
     '/programs/army-navy-internship',
     '/programs/colleges',

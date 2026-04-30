@@ -1,13 +1,5 @@
-import * as Sentry from "@sentry/nextjs";
-
+// Instrumentation file — Sentry removed.
+// Re-add error monitoring here if a new provider is chosen in future.
 export async function register() {
-  if (process.env.NEXT_RUNTIME === "nodejs") {
-    await import("../sentry.server.config");
-  }
-
-  if (process.env.NEXT_RUNTIME === "edge") {
-    await import("../sentry.edge.config");
-  }
+  // No-op: instrumentation hooks registered here when needed.
 }
-
-export const onRequestError = Sentry.captureRequestError;

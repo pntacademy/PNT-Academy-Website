@@ -22,7 +22,7 @@ export default function OnlineClassesPage() {
                 colorFrom="from-emerald-400"
                 colorTo="to-teal-500"
                 actionText="Go to LMS Portal"
-                actionLink="/lms"
+                actionLink="https://learn.pntacademy.com"
             />
 
             <section className="py-20 container mx-auto px-4 max-w-5xl">

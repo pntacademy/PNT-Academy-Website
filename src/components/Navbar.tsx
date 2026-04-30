@@ -148,7 +148,7 @@ export default function Navbar() {
                     )}
 
                     <Link
-                        href="/lms"
+                        href="https://learn.pntacademy.com"
                         className="ml-1 px-5 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl shadow-[0_4px_20px_rgba(139,92,246,0.35)] hover:shadow-[0_6px_25px_rgba(139,92,246,0.5)] hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 font-bold text-sm transition-all"
                     >
                         LMS Portal
@@ -223,7 +223,7 @@ export default function Navbar() {
                             ))}
 
                             <Link
-                                href="/lms"
+                                href="https://learn.pntacademy.com"
                                 onClick={() => setMobileOpen(false)}
                                 className="mt-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-bold text-sm flex items-center justify-between shadow-lg"
                             >
