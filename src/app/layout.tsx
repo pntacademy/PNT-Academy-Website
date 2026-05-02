@@ -10,6 +10,7 @@ import ClientOnly from "@/components/ClientOnly";
 import NetworkBackground from "@/components/NetworkBackground";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import { CookieBanner } from "@/components/CookieBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -130,6 +131,9 @@ export default function RootLayout({
 
           {/* Mobile Tab Bar */}
           <MobileBottomNav />
+          
+          {/* Global Cookie Banner */}
+          <CookieBanner />
         </ThemeProvider>
       </body>
     </html>
