@@ -15,7 +15,7 @@ import dbConnect from "@/lib/mongodb";
 import Testimonial from "@/lib/models/Testimonial";
 import LabPartner from "@/lib/models/LabPartner";
 
-export const revalidate = 60; // Revalidate every minute for fresh data
+export const revalidate = 3600; // Revalidate every hour for fresh data
 
 export default async function CollegesProgramsPage() {
     await dbConnect();

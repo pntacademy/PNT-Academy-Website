@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 // ISR: serve from cache instantly, silently refresh in background every 60s
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export default async function SchoolsProgramsPage() {
     return (

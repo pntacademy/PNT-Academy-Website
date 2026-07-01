@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     alternates: { canonical: "/payments" },
 };
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 interface PaymentsPageProps {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
